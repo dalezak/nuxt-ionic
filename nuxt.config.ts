@@ -9,9 +9,9 @@ export default defineNuxtConfig({
     'github:dalezak/nuxt-layer-supabase'
   ],
   css: [
-    '@/assets/css/default-white.css',
-    '@/assets/css/default-dark.css',
-    '@/assets/css/transition.css'
+    '~/assets/css/default-white.css',
+    '~/assets/css/default-dark.css',
+    '~/assets/css/transition.css'
   ],
   modules: [
     '@nuxtjs/ionic',
@@ -20,7 +20,7 @@ export default defineNuxtConfig({
     'nuxt-viewport',
   ],
   plugins: [
-    '@/plugins/masonry.js',
+    '~/plugins/masonry.js',
   ],
   ionic: {
     integrations: {
