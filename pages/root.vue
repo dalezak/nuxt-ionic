@@ -20,8 +20,9 @@ const { path } = useRoute();
 const currentUser = useCurrentUser();
 
 onMounted(() => {
-  // if (currentUser && path == "/") {
-  //   showPage("/home");
-  // }
+  if (currentUser && path == "/" && links.length > 0) {
+    let link = links[0];
+    showPage(link.path);
+  }
 })
 </script>
