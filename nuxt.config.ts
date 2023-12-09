@@ -9,8 +9,8 @@ export default defineNuxtConfig({
     'github:dalezak/nuxt-layer-supabase'
   ],
   css: [
-    '@/assets/css/themes/default-white.css',
-    '@/assets/css/themes/default-dark.css',
+    '@/assets/css/default-white.css',
+    '@/assets/css/default-dark.css',
     '@/assets/css/transition.css'
   ],
   modules: [
