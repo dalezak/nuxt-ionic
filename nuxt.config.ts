@@ -1,4 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+const fileUrl = fileURLToPath(import.meta.url);
+const currentDir = dirname(fileUrl);
 export default defineNuxtConfig({
   ssr: true,
   debug: true,
@@ -9,9 +13,9 @@ export default defineNuxtConfig({
     'github:dalezak/nuxt-layer-supabase'
   ],
   css: [
-    '@/assets/default-white.css',
-    '@/assets/default-dark.css',
-    '@/assets/transition.css'
+    join(currentDir, './assets/styles/default-white.css'),
+    join(currentDir, './assets/styles/default-dark.css'),
+    join(currentDir, './assets/styles/transition.css')
   ],
   modules: [
     '@nuxtjs/ionic',
@@ -20,7 +24,7 @@ export default defineNuxtConfig({
     'nuxt-viewport',
   ],
   plugins: [
-    '~/plugins/masonry.js',
+    join(currentDir, './plugins/masonry.js')
   ],
   ionic: {
     integrations: {
