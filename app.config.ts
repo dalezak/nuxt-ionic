@@ -1,5 +1,5 @@
 export default defineAppConfig({
-  name: "Nuxt",
+  name: "Ionic",
   description: "Nuxt Layer Ionic",
   theme: "default",
   dark: false,

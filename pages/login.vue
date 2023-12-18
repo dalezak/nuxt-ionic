@@ -58,46 +58,46 @@ definePageMeta({
   middleware: 'auth'
 })
 
-let name = $ref("");
-let nameInput = $ref(null);
+const name = ref("");
+const nameInput = ref(null);
 
-let email = $ref("");
-let emailInput = $ref(null);
+const email = ref("");
+const emailInput = ref(null);
 
-let password = $ref("");
-let passwordInput = $ref(null);
+const password = ref("");
+const passwordInput = ref(null);
 
-let form = $ref("login");
+const form = ref("login");
 
-let isLogin = $computed(() => form == "login");
-let isSignup = $computed(() => form == "signup");
-let isReset = $computed(() => form == "reset");
+let isLogin = computed(() => form.value == "login");
+let isSignup = computed(() => form.value == "signup");
+let isReset = computed(() => form.value == "reset");
 
 const userStore = useUserStore();
 const { userLogin, userSignup, resetPassword } = userStore;
   
 function loginForm() {
-  form = "login";
+  form.value = "login";
 }
 
 function signupForm() {
-  form = "signup";
+  form.value = "signup";
 }
 
 function resetForm() {
-  form = "reset";
+  form.value = "reset";
 }
 
 function hasName() {
-  return hasInput(nameInput, name, "Please enter your name");
+  return hasInput(nameInput.value, name.value, "Please enter your name");
 }
 
 function hasEmail() {
-  return hasInput(emailInput, email, "Please enter your email");
+  return hasInput(emailInput.value, email.value, "Please enter your email");
 }
 
 function hasPassword() {
-  return hasInput(passwordInput, password, "Please enter your password");
+  return hasInput(passwordInput.value, password.value, "Please enter your password");
 }
 
 function onEnter() {
@@ -117,8 +117,8 @@ async function doLogin() {
     try {
       showLoading("Logging in...");
       let user = await userLogin({
-        email: email, 
-        password: password
+        email: email.value, 
+        password: password.value
       });
       if (user) {
         showToast("Welcome back friend");
@@ -143,9 +143,9 @@ async function doSignup() {
     try {
       showLoading("Signing up...");
       let user = await userSignup({
-        name: name,
-        email: email,
-        password: password
+        name: name.value,
+        email: email.value,
+        password: password.value
       });
       if (user) {
         showToast("Welcome friend");
@@ -169,7 +169,7 @@ async function doReset() {
   if (hasEmail()) {
     try {
       await resetPassword({
-        email: email
+        email: email.value
       });
       showAlert("Password Reset", "Please check your email for instructions to reset your password.");
     }

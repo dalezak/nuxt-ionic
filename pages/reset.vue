@@ -38,26 +38,21 @@ definePageMeta({
   middleware: 'auth'
 })
 
-let password = $ref("");
-let passwordInput = $ref("");
+let password = ref("");
+let passwordInput = ref("");
 
 const userStore = useUserStore();
 const { updatePassword } = userStore;
 
 function hasPassword() {
-  if (password.length == 0) {
-    showToast("Please enter your password");
-    setFocus(passwordInput);
-    return false;
-  }
-  return true;
+  return hasInput(passwordInput.value, password.value, "Please enter your password");
 }
 
 async function doUpdate() {
   if (hasPassword()) {
     try {
       await updatePassword({
-        email: email
+        password: password.value
       });
       showAlert("Password Update", "Your password has been updated.");
     }

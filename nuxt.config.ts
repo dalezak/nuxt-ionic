@@ -20,12 +20,17 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/ionic',
     '@nuxtjs/device',
-    '@vue-macros/nuxt',
-    'nuxt-viewport',
+    'nuxt-viewport'
   ],
   plugins: [
     join(currentDir, './plugins/masonry.js')
   ],
+  // imports: {
+  //   dirs: [
+  //     'models', 
+  //     'stores'
+  //   ]
+  // },
   ionic: {
     integrations: {
       meta: true,
@@ -53,5 +58,11 @@ export default defineNuxtConfig({
       tablet: 'md',
     },
     fallbackBreakpoint: 'lg'
+  },
+  pinia: {
+    storesDirs: [
+      'stores/**',
+      '../nuxt-layer-supabase/stores/**'
+    ]
   }
 })
