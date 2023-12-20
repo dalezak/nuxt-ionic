@@ -25,12 +25,6 @@ export default defineNuxtConfig({
   plugins: [
     join(currentDir, './plugins/masonry.js')
   ],
-  // imports: {
-  //   dirs: [
-  //     'models', 
-  //     'stores'
-  //   ]
-  // },
   ionic: {
     integrations: {
       meta: true,
