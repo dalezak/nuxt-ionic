@@ -122,6 +122,7 @@ async function doLogin() {
       });
       if (user) {
         showToast("Welcome back friend");
+        clearInputs();
         showPage("/");
       }
       else {
@@ -129,7 +130,7 @@ async function doLogin() {
       }
     }
     catch (error) {
-      console.error("doLogin", error);
+      consoleError("doLogin", error);
       showAlert("Problem Logging In", error);
     }
     finally {
@@ -149,6 +150,7 @@ async function doSignup() {
       });
       if (user) {
         showToast("Welcome friend");
+        clearInputs();
         showPage("/");
       }
       else {
@@ -156,7 +158,7 @@ async function doSignup() {
       }
     }
     catch (error) {
-      console.error("doSignup", error);
+      consoleError("doSignup", error);
       showAlert("Problem Signing Up", error);
     }
     finally {
@@ -174,13 +176,19 @@ async function doReset() {
       showAlert("Password Reset", "Please check your email for instructions to reset your password.");
     }
     catch (error) {
-      console.error("doReset", error);
+      consoleError("doReset", error);
       showAlert("Problem Resetting Password", error);
     }
     finally {
       hideLoading();
     }
   }
+}
+
+function clearInputs() {
+  name.value = "";
+  email.value = "";
+  password.value = "";
 }
 
 </script>

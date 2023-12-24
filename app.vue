@@ -9,6 +9,6 @@ const { theme, dark } = useAppConfig();
 settingsTheme(theme, dark);
 
 onMounted(async () => {
-  console.log("onMounted ionic", process.client ? "client" : "server");
+  consoleLog("onMounted ionic", process.client ? "client" : "server");
 })
 </script>

@@ -1,31 +1,30 @@
 <template>
   <ion-toolbar v-show="visible">
-    <ion-title>{{ title }}</ion-title>
-    <ion-buttons slot="end" v-if="user">
-      <ion-button @click="showPage(link.path, false)" :title="link.label" :key="link.name" v-for="link of links">{{ link.label }}</ion-button>
-    </ion-buttons>
-    <ion-buttons slot="end" v-else>
-      <ion-button @click="showPage('/login')" title="Login">Login</ion-button>
+    <ion-title>{{ name || "" }}</ion-title>
+    <ion-buttons slot="end">
+      <template :key="tab.name" v-for="tab of tabs">
+        <ion-button @click="showPage(tab.path, false)" :title="tab.label" v-if="tab.auth == user != null">{{ tab.label }}</ion-button>
+      </template>
+      <ion-button @click="showPage('/login')" title="Login" v-if="user == null">Login</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </template>
 
 <script setup>
+const { name } = useAppConfig();
+
 const props = defineProps({
-  title: {
-    type: String,
-    default: "App"
+  user: {
+    type: Object,
+    default: null
   },
-  links: {
+  tabs: {
     type: Array,
     default: () => []
   },
   visible: {
     type: Boolean,
     default: true
-  },
-  user: {
-    type: Object
   }
 });
 </script>

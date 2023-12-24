@@ -1,28 +1,37 @@
 <template>
   <ion-page>
     <ion-header>
-      <nav-bar :title="name" :links="links" :visible="isWeb" :user="currentUser"></nav-bar>
+      <nav-bar :tabs="tabs" :visible="isWeb" :user="currentUser"></nav-bar>
     </ion-header>
     <ion-content>
-      <tab-bar :tabs="links" :visible="isMobile" v-if="currentUser"></tab-bar>
+      <tab-bar :tabs="tabs" :visible="isMobile" :user="currentUser"></tab-bar>
     </ion-content>
   </ion-page>
 </template>
 
 <script setup>
 definePageMeta({
-  alias: ['/'],
-  middleware: 'auth'
+  alias: ['/']
 })
-const { name, links } = useAppConfig();
-const { isMobile, isWeb } = usePlatform();
+
 const { path } = useRoute();
 const currentUser = useCurrentUser();
+const { tabs } = useAppConfig();
+const { isMobile, isWeb } = usePlatform();
+
+function showFirstPage() {
+  if (path == "/" && tabs.length > 0) {
+    for (let tab of tabs) {
+      if (tab.auth == currentUser.value != null) {
+        consoleLog("showFirstPage", tab.path);
+        showPage(tab.path, false);
+        break;
+      }
+    }
+  }
+}
 
 onMounted(() => {
-  if (currentUser && path == "/" && links.length > 0) {
-    let link = links[0];
-    showPage(link.path);
-  }
+  showFirstPage();
 })
 </script>

@@ -3,12 +3,13 @@ export default defineAppConfig({
   description: "Nuxt Layer Ionic",
   theme: "default",
   dark: false,
-  links: [
-    // {
-    //   name: "home",
-    //   label: "Home",
-    //   path: "/home",
-    //   icon: "home"
-    // }
+  tabs: [
+    {
+      name: "home",
+      label: "Home",
+      path: "/home",
+      icon: "home",
+      auth: false
+    }
   ]
 })
