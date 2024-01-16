@@ -21,7 +21,7 @@ const { userLogout } = userStore;
 
 onMounted (async () => {
   await userLogout();
-  await showPage("/login");
+  await showPageIndex();
 })
 </script>
 

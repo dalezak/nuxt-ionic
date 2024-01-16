@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <ion-header :translucent="true">
+    <ion-header :translucent="true" v-if="isMobile">
       <ion-toolbar>
         <ion-title v-if="isSignup">Signup</ion-title>
         <ion-title v-else-if="isLogin">Login</ion-title>
@@ -57,6 +57,8 @@
 definePageMeta({
   middleware: 'auth'
 })
+
+const { isMobile } = usePlatform();
 
 const name = ref("");
 const nameInput = ref(null);
@@ -123,7 +125,7 @@ async function doLogin() {
       if (user) {
         showToast("Welcome back friend");
         clearInputs();
-        showPage("/");
+        showPageIndex();
       }
       else {
         showAlert("Problem Logging In", "Please enter your credentials and try again.");
@@ -151,7 +153,7 @@ async function doSignup() {
       if (user) {
         showToast("Welcome friend");
         clearInputs();
-        showPage("/");
+        showPageIndex();
       }
       else {
         showAlert("Problem Signing In", "Please enter your information and try again.");

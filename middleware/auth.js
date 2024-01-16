@@ -1,8 +1,8 @@
 export default defineNuxtRouteMiddleware(async(to, from) => {
-  const currentUser = useCurrentUser();
-  console.log(`auth from ${from.path} to ${to.path}`, currentUser.value);
+  const user = useCurrentUser();
+  console.log(`auth from ${from.path} to ${to.path}`, user.value);
   if (to.path == '/login') {
-    if (currentUser.value) {
+    if (user.value) {
       return navigateTo('/');
     }
     else {
@@ -12,7 +12,7 @@ export default defineNuxtRouteMiddleware(async(to, from) => {
   else if (to.path == '/logout') {
     return;
   }
-  else if (currentUser.value) {
+  else if (user.value) {
     return;
   }
   else {

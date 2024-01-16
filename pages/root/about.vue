@@ -2,7 +2,7 @@
   <ion-page>
     <ion-header v-if="isMobile">
       <ion-toolbar>
-        <ion-title>Home</ion-title>
+        <ion-title>About</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding">
@@ -12,7 +12,7 @@
           <ion-card-subtitle>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</ion-card-subtitle>
         </ion-card-header>
         <ion-card-content></ion-card-content>
-        <ion-button fill="clear" @click="showPageLogout">Logout</ion-button>
+        <ion-button fill="clear" @click="showPageLogin">Login</ion-button>
       </ion-card>
     </ion-content>
   </ion-page>
@@ -20,7 +20,7 @@
 
 <script setup>
 definePageMeta({
-  middleware: 'auth',
+  // middleware: 'auth',
 })
 
 const { isMobile, isWeb } = usePlatform();

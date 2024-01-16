@@ -1,6 +1,6 @@
 export default defineAppConfig({
   name: "Ionic",
-  description: "Nuxt Layer Ionic",
+  description: "Nuxt Ionic",
   theme: "default",
   dark: false,
   tabs: [
@@ -9,6 +9,20 @@ export default defineAppConfig({
       label: "Home",
       path: "/home",
       icon: "home",
+      auth: true
+    },
+    {
+      name: "about",
+      label: "About",
+      path: "/about",
+      icon: "informationCircle",
+      auth: false
+    },
+    {
+      name: "login",
+      label: "Login",
+      path: "/login",
+      icon: "key",
       auth: false
     }
   ]
