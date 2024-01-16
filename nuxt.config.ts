@@ -56,7 +56,7 @@ export default defineNuxtConfig({
   pinia: {
     storesDirs: [
       'stores/**',
-      '../nuxt-layer-supabase/stores/**'
+      '../nuxt-supabase/stores/**'
     ]
   }
 })
