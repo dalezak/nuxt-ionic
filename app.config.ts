@@ -5,20 +5,6 @@ export default defineAppConfig({
   dark: false,
   tabs: [
     // {
-    //   name: "home",
-    //   label: "Home",
-    //   path: "/home",
-    //   icon: "home",
-    //   auth: true
-    // },
-    // {
-    //   name: "about",
-    //   label: "About",
-    //   path: "/about",
-    //   icon: "informationCircle",
-    //   auth: false
-    // },
-    // {
     //   name: "login",
     //   label: "Login",
     //   path: "/login",
