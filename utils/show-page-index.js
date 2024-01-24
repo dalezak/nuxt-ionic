@@ -2,9 +2,9 @@ export default function () {
   const { tabs } = useAppConfig();
   const user = useCurrentUser();
   const hasUser = user.value != null;
-  const authTabs = tabs.filter(tab => tab.auth == hasUser);
-  if (authTabs.length > 0) {
-    const tab = authTabs[0];
+  const appTabs = tabs.filter(tab => tab.auth == hasUser);
+  if (appTabs.length > 0) {
+    const tab = appTabs[0];
     showPage(tab.path, false);
   }
   else {

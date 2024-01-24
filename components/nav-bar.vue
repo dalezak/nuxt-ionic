@@ -2,7 +2,7 @@
   <ion-toolbar v-show="visible">
     <ion-title>{{ title }}</ion-title>
     <ion-buttons slot="end">
-      <ion-button @click="showPage(tab.path, false)" :title="tab.label" :key="tab.name" v-for="tab of authTabs">
+      <ion-button @click="showPage(tab.path, false)" :title="tab.label" :key="tab.name" v-for="tab of appTabs">
         <template v-if="tab.label">{{ tab.label }}</template>
         <template v-else-if="tab.icon">
           <ion-icon :icon="getIcon(tab.icon)" />
@@ -31,7 +31,7 @@ const props = defineProps({
     default: true
   }
 });
-const authTabs = computed(() => props.tabs.filter(tab => tab.auth == (props.user != null)));
+const appTabs = computed(() => props.tabs.filter(tab => tab.public == (props.user == null)));
 </script>
 
 <style scoped lang="scss">

@@ -9,7 +9,7 @@ export default defineAppConfig({
     //   label: "Login",
     //   path: "/login",
     //   icon: "key",
-    //   auth: false
+    //   public: true
     // }
   ]
 })
