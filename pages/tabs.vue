@@ -18,7 +18,8 @@ const currentUser = useCurrentUser();
 const { name, tabs } = useAppConfig();
 const { isMobile, isWeb } = usePlatform();
 
-onMounted(() => {
-  showPageIndex();
-})
+// onMounted(() => {
+//   showPageIndex();
+// })
+showPageIndex();
 </script>
