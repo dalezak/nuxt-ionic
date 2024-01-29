@@ -22,6 +22,6 @@ consoleLog("tabs", "script", "ionic");
 
 onMounted(() => {
   consoleLog("tabs", "mounted", "ionic");
-  // showPageIndex();
+  showPageIndex();
 })
 </script>
