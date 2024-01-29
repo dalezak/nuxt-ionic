@@ -18,5 +18,10 @@ const currentUser = useCurrentUser();
 const { name, tabs } = useAppConfig();
 const { isMobile, isWeb } = usePlatform();
 
-showPageIndex();
+consoleLog("tabs", "script", "ionic");
+
+onMounted(() => {
+  consoleLog("tabs", "mounted", "ionic");
+  showPageIndex();
+})
 </script>
