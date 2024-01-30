@@ -18,7 +18,7 @@ const currentUser = useCurrentUser();
 const { name, tabs } = useAppConfig();
 const { isMobile, isWeb } = usePlatform();
 
-consoleLog("tabs", currentUser);
+consoleLog("tabs user", currentUser);
 
 onMounted(() => {
   consoleLog("tabs", "mounted", "ionic");
