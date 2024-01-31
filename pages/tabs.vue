@@ -14,7 +14,7 @@ definePageMeta({
   alias: ['/']
 })
 
-const currentUser = useCurrentUser();
+const currentUser = await useCurrentUser();
 const { name, tabs } = useAppConfig();
 const { isMobile, isWeb } = usePlatform();
 
