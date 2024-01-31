@@ -1,10 +1,10 @@
 <template>
   <ion-page>
     <ion-header>
-      <nav-bar :tabs="tabs" :visible="isWeb" :user="currentUser" :title="name"></nav-bar>
+      <nav-bar :tabs="tabs" :visible="isWeb" :user="user" :title="name"></nav-bar>
     </ion-header>
     <ion-content>
-      <tab-bar :tabs="tabs" :visible="isMobile" :user="currentUser"></tab-bar>
+      <tab-bar :tabs="tabs" :visible="isMobile" :user="user"></tab-bar>
     </ion-content>
   </ion-page>
 </template>
@@ -14,14 +14,15 @@ definePageMeta({
   alias: ['/']
 })
 
-const currentUser = await useCurrentUser();
+const { path } = useRoute();
+const user = await useCurrentUser();
 const { name, tabs } = useAppConfig();
 const { isMobile, isWeb } = usePlatform();
 
-consoleLog("tabs user", currentUser);
-
 onMounted(() => {
   consoleLog("tabs", "mounted", "ionic");
-  showPageIndex();
+  if (path == "/") {
+    showPageIndex();
+  }
 })
 </script>
