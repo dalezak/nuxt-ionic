@@ -1,7 +1,7 @@
 export default async function () {
   const { tabs } = useAppConfig();
   const user = await useCurrentUser();
-  const noUser = user.value == null;
+  const noUser = user == null;
   const appTabs = tabs.filter(tab => tab.public == noUser);
   if (appTabs.length > 0) {
     const tab = appTabs[0];
