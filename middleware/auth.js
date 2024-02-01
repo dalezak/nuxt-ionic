@@ -1,5 +1,5 @@
 export default defineNuxtRouteMiddleware(async(to, from) => {
-  const hasCurrent = userHasCurrent();
+  const hasCurrent = useHasCurrent();
   const isPublic = hasCurrent == false;
   const { tabs } = useAppConfig();
   const page = tabs.find(tab => tab.path == to.path);
