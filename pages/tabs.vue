@@ -15,13 +15,13 @@ definePageMeta({
 })
 
 const { path } = useRoute();
-const user = await useCurrentUser();
+const user = useCurrentUser();
 const { name, tabs } = useAppConfig();
 const { isMobile, isWeb } = usePlatform();
 
 onMounted(() => {
   consoleLog("tabs", "mounted", "ionic");
-  if (path == "/") {
+  if (path == "/" || path == "") {
     showPageIndex();
   }
 })
