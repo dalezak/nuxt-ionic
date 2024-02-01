@@ -12,9 +12,9 @@
 
 <script setup>
 const props = defineProps({
-  user: {
-    type: Object,
-    default: null
+  public: {
+    type: Boolean,
+    default: true
   },
   visible: {
     type: Boolean,
@@ -29,7 +29,7 @@ const props = defineProps({
     default: "bottom"
   }
 });
-const appTabs = computed(() => props.tabs.filter(tab => tab.public == (props.user == null)));
+const appTabs = computed(() => props.tabs.filter(tab => tab.public == props.public));
 </script>
 
 <style scoped lang="scss">

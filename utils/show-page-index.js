@@ -1,8 +1,8 @@
 export default async function () {
   const { tabs } = useAppConfig();
-  const user = useCurrentUser();
-  const noUser = user.value == null;
-  const appTabs = tabs.filter(tab => tab.public == noUser);
+  const hasCurrent = useHasCurrent();
+  const isPublic = hasCurrent == false;
+  const appTabs = tabs.filter(tab => tab.public == isPublic);
   if (appTabs.length > 0) {
     const tab = appTabs[0];
     consoleLog("showPageIndex", tab.path);

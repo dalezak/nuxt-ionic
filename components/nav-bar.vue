@@ -18,9 +18,9 @@ const props = defineProps({
     type: String,
     default: ""
   },
-  user: {
-    type: Object,
-    default: null
+  public: {
+    type: Boolean,
+    default: true
   },
   tabs: {
     type: Array,
@@ -31,7 +31,7 @@ const props = defineProps({
     default: true
   }
 });
-const appTabs = computed(() => props.tabs.filter(tab => tab.public == (props.user == null)));
+const appTabs = computed(() => props.tabs.filter(tab => tab.public == props.public));
 </script>
 
 <style scoped lang="scss">
