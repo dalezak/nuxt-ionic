@@ -1,22 +1,34 @@
 export default defineNuxtRouteMiddleware(async(to, from) => {
-  const hasCurrent = useHasCurrent();
-  const isPublic = hasCurrent == false;
+  const loggedIn = useLoggedIn();
   const { tabs } = useAppConfig();
   const page = tabs.find(tab => tab.path == to.path);
-  consoleLog(`auth from ${from.path} to ${to.path}`, isPublic ? "public" : "private");
+  consoleLog(`auth ${loggedIn ? "private" : "public" } from ${from.path} to ${to.path}`);
   if (to.path == '/login') {
-    if (hasCurrent) {
+    if (loggedIn) {
       return navigateTo('/');
     }
-    else {
-      return;
+    return;
+  }
+  else if (to.path == '/reset') {
+    if (loggedIn) {
+      return navigateTo('/');
     }
+    return;
   }
   else if (to.path == '/logout') {
     return;
   }
-  else if (page && page.public == isPublic) {
+  else if (page && page.public == true) {
+    if (loggedIn) {
+      return navigateTo('/');
+    }
     return;
+  }
+  else if (page && page.public == false) {
+    if (loggedIn) {
+      return;
+    }
+    return navigateTo('/login');
   }
   else {
     return navigateTo('/login');

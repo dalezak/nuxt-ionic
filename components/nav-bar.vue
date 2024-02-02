@@ -2,7 +2,7 @@
   <ion-toolbar v-show="visible">
     <ion-title>{{ title }}</ion-title>
     <ion-buttons slot="end">
-      <ion-button @click="showPage(tab.path, false)" :title="tab.label" :key="tab.name" v-for="tab of appTabs">
+      <ion-button @click="showPage(tab.path, false)" :title="tab.label" :key="tab.name" v-for="tab of tabs">
         <template v-if="tab.label">{{ tab.label }}</template>
         <template v-else-if="tab.icon">
           <ion-icon :icon="getIcon(tab.icon)" />
@@ -18,10 +18,6 @@ const props = defineProps({
     type: String,
     default: ""
   },
-  public: {
-    type: Boolean,
-    default: true
-  },
   tabs: {
     type: Array,
     default: () => []
@@ -31,7 +27,6 @@ const props = defineProps({
     default: true
   }
 });
-const appTabs = computed(() => props.tabs.filter(tab => tab.public == props.public));
 </script>
 
 <style scoped lang="scss">

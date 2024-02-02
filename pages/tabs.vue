@@ -1,10 +1,10 @@
 <template>
   <ion-page>
     <ion-header>
-      <nav-bar :tabs="tabs" :visible="isWeb" :public="isPublic" :title="name"></nav-bar>
+      <nav-bar :tabs="tabs" :visible="isWeb" :title="name"></nav-bar>
     </ion-header>
     <ion-content>
-      <tab-bar :tabs="tabs" :visible="isMobile" :public="isPublic"></tab-bar>
+      <tab-bar :tabs="tabs" :visible="isMobile"></tab-bar>
     </ion-content>
   </ion-page>
 </template>
@@ -14,10 +14,9 @@ definePageMeta({
   alias: ['/']
 })
 
+const tabs = useAppTabs();
 const { path } = useRoute();
-const hasCurrent = useHasCurrent();
-const isPublic = hasCurrent == false;
-const { name, tabs } = useAppConfig();
+const { name } = useAppConfig();
 const { isMobile, isWeb } = usePlatform();
 
 onMounted(() => {

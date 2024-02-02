@@ -1,5 +1,4 @@
 export default function (title, description, image, url) {
-  // window.open(`http://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${encodeURI(`${title} - ${description}`)}`, "_blank");
   const link = new URL("http://www.linkedin.com/shareArticle");
   link.searchParams.append("mini", "true");
   let body = [];

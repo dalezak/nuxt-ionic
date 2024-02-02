@@ -1,4 +1,4 @@
-export default async function (url) {
+export default function (url) {
   if (process.client) {
     if (url.startsWith("mailto:")) {
       window.open(url, "_blank");

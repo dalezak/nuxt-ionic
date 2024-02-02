@@ -1,5 +1,4 @@
 export default function (title, description, image, url) {
-  // window.open(`mailto:?subject=${encodeURI(title)}&body=${encodeURI(description + "\n" + url)}`, "_blank"); 
   const params = {};
   if (title && title.length > 0) {
     params["subject"] = encodeURI(title);

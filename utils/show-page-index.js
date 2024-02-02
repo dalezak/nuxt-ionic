@@ -1,10 +1,7 @@
-export default async function () {
-  const { tabs } = useAppConfig();
-  const hasCurrent = useHasCurrent();
-  const isPublic = hasCurrent == false;
-  const appTabs = tabs.filter(tab => tab.public == isPublic);
-  if (appTabs.length > 0) {
-    const tab = appTabs[0];
+export default function () {
+  const tabs = useAppTabs();
+  if (tabs.length > 0) {
+    const tab = tabs[0];
     consoleLog("showPageIndex", tab.path);
     showPage(tab.path, false);
   }

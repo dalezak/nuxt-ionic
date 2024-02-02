@@ -1,5 +1,4 @@
 export default function (title, description, image, url) {
-  // window.open(`https://twitter.com/intent/tweet?url=${url}&text=${encodeURI(`${title} - ${description}`)}`, "_blank");
   const link = new URL("https://twitter.com/intent/tweet");
   let body = [];
   if (url && url.length > 0) {

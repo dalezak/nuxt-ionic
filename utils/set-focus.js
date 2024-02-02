@@ -1,4 +1,4 @@
-export default async function (element) {
+export default function (element) {
   if (process.client) {
     if (element && element.$el) {
       if (hasFunction(element.$el, "setFocus")) {

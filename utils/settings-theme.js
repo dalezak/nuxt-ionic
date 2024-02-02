@@ -1,4 +1,4 @@
-export default async function (theme = "default", dark = false) {
+export default function (theme = "default", dark = false) {
   if (process.client) {
     consoleLog('settingsTheme', theme, dark);
     if (dark) {

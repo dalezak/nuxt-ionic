@@ -1,5 +1,4 @@
 export default function (title, description, image, url) {
-  // window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${encodeURI(`${title} - ${description}`)}`, "_blank");
   const link = new URL("https://www.facebook.com/sharer/sharer.php");
   let body = [];
   if (url && url.length > 0) {
