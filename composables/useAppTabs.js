@@ -1,7 +1,7 @@
 export function useAppTabs() {
   const appTabs = ref([]);
-  const { tabs } = useAppConfig();
   const loggedIn = useLoggedIn();
+  const { tabs } = useAppConfig();
   appTabs.value = tabs.filter(tab => tab.public == !loggedIn);
   return appTabs;
 }
