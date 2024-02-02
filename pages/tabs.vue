@@ -19,10 +19,10 @@ const { path } = useRoute();
 const { name } = useAppConfig();
 const { isMobile, isWeb } = usePlatform();
 
-consoleLog("tabs", "setup", "ionic");
+consoleLog("tabs", "setup", tabs.value);
 
 onMounted(() => {
-  consoleLog("tabs", "mounted", "ionic");
+  consoleLog("tabs", "mounted", tabs.value);
   if (path == "/" || path == "") {
     showPageIndex();
   }
