@@ -19,6 +19,8 @@ const { path } = useRoute();
 const { name } = useAppConfig();
 const { isMobile, isWeb } = usePlatform();
 
+consoleLog("tabs", "setup", "ionic");
+
 onMounted(() => {
   consoleLog("tabs", "mounted", "ionic");
   if (path == "/" || path == "") {

@@ -19,7 +19,10 @@ definePageMeta({
 const userStore = useUserStore();
 const { userLogout } = userStore;
 
+consoleLog("logout", "setup");
+
 onMounted (async () => {
+  consoleLog("logout", "mounted");
   await userLogout();
   await showPageIndex();
 })
