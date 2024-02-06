@@ -1,16 +1,16 @@
 export default defineNuxtRouteMiddleware(async(to, from) => {
-  const loggedIn = useLoggedIn();
+  const appUser = useAppUser();
   const { tabs } = useAppConfig();
   const page = tabs.find(tab => tab.path == to.path);
-  consoleLog(`auth ${loggedIn.value ? "private" : "public" } from ${from.path} to ${to.path}`);
+  consoleLog(`auth ${appUser.value ? "private" : "public" } from ${from.path} to ${to.path}`);
   if (to.path == '/login') {
-    if (loggedIn.value) {
+    if (appUser.value) {
       return navigateTo('/');
     }
     return;
   }
   else if (to.path == '/reset') {
-    if (loggedIn.value) {
+    if (appUser.value) {
       return navigateTo('/');
     }
     return;
@@ -19,13 +19,13 @@ export default defineNuxtRouteMiddleware(async(to, from) => {
     return;
   }
   else if (page && page.public == true) {
-    if (loggedIn.value) {
+    if (appUser.value) {
       return navigateTo('/');
     }
     return;
   }
   else if (page && page.public == false) {
-    if (loggedIn.value) {
+    if (appUser.value) {
       return;
     }
     return navigateTo('/login');
