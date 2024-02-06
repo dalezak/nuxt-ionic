@@ -1,8 +1,10 @@
 export default function () {
-  const tabs = useAppTabs();
-  consoleLog("showPageIndex", "tabs", tabs.value);
-  if (tabs.value.length > 0) {
-    const tab = tabs.value[0];
+  const appUser = useAppUser();
+  const { tabs } = useAppConfig();
+  const appTabs = tabs.filter(tab => tab.public == !appUser.value);
+  consoleLog("showPageIndex", "tabs", appTabs.value);
+  if (appTabs.value.length > 0) {
+    const tab = appTabs.value[0];
     consoleLog("showPageIndex", "path", tab.path);
     showPage(tab.path, false);
   }
