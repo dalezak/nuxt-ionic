@@ -16,8 +16,7 @@ definePageMeta({
   middleware: 'auth'
 })
 
-const userStore = useUserStore();
-const { userLogout } = userStore;
+const { userLogout } = useUsersStore();
 
 consoleLog("logout", "setup");
 

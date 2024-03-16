@@ -75,8 +75,7 @@ let isLogin = computed(() => form.value == "login");
 let isSignup = computed(() => form.value == "signup");
 let isReset = computed(() => form.value == "reset");
 
-const userStore = useUserStore();
-const { userLogin, userSignup, resetPassword } = userStore;
+const { userLogin, userSignup, resetPassword } = useUsersStore();
   
 function loginForm() {
   form.value = "login";

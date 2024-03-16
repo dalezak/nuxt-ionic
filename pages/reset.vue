@@ -41,8 +41,7 @@ definePageMeta({
 let password = ref("");
 let passwordInput = ref("");
 
-const userStore = useUserStore();
-const { updatePassword } = userStore;
+const { updatePassword } = useUsersStore();
 
 function hasPassword() {
   return hasInput(passwordInput.value, password.value, "Please enter your password");
