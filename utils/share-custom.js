@@ -1,6 +1,6 @@
 export default async function (title, text, url) {
   let actionSheet = await actionSheetController.create({
-    header: 'Share Via',
+    header: 'Share via',
     buttons: [
       {
         text: 'Twitter',
