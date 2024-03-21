@@ -1,21 +1,58 @@
-// import { isPlatform } from '@ionic/vue';
+import { isPlatform } from '@ionic/vue';
 export default function () {
   const viewport = useViewport();
-  const isMobile = ref(false);
+
+  const isNarrow = ref(false);
+  const isWide = ref(false);
+
+  const isXSmall = ref(false);
+  const isSmall = ref(false);
+  const isMedium = ref(false);
+  const isLarge = ref(false);
+  const isXLarge = ref(false);
+
+  const isApp = ref(false);
   const isWeb = ref(false);
   
-  // isMobile.value = isPlatform('mobile') || viewport.isLessThan('lg');
-  // isWeb.value = isPlatform('desktop') || viewport.isGreaterOrEquals('lg');
-  isMobile.value = viewport.isLessThan('lg');
-  isWeb.value = viewport.isGreaterOrEquals('lg');
+  const isApple = ref(false);
+  const isAndroid = ref(false);
+  
+  isNarrow.value = viewport.isLessThan('md');
+  isWide.value = viewport.isGreaterOrEquals('md');
+
+  isXSmall.value = viewport.isLessThan('sm');
+  isSmall.value = viewport.isGreaterOrEquals('sm') && viewport.isLessThan('md');
+  isMedium.value = viewport.isGreaterOrEquals('md') && viewport.isLessThan('lg');
+  isLarge.value = viewport.isGreaterOrEquals('lg') && viewport.isLessThan('xl');
+  isXLarge.value = viewport.isGreaterOrEquals('xl');
 
   watch(viewport.breakpoint, (newBreakpoint, oldBreakpoint) => {
-    isMobile.value = viewport.isLessThan('lg');
-    isWeb.value = viewport.isGreaterOrEquals('lg');
+    isXSmall.value = viewport.isLessThan('sm');
+    isSmall.value = viewport.isGreaterOrEquals('sm') && viewport.isLessThan('md');
+    isMedium.value = viewport.isGreaterOrEquals('md') && viewport.isLessThan('lg');
+    isLarge.value = viewport.isGreaterOrEquals('lg') && viewport.isLessThan('xl');
+    isXLarge.value = viewport.isGreaterOrEquals('xl');
   })
+
+  // isApp.value = isPlatform('mobile') || isPlatform('ios') || isPlatform('android');
+  // isWeb.value = isPlatform('desktop') || isPlatform("mobileweb");
+  isApp.value = viewport.isLessThan('md');
+  isWeb.value = viewport.isGreaterOrEquals('md');
+
+  isApple.value = isPlatform('ios');
+  isAndroid.value = isPlatform('android');
   
   return { 
-    isMobile,
-    isWeb
+    isNarrow,
+    isWide,
+    isXSmall,
+    isSmall,
+    isMedium,
+    isLarge,
+    isXLarge,
+    isApp,
+    isWeb,
+    isApple,
+    isAndroid
   };
 }

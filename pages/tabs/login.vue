@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <ion-header :translucent="true" v-if="isMobile">
+    <ion-header :translucent="true" v-if="isApp">
       <ion-toolbar>
         <ion-title v-if="isSignup">Signup</ion-title>
         <ion-title v-else-if="isLogin">Login</ion-title>
@@ -58,7 +58,7 @@ definePageMeta({
   middleware: 'auth'
 })
 
-const { isMobile } = usePlatform();
+const { isApp } = usePlatform();
 
 const name = ref("");
 const nameInput = ref(null);
@@ -191,7 +191,6 @@ function clearInputs() {
   email.value = "";
   password.value = "";
 }
-
 </script>
 
 <style scoped>
