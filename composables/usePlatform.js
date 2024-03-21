@@ -13,7 +13,7 @@ export default function () {
 
   const isApp = ref(false);
   const isWeb = ref(false);
-  
+
   const isApple = ref(false);
   const isAndroid = ref(false);
   
@@ -26,22 +26,23 @@ export default function () {
   isLarge.value = viewport.isGreaterOrEquals('lg') && viewport.isLessThan('xl');
   isXLarge.value = viewport.isGreaterOrEquals('xl');
 
+  // isApp.value = isPlatform('mobile') || isPlatform('ios') || isPlatform('android');
+  // isWeb.value = isPlatform('desktop') || isPlatform("mobileweb");
+
+  isApple.value = isPlatform('ios');
+  isAndroid.value = isPlatform('android');
+  
   watch(viewport.breakpoint, (newBreakpoint, oldBreakpoint) => {
     isXSmall.value = viewport.isLessThan('sm');
     isSmall.value = viewport.isGreaterOrEquals('sm') && viewport.isLessThan('md');
     isMedium.value = viewport.isGreaterOrEquals('md') && viewport.isLessThan('lg');
     isLarge.value = viewport.isGreaterOrEquals('lg') && viewport.isLessThan('xl');
     isXLarge.value = viewport.isGreaterOrEquals('xl');
+
+    isApp.value = viewport.isLessThan('md');
+    isWeb.value = viewport.isGreaterOrEquals('md');
   })
 
-  // isApp.value = isPlatform('mobile') || isPlatform('ios') || isPlatform('android');
-  // isWeb.value = isPlatform('desktop') || isPlatform("mobileweb");
-  isApp.value = viewport.isLessThan('md');
-  isWeb.value = viewport.isGreaterOrEquals('md');
-
-  isApple.value = isPlatform('ios');
-  isAndroid.value = isPlatform('android');
-  
   return { 
     isNarrow,
     isWide,
