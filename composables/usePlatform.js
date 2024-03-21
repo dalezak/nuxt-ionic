@@ -28,7 +28,9 @@ export default function () {
 
   // isApp.value = isPlatform('mobile') || isPlatform('ios') || isPlatform('android');
   // isWeb.value = isPlatform('desktop') || isPlatform("mobileweb");
-
+  isApp.value = viewport.isLessThan('md');
+  isWeb.value = viewport.isGreaterOrEquals('md');
+  
   isApple.value = isPlatform('ios');
   isAndroid.value = isPlatform('android');
   
