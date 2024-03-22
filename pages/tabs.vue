@@ -16,27 +16,18 @@ definePageMeta({
   alias: ['/']
 })
 
-const { path } = useRoute();
-const appUser = useAppUser();
-const { name, tabs } = useAppConfig();
+// const appUser = useAppUser();
+const appTabs = useAppTabs();
+const { name } = useAppConfig();
 const { isApp, isWeb } = usePlatform();
-const appTabs = computed(() => tabs.filter(tab => tab.public == !appUser.value));
-
-consoleLog("tabs", "setup", appTabs.value);
-
-const showFirstTab = () => {
-  if (appTabs.value.length > 0) {
-    showPage(appTabs.value[0].path);
-  }
-}
+// const appTabs = computed(() => tabs.filter(tab => tab.public == !appUser.value));
 
 if (isApp.value) {
   onMounted(() => {
-    consoleLog("tabs", "mounted", appTabs.value);
-    showFirstTab();
+    showPageIndex();
   })
 }
 else {
-  showFirstTab();
+  showPageIndex();
 }
 </script>

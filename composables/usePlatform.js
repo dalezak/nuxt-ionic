@@ -2,9 +2,6 @@ import { isPlatform } from '@ionic/vue';
 export default function () {
   const viewport = useViewport();
 
-  const isNarrow = ref(false);
-  const isWide = ref(false);
-
   const isXSmall = ref(false);
   const isSmall = ref(false);
   const isMedium = ref(false);
@@ -16,9 +13,6 @@ export default function () {
 
   const isApple = ref(false);
   const isAndroid = ref(false);
-  
-  isNarrow.value = viewport.isLessThan('md');
-  isWide.value = viewport.isGreaterOrEquals('md');
 
   isXSmall.value = viewport.isLessThan('sm');
   isSmall.value = viewport.isGreaterOrEquals('sm') && viewport.isLessThan('md');
@@ -26,11 +20,11 @@ export default function () {
   isLarge.value = viewport.isGreaterOrEquals('lg') && viewport.isLessThan('xl');
   isXLarge.value = viewport.isGreaterOrEquals('xl');
 
-  // isApp.value = isPlatform('mobile') || isPlatform('ios') || isPlatform('android');
-  // isWeb.value = isPlatform('desktop') || isPlatform("mobileweb");
   isApp.value = viewport.isLessThan('md');
   isWeb.value = viewport.isGreaterOrEquals('md');
-  
+  // isApp.value = isPlatform('mobile') || isPlatform('ios') || isPlatform('android');
+  // isWeb.value = isPlatform('desktop') || isPlatform("mobileweb");
+
   isApple.value = isPlatform('ios');
   isAndroid.value = isPlatform('android');
   
@@ -46,8 +40,6 @@ export default function () {
   })
 
   return { 
-    isNarrow,
-    isWide,
     isXSmall,
     isSmall,
     isMedium,
