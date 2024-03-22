@@ -10,24 +10,27 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
-
 definePageMeta({
   alias: ['/']
 })
 
-// const appUser = useAppUser();
+const { path } = useRoute();
 const appTabs = useAppTabs();
 const { name } = useAppConfig();
 const { isApp, isWeb } = usePlatform();
-// const appTabs = computed(() => tabs.filter(tab => tab.public == !appUser.value));
+
+const showTabFirst = () => {
+  if (path === '' || path === '/') {
+    showPageIndex();
+  }
+}
 
 if (isApp.value) {
   onMounted(() => {
-    showPageIndex();
+    showTabFirst();
   })
 }
 else {
-  showPageIndex();
+  showTabFirst();
 }
 </script>
