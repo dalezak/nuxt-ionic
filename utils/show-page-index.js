@@ -1,15 +1,13 @@
-import { useAppTabs } from "../composables/useAppTabs";
-
 export default function () {
-  const { path } = useRoute();
   const appTabs = useAppTabs();
-  consoleLog("showPageIndex", "tabs", appTabs);
-  if (appTabs.length > 0) {
-    const tab = appTabs[0];
-    consoleLog("showPageIndex", "path", tab.path);
-    showPage(tab.path, false);
+  const { isRoot } = useAppRoute();
+  consoleLog("showPageIndex", "tabs", appTabs.value);
+  if (appTabs.value && appTabs.value.length > 0) {
+    const appTab = appTabs.value[0];
+    consoleLog("showPageIndex", "path", appTab.path);
+    showPage(appTab.path, false);
   }
-  else if (path != "" || page != "/") {
+  else if (isRoot.value == false) {
     consoleLog("showPageIndex", "path", "/");
     showPage("/", false);
   }

@@ -1,5 +1,5 @@
 import { isPlatform } from '@ionic/vue';
-export default function () {
+export function useAppScreen() {
   const viewport = useViewport();
 
   const isXSmall = ref(false);

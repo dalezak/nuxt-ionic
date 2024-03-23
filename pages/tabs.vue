@@ -14,13 +14,13 @@ definePageMeta({
   alias: ['/']
 })
 
-const { path } = useRoute();
 const appTabs = useAppTabs();
 const { name } = useAppConfig();
-const { isApp, isWeb } = usePlatform();
+const { isRoot } = useAppRoute();
+const { isApp, isWeb } = useAppScreen();
 
 const showTabFirst = () => {
-  if (path === '' || path === '/') {
+  if (isRoot.value) {
     showPageIndex();
   }
 }

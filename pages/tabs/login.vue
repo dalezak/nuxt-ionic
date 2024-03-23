@@ -58,7 +58,7 @@ definePageMeta({
   middleware: 'auth'
 })
 
-const { isApp } = usePlatform();
+const { isApp } = useAppScreen();
 
 const name = ref("");
 const nameInput = ref(null);
