@@ -1,5 +1,5 @@
 export function useAppRoute() {
-  const { path } = useRoute();
+  const { path, params } = useRoute();
 
   const isRoot = ref(false);
 
@@ -9,8 +9,15 @@ export function useAppRoute() {
     return path == path;
   }
 
+  const hasParam = (name) => {
+    return params.value[name] != undefined;
+  } 
+
   return { 
+    path,
+    params,
     isPath,
-    isRoot
+    isRoot,
+    hasParam
   };
 }

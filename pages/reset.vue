@@ -15,8 +15,7 @@
                 <ion-card-subtitle>Enter your new password</ion-card-subtitle>
               </ion-card-header>
               <ion-item lines="inset">
-                <ion-label position="floating">Password</ion-label>
-                <ion-input aria-label="Password" ref="passwordInput" v-model="password" type="password" required></ion-input>
+                <ion-input label="Password" label-position="floating" ref="passwordInput" v-model="password" type="password" required></ion-input>
               </ion-item>
               <ion-card-content>
                 <ion-row>
@@ -39,7 +38,7 @@ definePageMeta({
 })
 
 let password = ref("");
-let passwordInput = ref("");
+let passwordInput = ref(null);
 
 const { updatePassword } = useUsersStore();
 
