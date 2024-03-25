@@ -15,7 +15,7 @@
                 <ion-card-subtitle>Enter your new password</ion-card-subtitle>
               </ion-card-header>
               <ion-item lines="inset">
-                <ion-input label="Password" label-position="floating" ref="passwordInput" v-model="password" type="password" required></ion-input>
+                <ion-input type="text" label="Password" label-position="floating" ref="state.passwordInput" v-model="state.password" required></ion-input>
               </ion-item>
               <ion-card-content>
                 <ion-row>
@@ -37,26 +37,27 @@ definePageMeta({
   middleware: 'auth'
 })
 
-let password = ref("");
-let passwordInput = ref(null);
+const state = reactive({
+  password: "",
+  passwordInput: null
+});
 
 const { updatePassword } = useUsersStore();
 
 function hasPassword() {
-  return hasInput(passwordInput.value, password.value, "Please enter your password");
+  return hasInput(state.passwordInput, state.password, "Please enter your password");
 }
 
 async function doUpdate() {
   if (hasPassword()) {
     try {
       await updatePassword({
-        password: password.value
+        password: state.password
       });
       showAlert("Password Update", "Your password has been updated.");
     }
     catch (error) {
-      consoleError("doUpdate", error);
-      showAlert("Problem Updating Password", error);
+      showError("Problem Updating Password", error);
     }
   }
 }

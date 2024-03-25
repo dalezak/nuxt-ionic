@@ -5,9 +5,7 @@
         <ion-title>Nuxt</ion-title>
       </ion-toolbar>
     </ion-header>
-    <ion-content :fullscreen="true" class="ion-padding">
-        
-    </ion-content>
+    <ion-content :fullscreen="true" class="ion-padding"></ion-content>
   </ion-page>
 </template>
 
@@ -17,8 +15,6 @@ definePageMeta({
 })
 
 const { userLogout } = useUsersStore();
-
-consoleLog("logout", "setup");
 
 onMounted (async () => {
   consoleLog("logout", "mounted");

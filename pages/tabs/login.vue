@@ -21,13 +21,13 @@
                 <ion-card-subtitle v-else-if="isReset">Enter your email</ion-card-subtitle>
               </ion-card-header>
               <ion-item lines="inset" v-if="isSignup">
-                <ion-input label="Name" label-placement="floating" ref="nameInput" v-model="name" type="text" :required="isSignup" v-on:keyup.enter="onEnter"></ion-input>
+                <ion-input type="text" label="Name" label-placement="floating" ref="state.nameInput" v-model="state.name" :required="isSignup" v-on:keyup.enter="onEnter"></ion-input>
               </ion-item>
               <ion-item lines="inset" v-if="isSignup || isLogin || isReset">
-                <ion-input label="Email" label-placement="floating" ref="emailInput" v-model="email" type="text" required v-on:keyup.enter="onEnter"></ion-input>
+                <ion-input type="text" label="Email" label-placement="floating" ref="state.emailInput" v-model="state.email" required v-on:keyup.enter="onEnter"></ion-input>
               </ion-item>
               <ion-item lines="inset" v-if="isSignup || isLogin">
-                <ion-input label="Password" label-placement="floating" ref="passwordInput" v-model="password" type="password" :required="isSignup || isLogin" v-on:keyup.enter="onEnter"></ion-input>
+                <ion-input type="password" label="Password" label-placement="floating" ref="state.passwordInput" v-model="state.password" :required="isSignup || isLogin" v-on:keyup.enter="onEnter"></ion-input>
               </ion-item>
               <ion-card-content>
                 <ion-row>
@@ -60,45 +60,44 @@ definePageMeta({
 
 const { isApp } = useAppScreen();
 
-const name = ref("");
-const nameInput = ref(null);
+const state = reactive({
+  name: "",
+  nameInput: null,
+  email: "",
+  emailInput: null,
+  password: "",
+  passwordInput: null,
+  form: "login"
+});
 
-const email = ref("");
-const emailInput = ref(null);
-
-const password = ref("");
-const passwordInput = ref(null);
-
-const form = ref("login");
-
-let isLogin = computed(() => form.value == "login");
-let isSignup = computed(() => form.value == "signup");
-let isReset = computed(() => form.value == "reset");
+let isLogin = computed(() => state.form == "login");
+let isSignup = computed(() => state.form == "signup");
+let isReset = computed(() => state.form == "reset");
 
 const { userLogin, userSignup, resetPassword } = useUsersStore();
   
 function loginForm() {
-  form.value = "login";
+  state.form = "login";
 }
 
 function signupForm() {
-  form.value = "signup";
+  state.form = "signup";
 }
 
 function resetForm() {
-  form.value = "reset";
+  state.form = "reset";
 }
 
 function hasName() {
-  return hasInput(nameInput.value, name.value, "Please enter your name");
+  return hasInput(state.nameInput, state.name, "Please enter your name");
 }
 
 function hasEmail() {
-  return hasInput(emailInput.value, email.value, "Please enter your email");
+  return hasInput(state.emailInput, state.email, "Please enter your email");
 }
 
 function hasPassword() {
-  return hasInput(passwordInput.value, password.value, "Please enter your password");
+  return hasInput(state.passwordInput, state.password, "Please enter your password");
 }
 
 function onEnter() {
@@ -118,8 +117,8 @@ async function doLogin() {
     try {
       showLoading("Logging in...");
       let user = await userLogin({
-        email: email.value, 
-        password: password.value
+        email: state.email, 
+        password: state.password
       });
       if (user) {
         showToast("Welcome back friend");
@@ -131,8 +130,7 @@ async function doLogin() {
       }
     }
     catch (error) {
-      consoleError("doLogin", error);
-      showAlert("Problem Logging In", error);
+      showError("Problem Logging In", error);
     }
     finally {
       hideLoading();
@@ -145,9 +143,9 @@ async function doSignup() {
     try {
       showLoading("Signing up...");
       let user = await userSignup({
-        name: name.value,
-        email: email.value,
-        password: password.value
+        name: state.name,
+        email: state.email,
+        password: state.password
       });
       if (user) {
         showToast("Welcome friend");
@@ -159,8 +157,7 @@ async function doSignup() {
       }
     }
     catch (error) {
-      consoleError("doSignup", error);
-      showAlert("Problem Signing Up", error);
+      showError("Problem Signing Up", error);
     }
     finally {
       hideLoading();
@@ -172,12 +169,11 @@ async function doReset() {
   if (hasEmail()) {
     try {
       await resetPassword({
-        email: email.value
+        email: state.email
       });
       showAlert("Password Reset", "Please check your email for instructions to reset your password.");
     }
     catch (error) {
-      consoleError("doReset", error);
       showAlert("Problem Resetting Password", error);
     }
     finally {
@@ -187,9 +183,9 @@ async function doReset() {
 }
 
 function clearInputs() {
-  name.value = "";
-  email.value = "";
-  password.value = "";
+  state.name = "";
+  state.email = "";
+  state.password = "";
 }
 </script>
 

@@ -4,13 +4,13 @@ export default async function (title, text, url) {
   if (canShare && canShare.value) {
       let options = {};
       if (title && title.length > 0) {
-          options["title"] = title;
+        options["title"] = title;
       }
       if (text && text.length > 0) {
-          options["text"] = text;
+        options["text"] = text;
       }
       if (url && url.length > 0) {
-          options["url"] = url;
+        options["url"] = url;
       }
       return await Share.share(options);
   }

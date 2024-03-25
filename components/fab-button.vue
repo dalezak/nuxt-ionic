@@ -10,7 +10,7 @@
 const props = defineProps({
   icon: {
     type: String,
-    default: "ioniconsAdd"
+    default: "add"
   },
   visible: {
     type: Boolean,

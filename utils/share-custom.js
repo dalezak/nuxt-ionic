@@ -5,31 +5,31 @@ export default async function (title, text, url) {
       {
         text: 'Twitter',
         handler: () => {
-            shareTwitter(title, text, url);
+          shareTwitter(title, text, url);
         }
       },
       {
         text: 'Facebook',
         handler: () => {
-            shareFacebook(title, text, url);
+          shareFacebook(title, text, url);
         }
       },
       {
         text: 'LinkedIn',
         handler: () => {
-            shareLinkedIn(title, text, url);
+          shareLinkedIn(title, text, url);
         }
       },
       {
         text: 'Pinterest',
         handler: () => {
-            sharePinterest(title, text, url);
+          sharePinterest(title, text, url);
         }
       },
       {
         text: 'Email',
         handler: () => {
-            shareEmail(title, text, url);
+          shareEmail(title, text, url);
         }
       },
       {
