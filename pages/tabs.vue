@@ -17,20 +17,10 @@ definePageMeta({
 const appTabs = useAppTabs();
 const { name } = useAppConfig();
 const { isRoot } = useAppRoute();
-const { isApp, isWeb } = useAppScreen();
 
-const showTabFirst = () => {
+onMounted(() => {
   if (isRoot.value) {
     showPageIndex();
   }
-}
-
-if (isApp.value) {
-  onMounted(() => {
-    showTabFirst();
-  })
-}
-else {
-  showTabFirst();
-}
+})
 </script>
