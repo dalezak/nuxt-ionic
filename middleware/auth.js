@@ -30,6 +30,9 @@ export default defineNuxtRouteMiddleware(async(to, from) => {
     }
     return navigateTo('/login');
   }
+  else if (appUser.value) {
+    return;
+  }
   else {
     return navigateTo('/login');
   }
