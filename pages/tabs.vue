@@ -17,6 +17,7 @@ definePageMeta({
 const appTabs = useAppTabs();
 const { name } = useAppConfig();
 const { isRoot } = useAppRoute();
+const { isApp, isWeb } = useAppScreen();
 
 onMounted(() => {
   if (isRoot.value) {
