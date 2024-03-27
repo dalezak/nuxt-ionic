@@ -1,17 +1,15 @@
 import { actionSheetController } from "@ionic/vue";
-export default async function (options = {}, cancel = true) {
+export default async function (buttons = {}, cancel = true) {
   if (process.client) {
-    let buttons = [];
-    for (let label of Object.keys(options)) {
-      buttons.push({
-        text: label,
-        data: {
-          action: options[label],
-        },
+    let options = [];
+    for (let button of Object.keys(buttons)) {
+      options.push({
+        text: button,
+        handler: buttons[button]
       });
     }
     if (cancel) {
-      buttons.push({
+      options.push({
         text: 'Cancel',
         role: 'cancel',
         data: {
@@ -20,7 +18,7 @@ export default async function (options = {}, cancel = true) {
       });
     }
     const actionSheet = await actionSheetController.create({ 
-      buttons: buttons 
+      buttons: options 
     });
     await actionSheet.present();
     const data = await actionSheet.onDidDismiss();
