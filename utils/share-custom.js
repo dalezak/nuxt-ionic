@@ -1,33 +1,53 @@
-export default async function (title, text, url) {  
+export default async function ({title, description, url}) {  
   return await showActionSheet([
     {
       text: 'Twitter',
       handler: () => {
-        shareTwitter(title, text, url);
+        shareTwitter({
+          title: title, 
+          description: description, 
+          url: url
+        });
       }
     },
     {
       text: 'Facebook',
       handler: () => {
-        shareFacebook(title, text, url);
+        shareFacebook({
+          title: title, 
+          description: description, 
+          url: url
+        });
       }
     },
     {
       text: 'LinkedIn',
       handler: () => {
-        shareLinkedIn(title, text, url);
+        shareLinkedIn({
+          title: title, 
+          description: description, 
+          url: url
+        });
       }
     },
     {
       text: 'Pinterest',
       handler: () => {
-        sharePinterest(title, text, url);
+        sharePinterest({
+          title: title, 
+          description: description, 
+          url: url
+        });
       }
     },
     {
       text: 'Email',
       handler: () => {
-        shareEmail(title, text, url);
+        shareEmail({
+          title: title, 
+          description: description, 
+          url: url
+        });
       }
     },
     {
