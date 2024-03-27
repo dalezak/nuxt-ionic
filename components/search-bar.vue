@@ -56,7 +56,7 @@ const emits = defineEmits([
   "changed"
 ]);
 
-const onSearch = (event) => {
+function onSearch(event) {
   if (event && event.target) {
     emits("changed", event.target.value);
   }

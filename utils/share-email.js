@@ -1,4 +1,4 @@
-export default function (title, description, image, url) {
+export default function ({title, description, image, url}) {
   const params = {};
   if (title && title.length > 0) {
     params["subject"] = encodeURI(title);

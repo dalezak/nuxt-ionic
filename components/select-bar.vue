@@ -34,17 +34,17 @@ const getLabels = computed(() => {
   return props.labels ? props.labels.split(",") : [];
 });
 
-const getValue = (index) => {
+function getValue(index) {
   let values = getValues.value;
   return values && values.length > index ? values[index] : "";
 }
 
-const getLabel = (index) => {
+function getLabel(index) {
   let labels = getLabels.value;
   return labels && labels.length > index ? labels[index] : getValue(index);
 }
 
-const onChanged = (event) => {
+function onChanged(event) {
   if (event && event.detail) {
     emits("input", event.detail.value);
   }
