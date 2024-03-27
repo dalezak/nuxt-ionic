@@ -5,7 +5,9 @@ export default async function (buttons = {}, cancel = true) {
     for (let button of Object.keys(buttons)) {
       options.push({
         text: button,
-        handler: buttons[button]
+        handler: () => {
+          buttons[button]();
+        }
       });
     }
     if (cancel) {
