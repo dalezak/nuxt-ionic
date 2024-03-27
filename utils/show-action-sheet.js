@@ -2,11 +2,11 @@ import { actionSheetController } from "@ionic/vue";
 export default async function (options = {}, cancel = true) {
   if (process.client) {
     let buttons = [];
-    for (let option of Object.keys(options)) {
+    for (let label of Object.keys(options)) {
       buttons.push({
-        text: options[option],
+        text: label,
         data: {
-          action: option,
+          action: options[label],
         },
       });
     }
