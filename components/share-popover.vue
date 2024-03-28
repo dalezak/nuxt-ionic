@@ -4,11 +4,11 @@
       <ion-list-header>
         <ion-label>Share via</ion-label>
       </ion-list-header>
-      <ion-item button="true" detail="false" @click="doShareEmail" v-if="email">Email</ion-item>
-      <ion-item button="true" detail="false" @click="doShareTwitter" v-if="twitter">Twitter</ion-item>
-      <ion-item button="true" detail="false" @click="doShareFacebook" v-if="facebook">Facebook</ion-item>
-      <ion-item button="true" detail="false" @click="doShareLinkedIn" v-if="linkedin">LinkedIn</ion-item>
-      <ion-item button="true" detail="false" @click="doSharePinterest" v-if="pinterest">Pinterest</ion-item>
+      <ion-item button="true" detail="false" @click="shareEmail(properties)" v-if="email">Email</ion-item>
+      <ion-item button="true" detail="false" @click="shareTwitter(properties)" v-if="twitter">Twitter</ion-item>
+      <ion-item button="true" detail="false" @click="shareFacebook(properties)" v-if="facebook">Facebook</ion-item>
+      <ion-item button="true" detail="false" @click="shareLinkedIn(properties)" v-if="linkedin">LinkedIn</ion-item>
+      <ion-item button="true" detail="false" @click="sharePinterest(properties)" v-if="pinterest">Pinterest</ion-item>
     </ion-list>
   </ion-content>
 </template>
@@ -50,51 +50,13 @@ const props = defineProps({
     type: Boolean,
     default: true
   }
-})
+});
 
-function doShareEmail() {
-  shareEmail({
-    title: props.title,
-    description: props.description,
-    image: props.image,
-    url: props.url
-  });
-}
-
-function doShareTwitter() {
-  shareTwitter({
-    title: props.title,
-    description: props.description,
-    image: props.image,
-    url: props.url 
-  });
-}
-
-function doShareFacebook() {
-  shareFacebook({
-    title: props.title,
-    description: props.description,
-    image: props.image,
-    url: props.url 
-  });
-}
-
-function doShareLinkedIn() {
-  shareLinkedIn({
-    title: props.title,
-    description: props.description,
-    image: props.image,
-    url: props.url
-  });
-}
-
-function doSharePinterest() {
-  sharePinterest({
-    title: props.title,
-    description: props.description,
-    image: props.image,
-    url: props.url
-  });
+const properties = {
+  title: props.title,
+  description: props.description,
+  image: props.image,
+  url: props.url
 }
 </script>
 
