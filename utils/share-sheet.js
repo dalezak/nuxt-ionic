@@ -10,12 +10,13 @@ export default async function ({title, description, url, image}) {
     url: url,
     image: image
   };
+  consoleLog("shareSheet", properties);
   let action = await showActionSheet({
     title: "Share via",
     actions: [email, twitter, facebook, linkedin, pinterest], 
     cancel: true
   });
-  consoleLog("shareSheet", properties);
+  consoleLog("shareSheet", action);
   if (action == email) {
     shareEmail(properties);
   }

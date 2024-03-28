@@ -17,6 +17,7 @@ export default function ({title, description, image, url}) {
   if (body.length > 0) {
     params["body"] = encodeURI(body.join("\n\n"));
   }
+  consoleLog("shareEmail", params);
   const query = Object.keys(params).map(key => key + '=' + params[key]).join('&');
   window.open(`mailto:?${query}`, "_blank");
 }
