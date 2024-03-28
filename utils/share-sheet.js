@@ -2,7 +2,7 @@ export default async function ({title, description, url, image}) {
   const email = "Email";
   const twitter = "Twitter";
   const facebook = "Facebook";
-  const linkedIn = "LinkedIn";
+  const linkedin = "LinkedIn";
   const pinterest = "Pinterest";
   const properties = {
     title: title, 
@@ -12,9 +12,10 @@ export default async function ({title, description, url, image}) {
   };
   let action = await showActionSheet({
     title: "Share via",
-    actions: [email, twitter, facebook, linkedIn, pinterest], 
+    actions: [email, twitter, facebook, linkedin, pinterest], 
     cancel: true
   });
+  consoleLog("shareSheet", properties);
   if (action == email) {
     shareEmail(properties);
   }
