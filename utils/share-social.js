@@ -14,7 +14,7 @@ export default async function ({title, description, image, url}) {
       }
       return await Share.share(options);
   }
-  return await shareCustom({
+  return await shareSheet({
     title: title, 
     description: description,
     image: image,

@@ -10,16 +10,6 @@ export default async function ({title = null, subtitle = null, actions = [], dan
     if (subtitle && subtitle.length > 0) {
       options.subHeader = subtitle;
     }
-    if (buttons && buttons.length > 0) {
-      for (let action of actions) {
-        options.buttons.push({
-          text: action,
-          data: {
-            action: action
-          }
-        });
-      }
-    }
     if (dangers && dangers.length > 0) {
       for (let danger of dangers) {
         options.buttons.push({
@@ -27,6 +17,16 @@ export default async function ({title = null, subtitle = null, actions = [], dan
           role: "danger",
           data: {
             action: danger
+          }
+        });
+      }
+    }
+    if (actions && actions.length > 0) {
+      for (let action of actions) {
+        options.buttons.push({
+          text: action,
+          data: {
+            action: action
           }
         });
       }
