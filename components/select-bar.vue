@@ -21,12 +21,12 @@ const props = defineProps({
 });
 
 const emits = defineEmits([
-  "input"
+  "change"
 ]);
 
 function onChange(event) {
   if (event && event.detail) {
-    emits("input", event.detail.value);
+    emits("change", event.detail.value);
   }
 }
 </script>
