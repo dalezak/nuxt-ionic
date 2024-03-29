@@ -1,6 +1,6 @@
 <template>
-  <ion-select :title="title" :value="selected" interface="popover" @ionChange="onChanged">
-    <ion-select-option :value="key" :key="key" v-for="(value, key) in options">{{value}}</ion-select-option>
+  <ion-select :title="title" :value="value" interface="popover" @ionChange="onChange">
+    <ion-select-option :value="key" :key="key" v-for="(label, key) in options">{{label}}</ion-select-option>
   </ion-select>
 </template>
 
@@ -10,7 +10,7 @@ const props = defineProps({
     type: String,
     default: ""
   },
-  selected: {
+  value: {
     type: String,
     default: ""
   },
@@ -24,7 +24,7 @@ const emits = defineEmits([
   "input"
 ]);
 
-function onChanged(event) {
+function onChange(event) {
   if (event && event.detail) {
     emits("input", event.detail.value);
   }

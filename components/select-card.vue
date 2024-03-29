@@ -1,8 +1,8 @@
 <template>
   <ion-card v-if="options && options.length > 0">
     <ion-card-content class="ion-no-padding ion-padding-horizontal">
-      <ion-select :title="title" :value="selected" interface="popover" @ionChange="onChange">
-        <ion-select-option :value="value" :key="value" v-for="(label, value) in options">{{label}}</ion-select-option>
+      <ion-select :title="title" :value="value" interface="popover" @ionChange="onChange">
+        <ion-select-option :value="key" :key="key" v-for="(label, key) in options">{{label}}</ion-select-option>
       </ion-select>
     </ion-card-content>
   </ion-card>
@@ -14,7 +14,7 @@ const props = defineProps({
     type: String,
     default: ""
   },
-  selected: {
+  value: {
     type: String,
     default: ""
   },
