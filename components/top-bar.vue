@@ -5,11 +5,13 @@
         <ion-row>
           <ion-col v-if="breadcrumbs && breadcrumbs.length > 0">
             <ion-breadcrumbs>
-              <ion-breadcrumb :title="breadcrumb.label" @click="visitBreadcrumb(breadcrumb.path)" :key="breadcrumb.name" v-for="breadcrumb of breadcrumbs">{{ breadcrumb.label }}</ion-breadcrumb>
+              <ion-breadcrumb :title="breadcrumb.label" @click="onBreadcrumb(breadcrumb.path)" 
+                :key="breadcrumb.name" v-for="breadcrumb of breadcrumbs">{{ breadcrumb.label }}</ion-breadcrumb>
             </ion-breadcrumbs>
           </ion-col>
           <ion-col size="6" size-md="4" size-lg="3" v-if="hasSearch">
-            <ion-searchbar type="search" :value="search" :placeholder="placeholder" @ionInput="doSearch"></ion-searchbar>
+            <ion-searchbar :type="type" :value="search" :placeholder="placeholder" @ionInput="doSearch"
+              :inputmode="inputmode" :autocorrect="autocorrect" :enterkeyhint="enterkeyhint"></ion-searchbar>
           </ion-col>
         </ion-row>
       </ion-grid>
@@ -33,6 +35,26 @@ const props = defineProps({
   },
   onSearch: {
     type: Function
+  },
+  type: {
+    type: String,
+    default: "search"
+  },
+  inputmode: {
+    type: String,
+    default: "search"
+  },
+  autocorrect: {
+    type: String,
+    default: "off"
+  },
+  autocomplete: {
+    type: String,
+    default: "off"
+  },
+  enterkeyhint: {
+    type: String,
+    default: "search"
   }
 });
 
@@ -44,7 +66,7 @@ function doSearch() {
   }
 }
 
-function visitBreadcrumb(path) {
+function onBreadcrumb(path) {
   showPage(path, false);
 }
 </script>
