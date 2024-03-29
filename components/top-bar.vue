@@ -3,13 +3,13 @@
     <ion-card>
       <ion-grid>
         <ion-row>
-          <ion-col>
+          <ion-col v-if="breadcrumbs && breadcrumbs.length > 0">
             <ion-breadcrumbs>
               <ion-breadcrumb :title="breadcrumb.label" @click="visitBreadcrumb(breadcrumb.path)" :key="breadcrumb.name" v-for="breadcrumb of breadcrumbs">{{ breadcrumb.label }}</ion-breadcrumb>
             </ion-breadcrumbs>
           </ion-col>
           <ion-col size="6" size-md="4" size-lg="3" v-if="hasSearch">
-            <ion-searchbar type="search" :value="search" @ionInput="doSearch"></ion-searchbar>
+            <ion-searchbar type="search" :value="search" :placeholder="placeholder" @ionInput="doSearch"></ion-searchbar>
           </ion-col>
         </ion-row>
       </ion-grid>
@@ -26,6 +26,10 @@ const props = defineProps({
   search: {
     type: String,
     default: ""
+  },
+  placeholder: {
+    type: String,
+    default: "Search..."
   },
   onSearch: {
     type: Function
