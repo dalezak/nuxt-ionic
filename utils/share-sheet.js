@@ -1,4 +1,4 @@
-export default async function ({title = null, description = null, url = null, image = null} = {}) {
+export default async function ({title, description, url, image}) {
   const email = "Email";
   const twitter = "Twitter";
   const facebook = "Facebook";

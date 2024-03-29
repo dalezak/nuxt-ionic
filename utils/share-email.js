@@ -1,4 +1,4 @@
-export default function ({title, description, url, image} = {}) {
+export default function ({title, description, url, image}) {
   consoleLog("shareEmail", title, description, url, image);
   const params = {};
   if (title && title.length > 0) {

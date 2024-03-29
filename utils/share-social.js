@@ -1,5 +1,5 @@
 import { Share } from '@capacitor/share';
-export default async function ({title = null, description = null, url = null, image = null} = {}) {
+export default async function ({title, description, url, image}) {
   let canShare = await Share.canShare();
   if (canShare && canShare.value) {
       let options = {};
