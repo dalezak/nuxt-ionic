@@ -1,4 +1,4 @@
-export default function ({title, description, image, url}) {
+export default function ({title, description, url, image}) {
   const link = new URL("https://twitter.com/intent/tweet");
   let body = [];
   if (url && url.length > 0) {

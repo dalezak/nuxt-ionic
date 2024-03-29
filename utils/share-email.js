@@ -1,5 +1,5 @@
-export default function ({title, description, image, url}) {
-  consoleLog("shareEmail", title, description, image, url);
+export default function ({title, description, url, image} = {}) {
+  consoleLog("shareEmail", title, description, url, image);
   const params = {};
   if (title && title.length > 0) {
     params["subject"] = encodeURI(title);

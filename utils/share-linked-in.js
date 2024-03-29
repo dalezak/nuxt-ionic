@@ -1,4 +1,4 @@
-export default function ({title, description, image, url}) {
+export default function ({title, description, url, image}) {
   const link = new URL("http://www.linkedin.com/shareArticle");
   link.searchParams.append("mini", "true");
   let body = [];
