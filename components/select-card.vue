@@ -1,5 +1,5 @@
 <template>
-  <ion-card v-if="options && options.length > 0">
+  <ion-card v-if="options && Object.keys(options).length > 0">
     <ion-card-content class="ion-no-padding ion-padding-horizontal">
       <ion-select :title="title" :value="value" interface="popover" @ionChange="onChange">
         <ion-select-option :value="key" :key="key" v-for="(label, key) in options">{{label}}</ion-select-option>
