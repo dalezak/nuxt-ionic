@@ -21,20 +21,27 @@
 </template>
 <script setup>
 const props = defineProps({
-  cols: {
-    type: Object,
-    default: () => ({
-      default: 4, 
-      1200: 3, 
-      900: 2, 
-      600: 1
-    })
-  },
   gutter: {
     type: Object,
     default: () => ({
       default: "0px"
     })
+  },
+  sm: {
+    type: Number,
+    default: 1
+  },
+  md: {
+    type: Number,
+    default: 2
+  },
+  lg: {
+    type: Number,
+    default: 3
+  },
+  xl: {
+    type: Number,
+    default: 4
   },
   limit: {
     type: Number,
@@ -61,6 +68,13 @@ const props = defineProps({
 const emit = defineEmits([
   "more"
 ])
+
+const cols = {
+  default: props.sm,
+  600: props.md,
+  900: props.lg,
+  1200: props.xl
+}
 
 function onMore(event) {
   event.stopPropagation();
