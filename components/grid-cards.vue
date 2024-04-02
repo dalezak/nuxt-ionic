@@ -27,6 +27,10 @@ const props = defineProps({
       default: "0px"
     })
   },
+  xs: {
+    type: Number,
+    default: 1
+  },
   sm: {
     type: Number,
     default: 1
@@ -71,8 +75,10 @@ const emit = defineEmits([
 
 const cols = {
   default: props.sm,
-  600: props.md,
-  900: props.lg,
+  320: props.xs,
+  576: props.sm,
+  768: props.md,
+  992: props.lg,
   1200: props.xl
 }
 
