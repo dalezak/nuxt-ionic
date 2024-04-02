@@ -74,7 +74,7 @@ const emit = defineEmits([
 ])
 
 const cols = {
-  default: props.sm,
+  default: props.xl,
   320: props.xs,
   576: props.sm,
   768: props.md,
