@@ -1,7 +1,9 @@
+
+const { router } = useIonRouter();
 export default function (path, push = true) {
   if (process.client) {
     // const router = useRouter();
-    const router = useIonRouter();
+    // const router = useIonRouter();
     if (push) {
       consoleLog("showPage", path);
       // router.push({ path: path });
