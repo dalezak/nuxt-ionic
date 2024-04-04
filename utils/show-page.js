@@ -1,11 +1,12 @@
 export default function (path, push = true) {
   if (process.client) {
-    consoleLog("showPage", path, push);
     const router = useRouter();
     if (push) {
+      consoleLog("showPage", "push", path);
       router.push({ path: path });
     }
     else {
+      consoleLog("showPage", "replace", path);
       router.replace({ path: path });
     }
   }

@@ -15,13 +15,11 @@ definePageMeta({
 })
 
 const appTabs = useAppTabs();
+const { path } = useAppRoute();
 const { name } = useAppConfig();
-const { isRoot } = useAppRoute();
 const { isApp, isWeb } = useAppScreen();
 
-onMounted(() => {
-  if (isRoot.value) {
-    showPageIndex();
-  }
-})
+if (path === '' || path === '/') {
+  showPageIndex();
+}
 </script>
