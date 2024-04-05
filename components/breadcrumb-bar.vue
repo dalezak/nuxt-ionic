@@ -5,7 +5,7 @@
         <ion-row>
           <ion-col v-if="breadcrumbs && breadcrumbs.length > 0">
             <ion-breadcrumbs>
-              <ion-breadcrumb :title="breadcrumb.label" @click="popPage(breadcrumb.path)" 
+              <ion-breadcrumb :title="breadcrumb.label" @click="showPage(breadcrumb.path, false)" 
                 :key="breadcrumb.name" v-for="breadcrumb of breadcrumbs">{{ breadcrumb.label }}</ion-breadcrumb>
             </ion-breadcrumbs>
           </ion-col>

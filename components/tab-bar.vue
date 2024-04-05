@@ -2,7 +2,7 @@
   <ion-tabs v-if="tabs && tabs.length > 0">
     <ion-router-outlet></ion-router-outlet>
     <ion-tab-bar :slot="position" v-show="visible">
-      <ion-tab-button :tab="tab.name" @click="rootPage(tab.path)" :key="tab.name" v-for="tab of tabs">
+      <ion-tab-button :tab="tab.name" @click="showPage(tab.path, false, true)" :key="tab.name" v-for="tab of tabs">
         <ion-icon :icon="getIcon(tab.icon)" v-if="tab.icon" />
         <ion-label v-if="tab.label">{{ tab.label }}</ion-label>
       </ion-tab-button>

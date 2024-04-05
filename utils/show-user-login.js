@@ -1,3 +1,3 @@
 export default function () {
-  rootPage("/login");
+  showPage("/login", false, true);
 }

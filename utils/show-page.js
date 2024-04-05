@@ -1,7 +1,12 @@
-// direction: 'forward' | 'back' | 'root' | 'none'
-// action: 'push' | 'pop' | 'replace'
-export default function (path, direction = "forward", action = "push") {
+export default function (path, push = true, root = false) {
   const { $ionRouter } = useNuxtApp();
-  consoleLog("showPage", path, direction, action);
-  $ionRouter.navigate(path, direction, action);
+  if (root) {
+    $ionRouter.navigate(path, "root", "replace");
+  }
+  else if (push) {
+    $ionRouter.navigate(path, "forward", "push");
+  }
+  else {
+    $ionRouter.navigate(path, "back", "pop");
+  }
 }

@@ -2,7 +2,7 @@
   <ion-toolbar v-show="visible">
     <ion-title>{{ title }}</ion-title>
     <ion-buttons slot="end">
-      <ion-button @click="rootPage(tab.path)" :title="tab.label" :key="tab.name" v-for="tab of tabs">
+      <ion-button @click="showPage(tab.path, false, true)" :title="tab.label" :key="tab.name" v-for="tab of tabs">
         <template v-if="tab.label">{{ tab.label }}</template>
         <template v-else-if="tab.icon">
           <ion-icon :icon="getIcon(tab.icon)" />
