@@ -3,11 +3,11 @@ export default function () {
   const { isRoot } = useAppRoute();
   if (appTabs.value && appTabs.value.length > 0) {
     const appTab = appTabs.value[0];
-    consoleLog("showPageIndex", "path", appTab.path);
-    showPage(appTab.path, false);
+    consoleLog("showPageIndex", "tab", appTab.path);
+    rootPage(appTab.path);
   }
   else if (isRoot.value == false) {
     consoleLog("showPageIndex", "path", "/");
-    showPage("/", false);
+    rootPage("/");
   }
 }

@@ -5,7 +5,7 @@
         <ion-row>
           <ion-col v-if="breadcrumbs && breadcrumbs.length > 0">
             <ion-breadcrumbs>
-              <ion-breadcrumb :title="breadcrumb.label" @click="onBreadcrumb(breadcrumb.path)" 
+              <ion-breadcrumb :title="breadcrumb.label" @click="popPage(breadcrumb.path)" 
                 :key="breadcrumb.name" v-for="breadcrumb of breadcrumbs">{{ breadcrumb.label }}</ion-breadcrumb>
             </ion-breadcrumbs>
           </ion-col>
@@ -60,14 +60,11 @@ const props = defineProps({
 
 const hasSearch = props['onSearch'] !== undefined;
 
-function doSearch() {
+function doSearch(event) {
+  consoleLog("doSearch", event);
   if (props.onSearch) {
-    props.onSearch();
+    props.onSearch(event.target.value);
   }
-}
-
-function onBreadcrumb(path) {
-  showPage(path, false);
 }
 </script>
 

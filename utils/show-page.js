@@ -1,13 +1,7 @@
-export default function (path, push = true) {
-  if (process.client) {
-    const router = useRouter();
-    if (push) {
-      consoleLog("showPage", "push", path);
-      router.push({ path: path });
-    }
-    else {
-      consoleLog("showPage", "replace", path);
-      router.replace({ path: path });
-    }
-  }
+// direction: 'forward' | 'back' | 'root' | 'none'
+// action: 'push' | 'pop' | 'replace'
+export default function (path, direction = "forward", action = "push") {
+  const { $ionRouter } = useNuxtApp();
+  consoleLog("showPage", path, direction, action);
+  $ionRouter.navigate(path, direction, action);
 }

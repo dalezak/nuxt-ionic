@@ -1,3 +1,3 @@
 export default function () {
-  showPage("/logout", false);
+  rootPage("/logout");
 }
