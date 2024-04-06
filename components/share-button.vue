@@ -1,5 +1,5 @@
 <template>
-  <ion-button fill="clear" title="Share" :class="css" @click="onShare">
+  <ion-button fill="clear" :title="title" :class="css" @click="onShare">
     <ion-icon :icon="ioniconsShareSocialOutline"></ion-icon>
   </ion-button>
 </template>
@@ -12,45 +12,17 @@ const props = defineProps({
   },
   title: {
     type: String,
-    required: true
-  },
-  description: {
-    type: String,
-    default: ""
-  },
-  url: {
-    type: String,
-    default: ""
-  },
-  image: {
-    type: String,
-    default: ""
-  },
-  facebook: {
-    type: Boolean,
-    default: true
-  },
-  twitter: {
-    type: Boolean,
-    default: true
-  },
-  linkedin: {
-    type: Boolean,
-    default: true
-  },
-  pinterest: {
-    type: Boolean,
-    default: true
-  },
-  email: {
-    type: Boolean,
-    default: true
+    default: "Share"
   }
 })
 
+const emits = defineEmits([
+  "share"
+]);
+
 function onShare(event) {
   event.stopPropagation();
-  showPopoverShare(event, props);
+  emits("share", event);
 }
 </script>
 
