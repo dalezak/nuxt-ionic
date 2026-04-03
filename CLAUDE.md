@@ -40,6 +40,11 @@ app/
   utils/               # Auto-imported utility functions (kebab-case → camelCase)
 ```
 
+## Path aliases
+
+- `~/` resolves to `app/` inside Vue/JS source files (components, pages, utils, composables).
+- Do **not** use `~/` in `nuxt.config.ts` — it is not resolved there. Use `./app/...` paths relative to the project root instead (e.g. for `css:` entries).
+
 ## Auto-imports
 
 Nuxt auto-imports everything from `composables/` and `utils/`. When writing a new util or composable that calls another local util, **add an explicit import** so dependencies are traceable:

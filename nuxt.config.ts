@@ -1,5 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  srcDir: 'app',
+  compatibilityVersion: 4,
   ssr: true,
   debug: process.env.NODE_ENV !== 'production',
   devtools: {
@@ -9,9 +11,9 @@ export default defineNuxtConfig({
     'github:dalezak/nuxt-layer-supabase'
   ],
   css: [
-    '~/assets/styles/default-white.css',
-    '~/assets/styles/default-dark.css',
-    '~/assets/styles/transition.css'
+    './app/assets/styles/default-white.css',
+    './app/assets/styles/default-dark.css',
+    './app/assets/styles/transition.css'
   ],
   modules: [
     '@nuxtjs/ionic',
