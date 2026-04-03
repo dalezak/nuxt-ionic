@@ -15,7 +15,8 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "types": "npx supabase gen types typescript --project-id tewezjcxrkzpczhwqiju > app/types/database.types.ts"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
@@ -34,6 +35,7 @@
   "dependencies": {
     "@capacitor/share": "^8.0.1",
     "@pinia/nuxt": "^0.11.3",
+    "@vite-pwa/nuxt": "^1.1.1",
     "idb-keyval": "^6.2.2",
     "ionicons": "^8.0.13",
     "pinia": "^3.0.4",

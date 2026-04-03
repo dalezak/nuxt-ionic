@@ -130,7 +130,7 @@ async function doLogin() {
       }
     }
     catch (error) {
-      showError("Problem Logging In", error);
+      showAlertError("Problem Logging In", error);
     }
     finally {
       hideLoading();
@@ -157,7 +157,7 @@ async function doSignup() {
       }
     }
     catch (error) {
-      showError("Problem Signing Up", error);
+      showAlertError("Problem Signing Up", error);
     }
     finally {
       hideLoading();
@@ -174,7 +174,7 @@ async function doReset() {
       showAlert("Password Reset", "Please check your email for instructions to reset your password.");
     }
     catch (error) {
-      showError("Problem Resetting Password", error);
+      showAlertError("Problem Resetting Password", error);
     }
     finally {
       hideLoading();

@@ -21,7 +21,7 @@ export function useSearchPagination(loadFn, errorTitle) {
     }
     catch (error) {
       consoleError(errorTitle, error);
-      showError(errorTitle, error.message);
+      showAlertError(errorTitle, error.message);
     }
     finally {
       state.loading = false;

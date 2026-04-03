@@ -57,7 +57,7 @@ async function doUpdate() {
       showAlert("Password Update", "Your password has been updated.");
     }
     catch (error) {
-      showError("Problem Updating Password", error);
+      showAlertError("Problem Updating Password", error);
     }
   }
 }

@@ -18,12 +18,27 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/ionic',
     '@nuxtjs/device',
-    'nuxt-viewport'
+    'nuxt-viewport',
+    '@vite-pwa/nuxt'
   ],
+  pwa: {
+    registerType: 'autoUpdate',
+    manifest: {
+      name: 'Nuxt Ionic',
+      short_name: 'Nuxt Ionic',
+      theme_color: '#ffffff',
+      icons: [
+        { src: 'favicon.ico', sizes: '64x64', type: 'image/x-icon' }
+      ]
+    },
+    workbox: {
+      navigateFallback: '/'
+    }
+  },
   ionic: {
     integrations: {
       meta: true,
-      pwa: true,
+      pwa: false,
       icons: true,
       router: true
     },
@@ -47,6 +62,17 @@ export default defineNuxtConfig({
       tablet: 'md',
     },
     fallbackBreakpoint: 'lg'
+  },
+  vite: {
+    optimizeDeps: {
+      include: [
+        '@vue/devtools-core',
+        '@vue/devtools-kit',
+        '@ionic/vue',
+        'vue-next-masonry',
+        'ionicons/icons',
+      ]
+    }
   },
   pinia: {
     storesDirs: [
