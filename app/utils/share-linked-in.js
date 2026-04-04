@@ -1,3 +1,10 @@
+/**
+ * Opens the LinkedIn shareArticle dialog in a new tab.
+ * Passes `url` as the article link and combines `title` + `description` as the title param.
+ * @param {{title: string, description: string, url: string, image: string}} props
+ * @example
+ * shareLinkedIn({ title: 'My Article', description: 'Summary', url: 'https://...', image: '' });
+ */
 export default function ({title, description, url, image}) {
   const link = new URL("http://www.linkedin.com/shareArticle");
   link.searchParams.append("mini", "true");

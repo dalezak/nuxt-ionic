@@ -1,3 +1,10 @@
+/**
+ * Opens the Twitter/X tweet intent dialog in a new tab.
+ * Passes `url` as the tweet link and combines `title` + `description` as the tweet text.
+ * @param {{title: string, description: string, url: string, image: string}} props
+ * @example
+ * shareTwitter({ title: 'My Tweet', description: 'Check this', url: 'https://...', image: '' });
+ */
 export default function ({title, description, url, image}) {
   const link = new URL("https://twitter.com/intent/tweet");
   let body = [];

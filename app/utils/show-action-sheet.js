@@ -1,4 +1,27 @@
 import { actionSheetController } from "@ionic/vue";
+
+/**
+ * Presents an Ionic action sheet and returns the selected action string.
+ * Returns null if the user cancels or taps outside.
+ * `dangers` are rendered with a destructive red style above `actions`.
+ * Used internally by `shareSheet()` and directly for any confirmation-style menus.
+ * @param {{
+ *   title?: string,
+ *   subtitle?: string,
+ *   actions?: string[],
+ *   dangers?: string[],
+ *   cancel?: boolean
+ * }} options
+ * @returns {Promise<string|null>} The selected action string, or null if cancelled.
+ * @example
+ * const action = await showActionSheet({
+ *   title: 'Choose action',
+ *   actions: ['Edit', 'Duplicate'],
+ *   dangers: ['Delete'],
+ *   cancel: true
+ * });
+ * if (action === 'Delete') await deleteItem();
+ */
 export default async function ({title = null, subtitle = null, actions = [], dangers = [], cancel = true}) {
   if (process.client) {
     let options = {

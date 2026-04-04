@@ -1,3 +1,10 @@
+/**
+ * Opens the Pinterest pin creation dialog in a new tab.
+ * Passes `url` as the pin link and combines `title` + `description` as the description param.
+ * @param {{title: string, description: string, url: string, image: string}} props
+ * @example
+ * sharePinterest({ title: 'My Pin', description: 'Lovely', url: 'https://...', image: '' });
+ */
 export default function ({title, description, url, image}) {
   const link = new URL("http://pinterest.com/pin/create/button/");
   let body = [];

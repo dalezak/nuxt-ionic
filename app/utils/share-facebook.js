@@ -1,3 +1,10 @@
+/**
+ * Opens the Facebook sharer dialog in a new tab.
+ * Passes `url` as the shared link and combines `title` + `description` as the quote.
+ * @param {{title: string, description: string, url: string, image: string}} props
+ * @example
+ * shareFacebook({ title: 'My Post', description: 'Check it out', url: 'https://...', image: '' });
+ */
 export default function ({title, description, url, image}) {
   const link = new URL("https://www.facebook.com/sharer/sharer.php");
   let body = [];

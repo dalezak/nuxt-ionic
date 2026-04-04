@@ -1,3 +1,11 @@
+/**
+ * Opens the default email client pre-filled with share content as subject and body.
+ * Encodes title as `subject` and joins description, image, and url as `body`.
+ * For simply opening a mailto address use `openEmail()` instead.
+ * @param {{title: string, description: string, url: string, image: string}} props
+ * @example
+ * shareEmail({ title: 'Check this out', description: 'Great article', url: 'https://...', image: '' });
+ */
 export default function ({title, description, url, image}) {
   consoleLog("shareEmail", title, description, url, image);
   const params = {};

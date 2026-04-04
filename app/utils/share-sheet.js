@@ -5,6 +5,16 @@ import shareFacebook from '~/utils/share-facebook.js';
 import shareLinkedIn from '~/utils/share-linked-in.js';
 import sharePinterest from '~/utils/share-pinterest.js';
 
+/**
+ * Presents an Ionic action sheet listing social share options and dispatches
+ * to the appropriate share util based on the user's selection.
+ * Use `shareSocial()` instead when you want to prefer the native Capacitor
+ * share sheet (with fallback to this).
+ * @param {{title: string, description: string, url: string, image: string}} props
+ * @returns {Promise<void>}
+ * @example
+ * await shareSheet({ title: 'My Post', description: 'Check it', url: 'https://...', image: '' });
+ */
 export default async function ({title, description, url, image}) {
   const email = "Email";
   const twitter = "Twitter";
