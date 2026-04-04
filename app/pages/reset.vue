@@ -42,7 +42,7 @@ const state = reactive({
   passwordInput: null
 });
 
-const { updatePassword } = useUsersStore();
+const usersStore = useUsersStore();
 
 function hasPassword() {
   return hasInput(state.passwordInput, state.password, "Please enter your password");
@@ -51,7 +51,7 @@ function hasPassword() {
 async function doUpdate() {
   if (hasPassword()) {
     try {
-      await updatePassword({
+      await usersStore.updatePassword({
         password: state.password
       });
       showAlert("Password Update", "Your password has been updated.");

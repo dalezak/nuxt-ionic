@@ -74,7 +74,7 @@ let isLogin = computed(() => state.form == "login");
 let isSignup = computed(() => state.form == "signup");
 let isReset = computed(() => state.form == "reset");
 
-const { userLogin, userSignup, resetPassword } = useUsersStore();
+const usersStore = useUsersStore();
   
 function loginForm() {
   state.form = "login";
@@ -116,8 +116,8 @@ async function doLogin() {
   if (hasEmail() && hasPassword()) {
     try {
       showLoading("Logging in...");
-      let user = await userLogin({
-        email: state.email, 
+      let user = await usersStore.userLogin({
+        email: state.email,
         password: state.password
       });
       if (user) {
@@ -142,7 +142,7 @@ async function doSignup() {
   if (hasName() && hasEmail() && hasPassword()) {
     try {
       showLoading("Signing up...");
-      let user = await userSignup({
+      let user = await usersStore.userSignup({
         name: state.name,
         email: state.email,
         password: state.password
@@ -168,7 +168,7 @@ async function doSignup() {
 async function doReset() {
   if (hasEmail()) {
     try {
-      await resetPassword({
+      await usersStore.resetPassword({
         email: state.email
       });
       showAlert("Password Reset", "Please check your email for instructions to reset your password.");

@@ -1,6 +1,9 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
+const currentDir = dirname(fileURLToPath(import.meta.url));
 export default defineNuxtConfig({
-  srcDir: 'app',
+  srcDir: join(currentDir, 'app'),
   compatibilityVersion: 4,
   ssr: true,
   debug: process.env.NODE_ENV !== 'production',
@@ -11,11 +14,12 @@ export default defineNuxtConfig({
     'github:dalezak/nuxt-layer-supabase'
   ],
   css: [
-    './app/assets/styles/default-white.css',
-    './app/assets/styles/default-dark.css',
-    './app/assets/styles/transition.css'
+    join(currentDir, 'app/assets/styles/default-white.css'),
+    join(currentDir, 'app/assets/styles/default-dark.css'),
+    join(currentDir, 'app/assets/styles/transition.css')
   ],
   modules: [
+    '@pinia/nuxt',
     '@nuxtjs/ionic',
     '@nuxtjs/device',
     'nuxt-viewport',
@@ -76,8 +80,7 @@ export default defineNuxtConfig({
   },
   pinia: {
     storesDirs: [
-      'app/stores/**',
-      '../nuxt-supabase/stores/**'
+      join(currentDir, 'app/stores/**')
     ]
   }
 })

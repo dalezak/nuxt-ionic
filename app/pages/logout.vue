@@ -14,11 +14,11 @@ definePageMeta({
   middleware: 'auth'
 })
 
-const { userLogout } = useUsersStore();
+const usersStore = useUsersStore();
 
 onMounted (async () => {
   consoleLog("logout", "mounted");
-  await userLogout();
+  await usersStore.userLogout();
   await showPageIndex();
 })
 </script>
