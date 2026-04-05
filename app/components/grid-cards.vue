@@ -10,12 +10,16 @@
       </ion-button>
     </transition>
     <transition appear name="fade" mode="out-in">
-      <ion-card class="ion-margin" v-if="loading == false && count == 0 && limit > 0">
-        <ion-card-header>
-          <ion-card-subtitle v-if="search && search.length > 0">There are no {{label}} matching "{{search}}".</ion-card-subtitle>
-          <ion-card-subtitle v-else>It doesn't look like there are any {{label}} yet.</ion-card-subtitle>
-        </ion-card-header>
-      </ion-card>
+      <div v-if="loading == false && count == 0 && limit > 0">
+        <slot name="empty">
+          <ion-card class="ion-margin">
+            <ion-card-header>
+              <ion-card-subtitle v-if="search && search.length > 0">There are no {{label}} matching "{{search}}".</ion-card-subtitle>
+              <ion-card-subtitle v-else>It doesn't look like there are any {{label}} yet.</ion-card-subtitle>
+            </ion-card-header>
+          </ion-card>
+        </slot>
+      </div>
     </transition>
   </div>
 </template>
