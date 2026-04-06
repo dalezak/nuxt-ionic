@@ -17,10 +17,10 @@ export default async function (title, message = null, placeholder = '', defaultV
     const alert = await alertController.create({
       header: title,
       message: message ?? undefined,
-      inputs: [{ type: 'text', placeholder, value: defaultValue }],
+      inputs: [{ name: 'value', type: 'text', placeholder, value: defaultValue }],
       buttons: [
         { text: 'Cancel', role: 'cancel' },
-        { text: 'Ok', handler: (data) => { result = data[0] ?? null; } }
+        { text: 'Ok', handler: (data) => { result = data.value ?? null; } }
       ]
     });
     await alert.present();
