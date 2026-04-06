@@ -1,5 +1,3 @@
-import { watch } from "vue";
-
 /**
  * Composable that returns the filtered tab list for the current auth state.
  * Tabs marked `public: true` are shown to guests; `public: false` to signed-in users.
@@ -8,13 +6,15 @@ import { watch } from "vue";
  */
 export function useAppTabs() {
   const appTabs = ref([]);
-  const appUser = useAppUser();
   const { tabs } = useAppConfig();
+  const { isAuthenticated } = useAuthSession();
 
-  watch(appUser, (newAppUser, oldAppUser) => {
-    appTabs.value = tabs.filter(tab => tab.public == !appUser.value);
-  });
-  appTabs.value = tabs.filter(tab => tab.public == !appUser.value);
+  function filterTabs(auth) {
+    appTabs.value = tabs.filter(tab => tab.public == !auth);
+  }
+
+  watch(isAuthenticated, (auth) => filterTabs(auth));
+  filterTabs(isAuthenticated.value);
 
   return appTabs;
 }
