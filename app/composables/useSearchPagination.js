@@ -35,11 +35,11 @@ export function useSearchPagination(loadFn, errorTitle) {
     run();
   }
 
-  async function run(offset = 0, event = null) {
+  async function run(offset = 0, event = null, options = {}) {
     try {
       state.loading = true;
       state.offset = offset;
-      const results = await loadFn({ limit: state.limit, offset: state.offset, search: state.search });
+      const results = await loadFn({ limit: state.limit, offset: state.offset, search: state.search, ...options });
       state.count = results ? results.length : 0;
     }
     catch (error) {
