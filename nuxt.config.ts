@@ -11,7 +11,8 @@ export default defineNuxtConfig({
     enabled: process.env.NODE_ENV !== 'production'
   },
   extends: [
-    'github:dalezak/nuxt-layer-supabase'
+    // 'github:dalezak/nuxt-layer-supabase'
+    '../nuxt-supabase'
   ],
   css: [
     join(currentDir, 'app/assets/styles/default-white.css'),
