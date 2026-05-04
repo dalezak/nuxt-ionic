@@ -245,6 +245,16 @@ When a list is empty, render an empty-state component with `icon`, `title`, and 
 </grid-cards>
 ```
 
+## Layer-provided components
+
+Generic UI primitives lifted from suite apps. Use these directly via auto-import — no need to redefine in apps.
+
+- **`<EmptyState>`** (`Empty/State.vue`) — "no items here" surface for lists. Props: `icon` (Ionic icon constant, required), `title` (required), `subtitle` (optional).
+- **`<BadgeCard>`** (`Badge/Card.vue`) — display a single Badge as a horizontal card. Extracts trailing emoji from the badge name (badges seeded as `"First Step 👣"` → emoji `'👣'`, label `'First Step'`). Props: `badge` (required), `locked` (boolean — un-earned state).
+- **`<ShareButton>`**, **`<SharePopover>`** — see share-social pattern.
+
+Apps add their own components (nested by feature) for app-specific surfaces.
+
 ## Component conventions
 
 - **`<script setup>` only.** No Options API.
