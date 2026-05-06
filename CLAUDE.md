@@ -34,6 +34,47 @@ If new code is generic enough to benefit other apps extending `nuxt-ionic`, add 
 
 When uncertain, ask: "Would another app extending this layer want this?" If yes, it belongs in the layer.
 
+## Friends + Groups: one social tab
+
+Witness is the primary social verb. Friends (bilateral) and Groups (multilateral) are two ways to curate the same activity feed — they share kudos, share visibility, share the same surface. **Don't give each its own tab.** Mobile's 5-tab budget gets eaten by social plumbing instead of app-specific verbs.
+
+### Structure inside the tab
+
+```text
+┌─ <Social> tab ───────────────────┐
+│ [Add a friend / paste invite]    │
+│                                  │
+│ ── Activity feed ──              │
+│ Sara earned …       [♥ 3]       │
+│ Group "Mornings" …  [♥ 1]       │
+│                                  │
+│ ── Friends ──                    │
+│ … list                           │
+│                                  │
+│ ── Groups ──                     │
+│ … list                           │
+└──────────────────────────────────┘
+```
+
+The activity feed at top is load-bearing — it unifies witness across both kinds of curation.
+
+Tab name varies by app personality (Friends, Community, Together, Cohort, Circle), but structure stays the same.
+
+### Resolving placement inside the tab
+
+Friends/Groups lists are **admin** surfaces (manage your circle); the activity feed is the **product** (witness your circle). When in doubt, ask: "is this about managing or witnessing?" That resolves most cases.
+
+### Implications
+
+- **5-tab budget preserved** for app-specific verbs (Courses, Habits, Saves, Growth, …).
+- **Tier-friendly.** Groups can sit behind a paywall as a dimmed/upsell section — no tab disappears when the user upgrades.
+- **Onboarding-friendly.** New users see Friends; Groups reveal as a deeper tool.
+- **Detail pages** (`/friends/[id]`, `/groups/[id]`) sit under this tab.
+
+### Out of scope for this convention
+
+Saved content (lessons, bookmarks, library) is a *content* concern, not a *social* one — keep it separate, typically under Profile or as its own surface depending on the app's weight.
+
 ## Language
 
 - **Use JavaScript, not TypeScript.** All utils, composables, plugins, and pages are `.js` / `.vue` files. Do not create `.ts` files or add type annotations. The only `.ts` files that exist (`nuxt.config.ts`, `app.config.ts`, `tsconfig.json`) are Nuxt infrastructure — do not add more.
