@@ -296,6 +296,16 @@ Generic UI primitives lifted from suite apps. Use these directly via auto-import
 
 Apps add their own components (nested by feature) for app-specific surfaces.
 
+## Layer-provided composables
+
+Reusable reactive logic auto-imported from this layer. Use directly — no need to redefine.
+
+- **`useSubscription()`** — base subscription state + paid-feature gating. Reads `profile.value.subscription_status` (set by the layer's `revenuecat` Edge Function on RevenueCat webhook events) and resolves it against `app.config.ts`'s `plans` array. Returns:
+  - State: `currentPlan`, `isPaid`, `isPremium`, `isFree`, `planLabel`
+  - Generic feature accessors: `canUseFeature(key)` (boolean off the plan object), `featureLimit(key)` (number / value off the plan object)
+  - UI gate: `requiresPaid(label)` — returns `true` if paid; otherwise shows an upgrade dialog routing to `/subscribe` and returns `false`. Caller pattern: `if (!await requiresPaid('Groups')) return;`
+  - Apps that need domain-specific *async* gating (e.g. count-based limits like "can the user create another course?") wrap this composable in their own and add their helpers there. Plan IDs (`'free'` / `'standard'` / `'premium'`) match the categorical `subscription_status` values in the layer users table — re-skin via `plans[].label` rather than changing the IDs.
+
 ## Component conventions
 
 - **`<script setup>` only.** No Options API.
