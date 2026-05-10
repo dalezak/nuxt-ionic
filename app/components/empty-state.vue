@@ -7,10 +7,6 @@
 </template>
 
 <script setup>
-// EmptyState — simple "no items here" surface for lists.
-// Pass an Ionic icon (auto-imported `ioniconsXxx` constants), a title,
-// and an optional subtitle.
-
 defineProps({
   icon: { required: true },
   title: { type: String, required: true },
@@ -22,19 +18,16 @@ defineProps({
 .empty-state {
   padding-top: 4rem;
 }
-
 .empty-icon {
   font-size: 4rem;
   opacity: 0.3;
   margin-bottom: 1rem;
 }
-
 .empty-state h3 {
   font-size: 1.2rem;
   font-weight: 600;
   margin: 0 0 0.5rem;
 }
-
 .empty-state p {
   opacity: 0.6;
   font-size: 0.9rem;

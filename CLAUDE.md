@@ -286,25 +286,57 @@ When a list is empty, render an empty-state component with `icon`, `title`, and 
 </grid-cards>
 ```
 
+### Onboarding as a flow page (outside `tabs/`)
+
+First-run / signup flows are linear — pillar pick → template pick → adopt → done — and they want the full screen with no tab-bar chrome distracting the user. **Convention: put onboarding at `app/pages/onboarding.vue` (top level, NOT inside `app/pages/tabs/`).** The tab bar's parent route is `tabs.vue`; pages outside that subtree render alone, which is exactly what a flow page wants.
+
+```text
+app/pages/
+├── tabs.vue                ← parent with <nav-bar> + <tab-bar>
+├── tabs/
+│   ├── home.vue            ← inherits chrome from tabs.vue
+│   ├── courses/...
+│   └── profile.vue
+└── onboarding.vue          ← top-level, no chrome
+```
+
+The same pattern works for any other "focused linear flow" page — a welcome / first-paid-purchase / one-shot wizard. Anything that's not a recurring tab destination belongs outside `tabs/`.
+
+Gating into and out of the flow:
+
+```js
+// inside onboarding.vue
+definePageMeta({ middleware: 'auth' });
+
+// inside the relevant tab (e.g. tabs/home.vue) — redirect to onboarding if the
+// user is still in the pre-state the flow exists to resolve.
+async function loadData() {
+  const habits = await habitsStore.loadItems({ refresh: true });
+  if (!habits || habits.length === 0) {
+    router.push('/onboarding');
+    return;
+  }
+  // ... regular page load
+}
+
+// inside onboarding.vue, after the flow completes:
+router.push('/home');
+```
+
+The home tab carries the "still pre-state?" check; onboarding owns the linear flow + the post-flow redirect. Clean handoff with no app-state coupling.
+
 ## Layer-provided components
 
 Generic UI primitives lifted from suite apps. Use these directly via auto-import — no need to redefine in apps.
 
-- **`<EmptyState>`** (`Empty/State.vue`) — "no items here" surface for lists. Props: `icon` (Ionic icon constant, required), `title` (required), `subtitle` (optional).
-- **`<BadgeCard>`** (`Badge/Card.vue`) — display a single Badge as a horizontal card. Extracts trailing emoji from the badge name (badges seeded as `"First Step 👣"` → emoji `'👣'`, label `'First Step'`). Props: `badge` (required), `locked` (boolean — un-earned state).
+- **`<EmptyState>`** (`empty-state.vue`) — "no items here" surface for lists. Props: `icon` (Ionic icon constant, required), `title` (required), `subtitle` (optional).
+- **`<WheelChart>`** (`wheel-chart.vue`) — hand-rolled SVG radial/wheel-of-life chart with N axes. Each axis shows a labeled wedge that fills from center to the data value (max at outer ring). Themed via Ionic CSS variables. Props: `axes` (array of `{ label, value, max? }`) — tappable wedges emit click events. Use for pillar wheels, skill radars, virtue maps — any "score across N dimensions" surface where balance/shape matters more than ranking.
+- **`<AccentCard>`** (`accent-card.vue`) — wrapped `<ion-card>` with a colored header strip + title + optional subtitle/icon. Slot-based content. Props: `title` (required), `subtitle`, `icon`, `color` (default `'primary'`).
 - **`<ShareButton>`**, **`<SharePopover>`** — see share-social pattern.
 
+`<BadgeCard>` is now provided by `nuxt-badges` (not this layer) — apps that extend `nuxt-badges` get it automatically.
+
 Apps add their own components (nested by feature) for app-specific surfaces.
-
-## Layer-provided composables
-
-Reusable reactive logic auto-imported from this layer. Use directly — no need to redefine.
-
-- **`useSubscription()`** — base subscription state + paid-feature gating. Reads `profile.value.subscription_status` (set by the layer's `revenuecat` Edge Function on RevenueCat webhook events) and resolves it against `app.config.ts`'s `plans` array. Returns:
-  - State: `currentPlan`, `isPaid`, `isPremium`, `isFree`, `planLabel`
-  - Generic feature accessors: `canUseFeature(key)` (boolean off the plan object), `featureLimit(key)` (number / value off the plan object)
-  - UI gate: `requiresPaid(label)` — returns `true` if paid; otherwise shows an upgrade dialog routing to `/subscribe` and returns `false`. Caller pattern: `if (!await requiresPaid('Groups')) return;`
-  - Apps that need domain-specific *async* gating (e.g. count-based limits like "can the user create another course?") wrap this composable in their own and add their helpers there. Plan IDs (`'free'` / `'standard'` / `'premium'`) match the categorical `subscription_status` values in the layer users table — re-skin via `plans[].label` rather than changing the IDs.
 
 ## Component conventions
 
