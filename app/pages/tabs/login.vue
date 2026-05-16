@@ -153,11 +153,20 @@ async function doSignup() {
         showPageIndex();
       }
       else {
-        showAlert("Problem Signing In", "Please enter your information and try again.");
+        showAlert("Problem Signing Up", "Please enter your information and try again.");
       }
     }
     catch (error) {
-      showAlertError("Problem Signing Up", error);
+      const message = error?.message ?? '';
+      if (/already registered|already exists/i.test(message)) {
+        showAlert("Account Exists", `An account with ${state.email} already exists. Try logging in instead.`);
+      }
+      else if (/password/i.test(message)) {
+        showAlertError("Password Problem", null, message);
+      }
+      else {
+        showAlertError("Problem Signing Up", null, message || "Please try again.");
+      }
     }
     finally {
       hideLoading();
