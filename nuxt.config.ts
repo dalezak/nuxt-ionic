@@ -14,6 +14,16 @@ export default defineNuxtConfig({
     // 'github:dalezak/nuxt-layer-supabase'
     '../nuxt-supabase'
   ],
+  // Explicit override: register our `showError` from app/utils so it beats
+  // Nuxt's built-in `showError` (from `#app/composables/error`) which would
+  // navigate to the full-screen error page. The auto-import scan picks up
+  // app/utils/* but in conflict cases Nuxt's built-in can win; this entry
+  // pins precedence.
+  imports: {
+    imports: [
+      { name: 'default', as: 'showError', from: join(currentDir, 'app/utils/show-error') },
+    ],
+  },
   css: [
     join(currentDir, 'app/assets/styles/default-white.css'),
     join(currentDir, 'app/assets/styles/default-dark.css'),
