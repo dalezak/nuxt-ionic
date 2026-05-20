@@ -4,6 +4,7 @@
       :viewBox="`0 0 ${size} ${size}`"
       :width="size"
       :height="size"
+      overflow="visible"
       class="wheel-svg">
 
       <!-- Concentric rings as scale guides (1, 5, 10) -->
@@ -28,7 +29,7 @@
         stroke="var(--ion-background-color)"
         stroke-width="1.5"
         @click="$emit('select', seg)"
-        :class="{ tappable: true }"></path>
+        :class="{ tappable: true, 'wedge--highlight': highlightKeys.includes(seg.key) }"></path>
 
       <!-- Outer ring (max boundary) -->
       <circle
@@ -73,15 +74,22 @@ const props = defineProps({
   segments: { type: Array, required: true },
   size: { type: Number, default: 320 },
   max: { type: Number, default: 10 },
+  // Segment keys to briefly pulse — consumer-driven freshness signal.
+  // Useful for "this part of the wheel just changed" feedback (e.g. user
+  // completed a practice in pillar X, the X wedge pulses on next view).
+  highlightKeys: { type: Array, default: () => [] },
 });
 
 defineEmits(['select']);
 
 const cx = computed(() => props.size / 2);
 const cy = computed(() => props.size / 2);
-// Reserve 22% of the half-width for label space
-const radius = computed(() => (props.size / 2) * 0.78);
-const labelRadius = computed(() => radius.value + 16);
+// Reserve ~30% of the half-width for label space. Combined with the
+// SVG's overflow="visible" attribute and the container's horizontal
+// padding, this lets long labels ("Occupational", "Recreational") render
+// fully without clipping at the viewBox edge.
+const radius = computed(() => (props.size / 2) * 0.7);
+const labelRadius = computed(() => radius.value + 14);
 
 const rings = [props.max / 2, props.max];
 
@@ -128,12 +136,14 @@ function wedgePath(i, score) {
 .wheel-chart {
   display: flex;
   justify-content: center;
-  padding: 1rem 0;
+  padding: 1rem 3rem; /* horizontal pad so overflow="visible" labels have room */
+  overflow: visible;
 }
 
 .wheel-svg {
   max-width: 100%;
   height: auto;
+  overflow: visible;
 }
 
 .wheel-label {
@@ -149,5 +159,17 @@ function wedgePath(i, score) {
 
 .tappable:hover {
   fill-opacity: 0.75;
+}
+
+/* Highlight pulse — fires once per render for segments named in
+   highlightKeys. Lifts opacity briefly so the wedge "breathes" once. */
+@keyframes wedge-pulse {
+  0%   { fill-opacity: 0.55; }
+  40%  { fill-opacity: 0.95; }
+  100% { fill-opacity: 0.55; }
+}
+
+.wedge--highlight {
+  animation: wedge-pulse 1.4s ease-in-out 1;
 }
 </style>
