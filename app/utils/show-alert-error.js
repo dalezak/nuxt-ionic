@@ -1,20 +1,24 @@
 /**
- * Logs an error via `consoleError` then shows it as an Ionic alert dialog.
- * Use in catch blocks for user-visible error reporting.
- * Prefer this over `showAlert()` directly in catch blocks so errors are always logged.
- * @param {string} title - Alert header, e.g. "Problem Saving".
- * @param {string|null} subtitle - Optional secondary header.
- * @param {string|null} message - Optional detail message (e.g. error.message).
- * @param {string[]} buttons - Button labels (default: ["Ok"]).
+ * User-facing error alert. Logs via `consoleError` then shows an Ionic
+ * alert dialog with the title + extracted error message.
+ *
+ * Use from catch blocks instead of Nuxt's built-in `showError`
+ * (auto-imported from `#app`), which navigates to the full-screen error
+ * page — almost never what a catch block wants.
+ *
+ * @param {string} title - Alert header, e.g. "Couldn't save reflection".
+ * @param {Error|string|null} content - Error instance or message string; renders as the alert body.
  * @returns {Promise<any>} Resolves when the alert is dismissed.
  * @example
  * try {
- *   await saveItem();
+ *   await save();
  * } catch (error) {
- *   showAlertError('Problem Saving', null, error.message);
+ *   showAlertError("Couldn't save", error);
  * }
  */
-export default async function (title, subtitle = null, message = null, buttons = ["Ok"]) {
-  consoleError(title, subtitle, message);
-  return showAlert(title, subtitle, message, buttons);
+export default async function (title, content = null) {
+  consoleError(title, content);
+  const message = content?.message
+    ?? (typeof content === 'string' ? content : null);
+  return showAlert(title, null, message);
 }
