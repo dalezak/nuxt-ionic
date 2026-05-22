@@ -39,6 +39,7 @@
     "idb-keyval": "^6.2.2",
     "ionicons": "^8.0.13",
     "pinia": "^3.0.4",
+    "pluralize": "^8.0.0",
     "swiper": "^12.1.3",
     "unstorage": "^1.17.5",
     "vue-next-masonry": "^1.1.3"

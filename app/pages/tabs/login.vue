@@ -112,6 +112,21 @@ function onEnter() {
   }
 }
 
+// `?return=<path>` lets deep-link surfaces (e.g. `/join/<code>`) bounce
+// users through login and land them back on the original destination
+// instead of the tab index. Only relative paths are honored — guards
+// against `?return=https://evil.example` open-redirects.
+function returnPath() {
+  const raw = useRoute().query.return;
+  return typeof raw === 'string' && raw.startsWith('/') ? raw : null;
+}
+
+function finishAuth() {
+  const path = returnPath();
+  if (path) showPage(path, true, true);
+  else showPageIndex();
+}
+
 async function doLogin() {
   if (hasEmail() && hasPassword()) {
     try {
@@ -123,7 +138,7 @@ async function doLogin() {
       if (user) {
         showToast("Welcome back friend");
         clearInputs();
-        showPageIndex();
+        finishAuth();
       }
       else {
         showAlert("Problem Logging In", "Please enter your credentials and try again.");
@@ -150,7 +165,7 @@ async function doSignup() {
       if (user) {
         showToast("Welcome friend");
         clearInputs();
-        showPageIndex();
+        finishAuth();
       }
       else {
         showAlert("Problem Signing Up", "Please enter your information and try again.");

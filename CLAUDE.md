@@ -28,6 +28,16 @@ Pure helpers (formatting, sorting, transforming) go in `app/utils/` — kebab-ca
 
 Group related components in subfolders. Nuxt flattens the path into the component name, so `app/components/course/Card.vue` becomes `<CourseCard>` and `app/components/lesson/list/Item.vue` becomes `<LessonListItem>`. Prefer subfolders over long prefixed filenames.
 
+### Error UX from catch blocks
+
+Use the layer's error helpers from catch blocks; don't leave writes failing silently. The helpers log via `consoleError` internally, so a separate `consoleError(...)` call before them is redundant.
+
+- **`showToastError(title, error)`** — non-blocking toast (red). Default for user-initiated writes that can simply be retried: save / archive / delete / add / accept / etc. Doesn't interrupt flow.
+- **`showAlertError(title, error)`** — blocking alert dialog. For critical or destructive flows where the user needs to acknowledge: failed group creation, failed reflection save where the data would otherwise be lost.
+- **`consoleError(label, error)`** — log-only, no UI. For background tasks (milestones, streak updates) where failure isn't load-bearing, or for `loadData` paths that show an empty state on failure.
+
+Pages should pick deliberately — every silent-fail write is a bug in waiting.
+
 ### Push reusable logic up into this layer
 
 If new code is generic enough to benefit other apps extending `nuxt-ionic`, add it here rather than in the consuming app. Keep app-specific logic in the app; keep cross-app logic upstream.
