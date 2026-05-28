@@ -1,3 +1,5 @@
+import { DAY_MS } from '#layers/nuxt-supabase/app/utils/time';
+
 // Pick one item from an array, deterministic per UTC day. Returns the same
 // item to every caller on the same calendar day; rotates as the day rolls
 // over. Cheap, stable, and doesn't need a per-user seed — useful for daily
@@ -13,6 +15,6 @@
 
 export default function pickDaily(items) {
   if (!Array.isArray(items) || items.length === 0) return null;
-  const dayOfEpoch = Math.floor(Date.now() / 86400000);
+  const dayOfEpoch = Math.floor(Date.now() / DAY_MS);
   return items[dayOfEpoch % items.length];
 }
