@@ -1,5 +1,9 @@
 import { loadingController } from "@ionic/vue";
 
+// Short delay before dismissing the overlay. Lets the final state of the
+// spinner render briefly so it doesn't blink off mid-animation.
+const DEFAULT_DISMISS_DELAY_MS = 200;
+
 /**
  * Module-level ref so a single loading overlay is shared across all callers.
  * Calling show() while a loader is already visible updates its message in place.
@@ -36,7 +40,7 @@ export function useLoading() {
   };
 
   /** Dismiss the loading overlay after an optional delay (ms). */
-  const dismiss = (delay = 200) => {
+  const dismiss = (delay = DEFAULT_DISMISS_DELAY_MS) => {
     if (process.client) {
       setTimeout(async () => {
         if (loading.value) {

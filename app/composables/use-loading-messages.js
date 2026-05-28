@@ -16,10 +16,15 @@
 // know the task has progressed and want to lock the message; `stop()`
 // dismisses the overlay entirely.
 
+// Default cycle: each message stays up for 4 seconds before the next one
+// rotates in. Slow enough to read; fast enough to feel like work is
+// progressing on multi-step AI calls.
+const DEFAULT_ROTATION_INTERVAL_MS = 4000;
+
 export function useLoadingMessages() {
   let intervalId = null;
 
-  function start(messages, { intervalMs = 4000 } = {}) {
+  function start(messages, { intervalMs = DEFAULT_ROTATION_INTERVAL_MS } = {}) {
     pause();
     if (!messages?.length) return;
     let index = 0;
