@@ -1,0 +1,27 @@
+/*
+ * Typography helpers — shared inline-text styles used across the suite.
+ *
+ * Apps consume these as CSS classes on any element (`<p>`, `<span>`,
+ * `<ion-label>`, etc.) without needing a Vue wrapper for every variant.
+ *
+ * Apps override at their own `:root` or via theme.css when they want
+ * suite-wide adjustments — last one wins, so per-app palettes stay
+ * possible without touching the layer.
+ */
+
+/*
+ * .hint — italic muted helper text. Sits next to or below a form
+ * control, a list item, or a card body to add quiet context that
+ * doesn't compete with the primary content. Works on any element so
+ * `<p>` and `<ion-label>` both pick up the same treatment.
+ *
+ *   <p class="hint">Waiting for them to accept</p>
+ *   <ion-label class="hint">No reflections yet — your first one is waiting.</ion-label>
+ *
+ * Note: tighter layout variants (`margin: 0`, centered, larger size)
+ * keep their own scoped overrides — this is the consensus default.
+ */
+.hint {
+  font-style: italic;
+  color: var(--ion-color-medium);
+}

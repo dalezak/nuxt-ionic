@@ -28,7 +28,9 @@ export default defineNuxtConfig({
   css: [
     join(currentDir, 'app/assets/styles/default-white.css'),
     join(currentDir, 'app/assets/styles/default-dark.css'),
-    join(currentDir, 'app/assets/styles/transition.css')
+    join(currentDir, 'app/assets/styles/transition.css'),
+    join(currentDir, 'app/assets/styles/card-tokens.css'),
+    join(currentDir, 'app/assets/styles/typography.css')
   ],
   modules: [
     '@pinia/nuxt',
@@ -87,6 +89,10 @@ export default defineNuxtConfig({
         '@ionic/vue',
         'vue-next-masonry',
         'ionicons/icons',
+        // `pluralize` ships as UMD/CJS; without explicit pre-bundling, Vite
+        // serves the raw file and its `root.pluralize = ...` browser-global
+        // fallback throws under strict ESM (root is undefined).
+        'pluralize',
       ]
     }
   },

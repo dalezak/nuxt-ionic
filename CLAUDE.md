@@ -342,6 +342,15 @@ Generic UI primitives lifted from suite apps. Use these directly via auto-import
 - **`<EmptyState>`** (`empty-state.vue`) — "no items here" surface for lists. Props: `icon` (Ionic icon constant, required), `title` (required), `subtitle` (optional).
 - **`<WheelChart>`** (`wheel-chart.vue`) — hand-rolled SVG radial/wheel-of-life chart with N axes. Each axis shows a labeled wedge that fills from center to the data value (max at outer ring). Themed via Ionic CSS variables. Props: `axes` (array of `{ label, value, max? }`) — tappable wedges emit click events. Use for pillar wheels, skill radars, virtue maps — any "score across N dimensions" surface where balance/shape matters more than ranking.
 - **`<AccentCard>`** (`accent-card.vue`) — wrapped `<ion-card>` with a colored header strip + title + optional subtitle/icon. Slot-based content. Props: `title` (required), `subtitle`, `icon`, `color` (default `'primary'`).
+- **`<SectionCard>`** (`section-card.vue`) — the workhorse card primitive for the suite. Wraps `<ion-card>` / `<ion-card-header>` / `<ion-card-title>` / `<ion-card-content>` with a consistent header + body + footer shape plus an optional left-accent stripe that encodes the card's *purpose* (`learn` / `act` / `reflect` / `witness` / `nudge` / `alert`). Chrome (radius, shadow, background, margin) is left to Ionic's `<ion-card>` defaults so per-platform adaptations work for free; the token palette (see `card-tokens.css`) governs the geometry + accent palette layered on top, and apps re-skin via `theme.css` without forking the primitive.
+
+  Props (all optional unless noted): `accent` (semantic name; validated against the 6-name set), `accentColor` (raw color override for data-driven accents — pillar colors, user-picked themes; accepts any CSS color), `icon` (top-left ionicon), `iconColor` (override; defaults to follow accent), `title`, `subtitle`, `disclosure` (top-right chevron — shortcut for nav cards), `tappable` (whole-card button shape), `to` (router navigation; uses `<ion-card>`'s built-in `router-link` prop). Slots: `#media` (full-bleed image/video above the header — edge-to-edge of the card), `#header` (escape hatch — replaces whole header), default (body), `#footer` (any footer content), `#header-end` (top-right area; wins over `disclosure` if filled).
+
+  When an accent stripe is present, header/body/footer left padding is auto-shifted by `--card-accent-width` so content breathes against the bar — declarative via the `.section-card--has-accent` class, no per-slot guard logic.
+
+  **Accessibility:** when `tappable` or `to` is set the card becomes a focusable button. Pass a meaningful `title` (or `aria-label` on the host) so screen readers can name the action.
+
+  Use this for ~70% of cards. Use `<AccentCard>` for the colored-header-bar treatment when you want the title visually emphasized.
 - **`<StepTimeline>`** (`step-timeline.vue`) — vertical sequence of steps rendered as connected nodes down a left-edge rail (✓ completed / ◯ current / ◯ upcoming). Communicates progression through a sequence — today's plan, daily ritual, onboarding flow — rather than a flat list. Props: `steps` (array of `{ id, title, subtitle?, status? }`); status is auto-derived as the first non-completed step if not set. Slots: `step` (global body override), `step-{id}` (per-step override). Emits `step-click(step, index)`.
 - **`<ShareButton>`**, **`<SharePopover>`** — see share-social pattern.
 
@@ -406,6 +415,21 @@ Theme variants live in `app/assets/styles/themes/*.css` as `:root { --ion-* }` o
 ```
 
 Components reference Ionic CSS variables (`var(--ion-color-primary)`, `var(--ion-text-color)`, `var(--ion-color-medium)`) — never hardcoded hex. Use semantic Ionic colors (`color="primary"`, `color="success"`, etc.) on components.
+
+### Card tokens (`card-tokens.css`)
+
+A layer of design tokens *on top of* Ionic's theme, scoped to card surfaces. Single source of truth for radius, padding, shadow, accent-stripe width, and the semantic *purpose-accent* palette consumed by `<SectionCard>`.
+
+```css
+/* Geometry */    --card-radius / --card-padding / --card-header-gap / etc.
+/* Depth */       --card-shadow / --card-shadow-hover
+/* Surface */     --card-background / --card-border
+/* Accent */      --card-accent-learn / -act / -reflect / -witness / -nudge / -alert
+```
+
+Apps can override any token at their own `:root` (typically in `theme.css`) — last one wins, so per-app palettes stay possible without forking layer code. The semantic accent names (`learn`, `act`, etc.) encode the card's *purpose*, not its color, so re-skinning the suite is one CSS-var change per token, not a sweep across every card.
+
+The card primitives use `<ion-card>` underneath, so Ionic's iOS-vs-Android visual adaptations + theme inheritance work for free. The card tokens are additive.
 
 ## Testing
 

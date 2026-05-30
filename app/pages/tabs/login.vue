@@ -8,47 +8,38 @@
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true" class="ion-padding">
-      <ion-grid>
-        <ion-row class="ion-justify-content-center">
-          <ion-col size="12" size-sm="12" size-md="10" size-lg="8" size-xl="6">
-            <ion-card class="ion-margin">
-              <ion-card-header>
-                <ion-card-title v-if="isSignup">Welcome</ion-card-title>
-                <ion-card-title v-else-if="isLogin">Welcome back</ion-card-title>
-                <ion-card-title v-else-if="isReset">Forgot password</ion-card-title>
-                <ion-card-subtitle v-if="isSignup">Enter your name, email, and password</ion-card-subtitle>
-                <ion-card-subtitle v-else-if="isLogin">Enter your email and password</ion-card-subtitle>
-                <ion-card-subtitle v-else-if="isReset">Enter your email</ion-card-subtitle>
-              </ion-card-header>
-              <ion-item lines="inset" v-if="isSignup">
-                <ion-input type="text" label="Name" label-placement="floating" ref="state.nameInput" v-model="state.name" :required="isSignup" v-on:keyup.enter="onEnter"></ion-input>
-              </ion-item>
-              <ion-item lines="inset" v-if="isSignup || isLogin || isReset">
-                <ion-input type="text" label="Email" label-placement="floating" ref="state.emailInput" v-model="state.email" required v-on:keyup.enter="onEnter"></ion-input>
-              </ion-item>
-              <ion-item lines="inset" v-if="isSignup || isLogin">
-                <ion-input type="password" label="Password" label-placement="floating" ref="state.passwordInput" v-model="state.password" :required="isSignup || isLogin" v-on:keyup.enter="onEnter"></ion-input>
-              </ion-item>
-              <ion-card-content>
-                <ion-row>
-                  <ion-col class="ion-no-padding ion-text-end">
-                    <ion-button fill="solid" @click="doSignup" v-if="isSignup">Signup</ion-button>
-                    <ion-button fill="solid" @click="doLogin" v-else-if="isLogin">Login</ion-button>
-                    <ion-button fill="solid" @click="doReset" v-else-if="isReset">Email Instructions</ion-button>
-                  </ion-col>
-                </ion-row>
-              </ion-card-content>
-            </ion-card>
-            <ion-card class="ion-margin">
-              <ion-card-content>
-                <ion-button fill="clear" @click="loginForm" v-if="isSignup || isReset">Already have an account?</ion-button>
-                <ion-button fill="clear" @click="signupForm" v-if="isLogin || isReset">Don't have an account?</ion-button>
-                <ion-button fill="clear" @click="resetForm" v-if="isLogin">Forgot your password?</ion-button>
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
+      <page-content>
+
+        <section-card
+          :title="formTitle"
+          :subtitle="formSubtitle">
+          <ion-list>
+            <ion-item lines="inset" v-if="isSignup">
+              <ion-input type="text" label="Name" label-placement="floating" ref="state.nameInput" v-model="state.name" :required="isSignup" v-on:keyup.enter="onEnter"></ion-input>
+            </ion-item>
+            <ion-item lines="inset" v-if="isSignup || isLogin || isReset">
+              <ion-input type="text" label="Email" label-placement="floating" ref="state.emailInput" v-model="state.email" required v-on:keyup.enter="onEnter"></ion-input>
+            </ion-item>
+            <ion-item lines="inset" v-if="isSignup || isLogin">
+              <ion-input type="password" label="Password" label-placement="floating" ref="state.passwordInput" v-model="state.password" :required="isSignup || isLogin" v-on:keyup.enter="onEnter"></ion-input>
+            </ion-item>
+          </ion-list>
+          <template #footer>
+            <div class="ion-text-end">
+              <ion-button fill="solid" @click="doSignup" v-if="isSignup">Signup</ion-button>
+              <ion-button fill="solid" @click="doLogin" v-else-if="isLogin">Login</ion-button>
+              <ion-button fill="solid" @click="doReset" v-else-if="isReset">Email Instructions</ion-button>
+            </div>
+          </template>
+        </section-card>
+
+        <section-card>
+          <ion-button fill="clear" @click="loginForm" v-if="isSignup || isReset">Already have an account?</ion-button>
+          <ion-button fill="clear" @click="signupForm" v-if="isLogin || isReset">Don't have an account?</ion-button>
+          <ion-button fill="clear" @click="resetForm" v-if="isLogin">Forgot your password?</ion-button>
+        </section-card>
+
+      </page-content>
     </ion-content>
   </ion-page>
 </template>
@@ -74,8 +65,25 @@ let isLogin = computed(() => state.form == "login");
 let isSignup = computed(() => state.form == "signup");
 let isReset = computed(() => state.form == "reset");
 
+// Header text per form mode — lifted to computeds so the template
+// stays declarative and the section-card primitive can stay generic.
+const formTitle = computed(() => {
+  if (isSignup.value) return "Welcome";
+  if (isLogin.value) return "Welcome back";
+  if (isReset.value) return "Forgot password";
+  return null;
+});
+
+const formSubtitle = computed(() => {
+  if (isSignup.value) return "Enter your name, email, and password";
+  if (isLogin.value) return "Enter your email and password";
+  if (isReset.value) return "Enter your email";
+  return null;
+});
+
 const usersStore = useUsersStore();
-  
+const route = useRoute();
+
 function loginForm() {
   state.form = "login";
 }
@@ -101,13 +109,13 @@ function hasPassword() {
 }
 
 function onEnter() {
-  if (isSignup && hasName() && hasEmail() && hasPassword()) {
+  if (isSignup.value && hasName() && hasEmail() && hasPassword()) {
     doSignup();
   }
-  else if (isLogin && hasEmail() && hasPassword()) {
+  else if (isLogin.value && hasEmail() && hasPassword()) {
     doLogin();
   }
-  else if (isReset && hasEmail()) {
+  else if (isReset.value && hasEmail()) {
     doReset();
   }
 }
@@ -117,7 +125,7 @@ function onEnter() {
 // instead of the tab index. Only relative paths are honored — guards
 // against `?return=https://evil.example` open-redirects.
 function returnPath() {
-  const raw = useRoute().query.return;
+  const raw = route.query.return;
   return typeof raw === 'string' && raw.startsWith('/') ? raw : null;
 }
 
@@ -212,6 +220,3 @@ function clearInputs() {
   state.password = "";
 }
 </script>
-
-<style scoped>
-</style>

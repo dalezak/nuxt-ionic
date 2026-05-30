@@ -10,7 +10,7 @@
       </ion-button>
     </transition>
     <transition appear name="fade" mode="out-in">
-      <div v-if="loading == false && count == 0 && limit > 0">
+      <div v-if="loading == false && count == 0">
         <slot name="empty">
           <ion-card class="ion-margin">
             <ion-card-header>
