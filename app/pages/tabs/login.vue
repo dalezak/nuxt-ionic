@@ -13,16 +13,10 @@
         <section-card
           :title="formTitle"
           :subtitle="formSubtitle">
-          <ion-list>
-            <ion-item lines="inset" v-if="isSignup">
-              <ion-input type="text" label="Name" label-placement="floating" ref="state.nameInput" v-model="state.name" :required="isSignup" v-on:keyup.enter="onEnter"></ion-input>
-            </ion-item>
-            <ion-item lines="inset" v-if="isSignup || isLogin || isReset">
-              <ion-input type="text" label="Email" label-placement="floating" ref="state.emailInput" v-model="state.email" required v-on:keyup.enter="onEnter"></ion-input>
-            </ion-item>
-            <ion-item lines="inset" v-if="isSignup || isLogin">
-              <ion-input type="password" label="Password" label-placement="floating" ref="state.passwordInput" v-model="state.password" :required="isSignup || isLogin" v-on:keyup.enter="onEnter"></ion-input>
-            </ion-item>
+          <ion-list lines="none" class="login-fields">
+            <ion-input v-if="isSignup" type="text" label="Name" label-placement="floating" mode="md" fill="outline" ref="state.nameInput" v-model="state.name" :required="isSignup" v-on:keyup.enter="onEnter" class="login-input"></ion-input>
+            <ion-input v-if="isSignup || isLogin || isReset" type="text" label="Email" label-placement="floating" mode="md" fill="outline" ref="state.emailInput" v-model="state.email" required v-on:keyup.enter="onEnter" class="login-input"></ion-input>
+            <ion-input v-if="isSignup || isLogin" type="password" label="Password" label-placement="floating" mode="md" fill="outline" ref="state.passwordInput" v-model="state.password" :required="isSignup || isLogin" v-on:keyup.enter="onEnter" class="login-input"></ion-input>
           </ion-list>
           <template #footer>
             <div class="ion-text-end">
@@ -220,3 +214,17 @@ function clearInputs() {
   state.password = "";
 }
 </script>
+
+<style scoped>
+.login-fields {
+  background: transparent;
+  padding: 0;
+}
+
+/* Space between inputs since they're no longer wrapped in ion-item
+   rows that provided implicit row spacing. Last input gets an extra
+   bottom margin — fine since the footer button has its own spacing. */
+.login-input {
+  margin-bottom: 0.75rem;
+}
+</style>
