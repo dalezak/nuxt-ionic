@@ -132,7 +132,7 @@ function finishAuth() {
 async function doLogin() {
   if (hasEmail() && hasPassword()) {
     try {
-      showLoading("Logging in...");
+      await showLoading("Logging in...");
       let user = await usersStore.userLogin({
         email: state.email,
         password: state.password
@@ -158,7 +158,7 @@ async function doLogin() {
 async function doSignup() {
   if (hasName() && hasEmail() && hasPassword()) {
     try {
-      showLoading("Signing up...");
+      await showLoading("Signing up...");
       let user = await usersStore.userSignup({
         name: state.name,
         email: state.email,
@@ -194,6 +194,7 @@ async function doSignup() {
 async function doReset() {
   if (hasEmail()) {
     try {
+      await showLoading("Sending reset email...");
       await usersStore.resetPassword({
         email: state.email
       });
@@ -218,7 +219,10 @@ function clearInputs() {
 <style scoped>
 .login-fields {
   background: transparent;
-  padding: 0;
+  /* Top padding clears the first floating label — MD's `label-placement="floating"`
+     positions the active label ~8px above the input outline, and section-card's
+     `overflow: hidden` (for stripe clipping) would otherwise crop it. */
+  padding: 0.5rem 0 0;
 }
 
 /* Space between inputs since they're no longer wrapped in ion-item

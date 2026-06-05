@@ -26,6 +26,7 @@
             :debounce="debounce"
             show-cancel-button="never"
             class="search-bar"
+            :class="{ 'search-bar--outline': fill === 'outline' }"
             @update:model-value="$emit('update:search', $event)">
           </ion-searchbar>
         </ion-col>
@@ -42,6 +43,11 @@ defineProps({
   label: { type: String, default: null },
   placeholder: { type: String, default: 'Search...' },
   debounce: { type: Number, default: 200 },
+  // Searchbar chrome. 'clear' (default) keeps the borderless input that
+  // blends into the card; 'outline' draws a 1px ring so the input reads
+  // as a distinct field. Done via the searchbar's --box-shadow var so it
+  // works in either Ionic mode (ion-searchbar has no `fill` prop itself).
+  fill: { type: String, default: 'clear', validator: (v) => ['clear', 'outline'].includes(v) },
 });
 
 defineEmits(['update:modelValue', 'update:search']);
@@ -66,5 +72,16 @@ defineEmits(['update:modelValue', 'update:search']);
   padding-top: 0;
   padding-bottom: 0;
   max-width: 260px;
+}
+
+/* Outline variant — a 1px inset ring via the searchbar's --box-shadow
+   var (works in either Ionic mode, no `fill` prop on ion-searchbar).
+   Colour + radius mirror Ionic's MD `fill="outline"` defaults
+   (--ion-color-step-300 border, 4px radius) so the field matches the
+   app's other outlined inputs (e.g. the reflection textareas). */
+.search-bar--outline {
+  --box-shadow: inset 0 0 0 1px var(--ion-color-step-300, #b3b3b3);
+  --border-radius: 4px;
+  --background: var(--ion-background-color, #fff);
 }
 </style>
