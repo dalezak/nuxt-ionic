@@ -95,6 +95,12 @@ const activeStyle = computed(() => ({
   outline-offset: 2px;
   color: var(--ion-color-warning-tint);
 }
+/* Today, not yet done — soft inner fill so it reads as a present marker rather
+   than a hollow ring. Lighter than a completed day's solid fill (which comes
+   from the inline active style), so "today, not yet" stays distinct from "done". */
+.weekly-day.is-today .weekly-day-dot:not(.active) {
+  background: rgba(var(--ion-color-warning-rgb), 0.22);
+}
 .weekly-day.is-today .weekly-day-label {
   color: var(--ion-color-warning-shade);
 }
