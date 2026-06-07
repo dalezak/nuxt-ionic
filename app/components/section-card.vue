@@ -325,6 +325,10 @@ function onClick(event) {
   font-size: var(--card-title-size);
   font-weight: var(--card-title-weight);
   margin: 0;
+  /* Break long words so a long title wraps inside the card on narrow screens
+     instead of overflowing the header row. The titles container is min-width:0
+     so normal multi-word titles already wrap; this covers unbreakable strings. */
+  overflow-wrap: break-word;
 }
 
 .section-card-subtitle {
@@ -332,6 +336,7 @@ function onClick(event) {
   font-size: var(--card-subtitle-size);
   color: var(--card-subtitle-color);
   line-height: 1.4;
+  overflow-wrap: break-word;
 }
 
 .section-card-header-end {
