@@ -11,7 +11,7 @@
         <section-card
           title="Change password"
           subtitle="Enter your new password">
-          <ion-input type="password" label="Password" label-placement="floating" mode="md" fill="outline" ref="state.passwordInput" v-model="state.password" required></ion-input>
+          <ion-input type="password" autocapitalize="off" autocorrect="off" spellcheck="false" label="Password" label-placement="floating" mode="md" fill="outline" ref="state.passwordInput" v-model="state.password" required></ion-input>
           <template #footer>
             <div class="ion-text-end">
               <ion-button fill="solid" @click="doUpdate">Update Password</ion-button>

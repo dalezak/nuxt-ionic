@@ -14,9 +14,9 @@
           :title="formTitle"
           :subtitle="formSubtitle">
           <ion-list lines="none" class="login-fields">
-            <ion-input v-if="isSignup" type="text" label="Name" label-placement="floating" mode="md" fill="outline" ref="state.nameInput" v-model="state.name" :required="isSignup" v-on:keyup.enter="onEnter" class="login-input"></ion-input>
-            <ion-input v-if="isSignup || isLogin || isReset" type="text" label="Email" label-placement="floating" mode="md" fill="outline" ref="state.emailInput" v-model="state.email" required v-on:keyup.enter="onEnter" class="login-input"></ion-input>
-            <ion-input v-if="isSignup || isLogin" type="password" label="Password" label-placement="floating" mode="md" fill="outline" ref="state.passwordInput" v-model="state.password" :required="isSignup || isLogin" v-on:keyup.enter="onEnter" class="login-input"></ion-input>
+            <ion-input v-if="isSignup" type="text" autocapitalize="words" autocorrect="off" spellcheck="false" label="Name" label-placement="floating" mode="md" fill="outline" ref="state.nameInput" v-model="state.name" :required="isSignup" v-on:keyup.enter="onEnter" class="login-input"></ion-input>
+            <ion-input v-if="isSignup || isLogin || isReset" type="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" label="Email" label-placement="floating" mode="md" fill="outline" ref="state.emailInput" v-model="state.email" required v-on:keyup.enter="onEnter" class="login-input"></ion-input>
+            <ion-input v-if="isSignup || isLogin" type="password" autocapitalize="off" autocorrect="off" spellcheck="false" label="Password" label-placement="floating" mode="md" fill="outline" ref="state.passwordInput" v-model="state.password" :required="isSignup || isLogin" v-on:keyup.enter="onEnter" class="login-input"></ion-input>
           </ion-list>
           <template #footer>
             <div class="ion-text-end">
