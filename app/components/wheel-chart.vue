@@ -19,6 +19,19 @@
         stroke-opacity="0.15"
         stroke-width="1"></circle>
 
+      <!-- Full-area tap targets — one per segment, the whole pie slice out to
+           max radius. So a segment is selectable even when its score is 0 (an
+           unrated wheel has no visible wedge to tap). Transparent fill still
+           captures pointer events; `fill="none"` would not. Rendered first so
+           the colored wedges + their hover sit on top. -->
+      <path
+        v-for="(seg, i) in segments"
+        :key="`hit-${seg.key}`"
+        :d="wedgePath(i, max)"
+        fill="transparent"
+        class="tappable"
+        @click="$emit('select', seg)"></path>
+
       <!-- Wedges, one per segment, filled to the rating value -->
       <path
         v-for="(seg, i) in segments"

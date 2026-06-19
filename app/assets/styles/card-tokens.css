@@ -54,3 +54,29 @@
   --card-accent-nudge:    var(--ion-color-warning);     /* attention / soft prompt */
   --card-accent-alert:    var(--ion-color-danger);      /* warnings, comebacks */
 }
+
+/*
+ * Horizontal spacing is owned by the PAGE CONTAINER (the <page-content>
+ * column + <ion-content class="ion-padding">), never by individual cards.
+ *
+ * Ionic's <ion-card> ships a default inline (left/right) margin — 10px on
+ * Material, 16px on iOS — so out of the box every card is inset from the
+ * container edge by a platform-dependent amount, leaving cards misaligned
+ * with flush content like <section-heading> / <section-lede> and inconsistent
+ * across iOS vs web. Zeroing the inline margin makes every card surface
+ * (section-card, accent-card, and any raw ion-card) align to the one content
+ * edge the container defines.
+ *
+ * Only the INLINE (left/right) axis is zeroed — vertical (block) margin is
+ * left to Ionic's default so cards keep their top/bottom stacking gap.
+ *
+ * `!important` is required: Ionic sets the margin via `:host { margin-inline-
+ * start: 10px }`, and a `:host` rule (specificity 0,1,0) outranks a plain
+ * `ion-card` selector (0,0,1). A deliberate per-card override via the
+ * `.ion-margin` utility still wins (higher specificity, also !important).
+ * Cards laid out in a horizontal row/grid should space with `gap` on their
+ * flex/grid container, not card margins.
+ */
+ion-card {
+  margin-inline: 0 !important;
+}

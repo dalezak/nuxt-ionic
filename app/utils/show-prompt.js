@@ -1,23 +1,27 @@
 import { alertController } from "@ionic/vue";
 
 /**
- * Presents an Ionic alert with a text input and Cancel / Ok buttons.
+ * Presents an Ionic alert with a single input and Cancel / Ok buttons.
  * Resolves with the entered string on Ok, or null on Cancel.
  * @param {string} title - Alert header.
  * @param {string|null} message - Optional body text.
  * @param {string} placeholder - Input placeholder text.
  * @param {string} defaultValue - Pre-filled input value.
+ * @param {string} type - Input type, e.g. 'text' (default), 'textarea' (wraps
+ *   multi-line, for sentence-length input), 'email', 'number', 'password'.
  * @returns {Promise<string|null>}
  * @example
  * const name = await showPrompt('Create Group', 'Enter a group name:', 'Group name');
+ * @example
+ * const note = await showPrompt('Begin the day', null, '', draft, 'textarea');
  */
-export default async function (title, message = null, placeholder = '', defaultValue = '') {
+export default async function (title, message = null, placeholder = '', defaultValue = '', type = 'text') {
   if (import.meta.client) {
     let result = null;
     const alert = await alertController.create({
       header: title,
       message: message ?? undefined,
-      inputs: [{ name: 'value', type: 'text', placeholder, value: defaultValue }],
+      inputs: [{ name: 'value', type, placeholder, value: defaultValue }],
       buttons: [
         { text: 'Cancel', role: 'cancel' },
         { text: 'Ok', handler: (data) => { result = data.value ?? null; } }

@@ -1,6 +1,5 @@
 const ROUTES = {
   HOME: '/',
-  LOGIN: '/login',
   RESET: '/reset',
   LOGOUT: '/logout',
 };
@@ -10,14 +9,18 @@ export default defineNuxtRouteMiddleware(async(to, from) => {
   const page = tabs.find(tab => tab.path == to.path);
   const { isAuthenticated } = useAuthSession();
 
+  // Bounce an unauthenticated user off a private route onto the first public
+  // tab (e.g. the start page). `?login` triggers the login-prompt plugin to
+  // auto-open the login modal; `?return` lands them back on the page they
+  // wanted once they authenticate. (Login is a modal now, not a route.)
+  const publicTab = tabs.find(tab => tab.public == true);
+  const loginBounce = (returnPath) => navigateTo({
+    path: publicTab?.path ?? ROUTES.HOME,
+    query: { login: '1', return: returnPath },
+  });
+
   consoleLog(`auth ${isAuthenticated.value ? "private" : "public" } from ${from.path} to ${to.path}`);
-  if (to.path == ROUTES.LOGIN || to.path == '/tabs/login') {
-    if (isAuthenticated.value) {
-      return navigateTo(ROUTES.HOME);
-    }
-    return;
-  }
-  else if (to.path == ROUTES.RESET || to.path == '/tabs/reset') {
+  if (to.path == ROUTES.RESET || to.path == '/tabs/reset') {
     if (isAuthenticated.value) {
       return navigateTo(ROUTES.HOME);
     }
@@ -36,13 +39,13 @@ export default defineNuxtRouteMiddleware(async(to, from) => {
     if (isAuthenticated.value) {
       return;
     }
-    return navigateTo(ROUTES.LOGIN);
+    return loginBounce(to.path);
   }
   else if (isAuthenticated.value) {
     return;
   }
   else {
-    return navigateTo(ROUTES.LOGIN);
+    return loginBounce(to.path);
   }
 
 });

@@ -18,9 +18,12 @@
     best-self: "."    → "Good afternoon, Dale."
     love-well: "."    → "Good afternoon, Dale."
 
-  Slot content stacks below the title and inherits the welcome's
-  horizontal padding so taglines, week-strips, and promise lines align
-  with the greeting.
+  Slot content stacks below the title and shares the welcome's box, so
+  taglines, week-strips, and promise lines align with the greeting — and,
+  because the welcome adds no horizontal padding of its own, with every
+  other surface at the page container's content edge (cards, section
+  headings). Horizontal spacing is owned by the page container, never by
+  this component (same rule as cards — see card-tokens.css).
 
   Example:
 
@@ -39,6 +42,9 @@ defineProps({
 
 <style scoped>
 .page-welcome {
-  padding: 1rem 1rem 0;
+  /* Top spacing only — horizontal padding is the page container's job, so the
+     greeting + slot (tagline, week-strip) align with cards and section
+     headings at the content edge instead of being inset an extra 1rem. */
+  padding: 1rem 0 0;
 }
 </style>

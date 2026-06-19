@@ -10,6 +10,51 @@
  */
 
 /*
+ * Bundled color-emoji font — the robust, all-apps, all-data emoji fix.
+ *
+ * The problem: emoji aren't just hardcoded UI glyphs (relationship-type /
+ * onboarding pickers) — they appear in DATA too (badge names, seed content),
+ * so an icon-set swap can't cover them. And the platform emoji font can't be
+ * relied on: the iOS Simulator ships no color-emoji font (tofu "?" boxes),
+ * Android's varies, and web depends on the visitor's OS. The only thing that
+ * renders ANY emoji identically everywhere — Simulator, device, Android, web,
+ * hardcoded or DB-driven — is a color-emoji font WE bundle and ship.
+ *
+ * Noto Color Emoji (COLRv1 vector, ~5MB) lives in this layer's
+ * `public/fonts/` so every consuming app inherits it (Nuxt merges layer
+ * public dirs; served at `/fonts/...`, bundled locally in the Capacitor build
+ * so mobile pays no network cost). COLRv1 needs modern WebKit/Chromium
+ * (iOS 16.4+); older iOS falls through to the platform emoji fonts below,
+ * which those real devices actually have — so no target sees tofu.
+ *
+ * No `unicode-range`: the font is still lazy — a browser only downloads it
+ * when an emoji actually needs rendering (it sits after the text fonts, so
+ * it's never selected for latin). Omitting the range keeps coverage TOTAL,
+ * so a future badge/seed emoji in an unlisted block can't reintroduce tofu —
+ * robustness over shaving a one-time, cached fetch.
+ */
+@font-face {
+  font-family: "App Emoji";
+  src: url("/fonts/TwemojiMozilla-COLRv0.ttf") format("truetype");
+  font-display: swap;
+}
+
+/*
+ * Append emoji fonts to Ionic's text stack. Our bundled "App Emoji" (Twemoji
+ * Mozilla, COLRv0) comes first — COLRv0 has far broader WebKit support than
+ * COLRv1 (which iOS WebKit registered but rendered blank), so it paints even
+ * in the iOS Simulator, whose Apple Color Emoji ships no glyph data. The
+ * platform emoji fonts follow as graceful fallback for any target where the
+ * bundled font fails. Ionic's `--ion-default-font` stays intact for latin text.
+ */
+:root {
+  --ion-font-family:
+    var(--ion-default-font),
+    "App Emoji",
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+/*
  * .hint — italic muted helper text. Sits next to or below a form
  * control, a list item, or a card body to add quiet context that
  * doesn't compete with the primary content. Works on any element so
@@ -24,4 +69,27 @@
 .hint {
   font-style: italic;
   color: var(--ion-color-medium);
+}
+
+/*
+ * Floating-label animation fix for WebKit (Safari + iOS WKWebView).
+ *
+ * Ionic's `ion-input` floating label animates via `transition: transform 150ms`
+ * on `.label-text-wrapper` (the label sliding from the field up to the top).
+ * Chromium plays it; WebKit *snaps* the transform instead of interpolating it —
+ * a long-standing WebKit quirk where a transform transition is skipped when the
+ * element's box also changes (the floated state also shifts `max-width`) in the
+ * same style pass. Promoting the label to its own compositing layer
+ * (`translateZ(0)` via `backface-visibility` + `will-change`) makes WebKit
+ * commit a "from" frame and actually run the 150ms transition.
+ *
+ * `ion-input` is a *scoped* Stencil component (light DOM, `.sc-ion-input-*`
+ * classes), so this global rule reaches the internal label wrapper. Scoped to
+ * the input label only — it doesn't touch the transform Ionic animates, just
+ * hints compositing. Set on the layer so every app's forms benefit.
+ */
+ion-input .label-text-wrapper {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform;
 }

@@ -20,8 +20,8 @@ import { bookOutline } from 'ionicons/icons';
 // Standardized visual + interaction so users learn one affordance and
 // recognize provenance across the app — tap goes back to the source.
 //
-// Distinct from `labeled-chip.vue` (a taxonomy / category pill) — the
-// provenance chip is sentence-cased, larger, and always tappable.
+// Distinct from `label-chips.vue` (the static metadata/tag pill row) — the
+// provenance chip is larger and always tappable (a back-link, not a tag).
 //
 // Example usage:
 //

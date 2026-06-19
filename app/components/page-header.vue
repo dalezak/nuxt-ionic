@@ -1,26 +1,65 @@
 <!--
-  page-header — a page's primary title + description block (one per page, h1),
-  so detail pages (e.g. a Course detail and a Lesson summary) stay visually
-  consistent: same type scale, spacing, and muted description. Sits inside
-  page content — distinct from <app-header>, which is the Ionic nav toolbar.
-  Page-specific extras go in slots:
-    #meta    — a line directly under the title (e.g. duration, "Paired with …")
-    default  — anything after the description (e.g. a progress bar + % text)
+  page-header — a page's primary title block (one per page, h1), so detail
+  pages (e.g. a Course detail and a Lesson summary) stay visually consistent:
+  same type scale, spacing, italic subtitle, chip row, muted description, and
+  progress bar. Sits inside page content — distinct from <app-header>, the
+  Ionic nav toolbar.
+
+  Props (all optional except title):
+    title       — the h1
+    subtitle    — an italic secondary line under the title (e.g. a tagline)
+    chips       — [{ label, icon? | emoji? }] → a row of uniform light-grey
+                  <ion-chip>s (category, level, duration, …). Each chip may
+                  carry an `icon` (ionicon) OR an `emoji` (string).
+    description — a muted paragraph below the chips
+    progress    — 0–1 fraction; when set, renders a thin progress bar + % label
+    cta         — { label, icon?, color?, disabled? } → a full-width primary
+                  button at the bottom; emits `cta` on click
+
+  Slot:
+    default     — content between the progress bar and the CTA (e.g. a detail
+                  caption, or other page-specific content).
 -->
 <template>
   <div class="page-header">
     <h1 class="page-header-title">{{ title }}</h1>
-    <slot name="meta" />
+    <p v-if="subtitle" class="page-header-subtitle">{{ subtitle }}</p>
+    <label-chips v-if="chips.length" :items="chips" class="page-header-chips" />
     <p v-if="description" class="page-header-description">{{ description }}</p>
+    <div v-if="progress != null" class="page-header-progress">
+      <ion-progress-bar :value="progress" color="success" class="page-header-progress-bar"></ion-progress-bar>
+      <span class="page-header-progress-label">{{ Math.round(progress * 100) }}%</span>
+    </div>
     <slot />
+    <ion-button
+      v-if="cta"
+      expand="block"
+      :color="cta.color || 'primary'"
+      :disabled="cta.disabled"
+      class="page-header-cta"
+      @click="$emit('cta')">
+      <ion-icon v-if="cta.icon" :icon="cta.icon" slot="start"></ion-icon>
+      {{ cta.label }}
+    </ion-button>
   </div>
 </template>
 
 <script setup>
 defineProps({
   title: { type: String, default: '' },
+  subtitle: { type: String, default: '' },
   description: { type: String, default: '' },
+  // [{ label, icon? | emoji? }] — a row of uniform light-grey ion-chips.
+  // `icon` is an ionicon object; `emoji` is a string. No per-chip color.
+  chips: { type: Array, default: () => [] },
+  // 0–1 fraction; when set, renders a thin progress bar with a derived % label.
+  progress: { type: Number, default: null },
+  // { label, icon?, color?, disabled? } — a full-width primary CTA button at
+  // the bottom of the header; emits `cta` on click. Omit for no button.
+  cta: { type: Object, default: null },
 });
+
+defineEmits(['cta']);
 </script>
 
 <style scoped>
@@ -33,10 +72,41 @@ defineProps({
   line-height: 1.25;
   margin: 0 0 0.5rem;
 }
+.page-header-subtitle {
+  font-size: 1.05rem;
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--ion-color-medium-shade);
+  margin: 0 0 0.5rem;
+}
+.page-header-chips {
+  margin: 0 0 0.75rem;
+}
 .page-header-description {
   font-size: 0.95rem;
   line-height: 1.5;
   color: var(--ion-color-medium-shade);
   margin: 0;
+}
+.page-header-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.85rem;
+}
+.page-header-progress-bar {
+  flex: 1;
+  height: 10px;
+  border-radius: 5px;
+}
+.page-header-progress-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--ion-color-medium);
+  min-width: 2.5rem;
+  text-align: right;
+}
+.page-header-cta {
+  margin-top: 1rem;
 }
 </style>

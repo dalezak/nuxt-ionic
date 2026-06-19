@@ -19,14 +19,17 @@
             </ion-select-option>
           </ion-select>
         </ion-col>
-        <ion-col v-if="placeholder !== undefined" size="auto">
+        <!-- When the bar is search-only (no label/select) the searchbar fills
+             the row (size=""); when it shares the row with a label/select it
+             stays content-width (size="auto") on the right. -->
+        <ion-col v-if="placeholder !== undefined" :size="(options?.length || label) ? 'auto' : ''">
           <ion-searchbar
             :model-value="search"
             :placeholder="placeholder"
             :debounce="debounce"
             show-cancel-button="never"
             class="search-bar"
-            :class="{ 'search-bar--outline': fill === 'outline' }"
+            :class="{ 'search-bar--outline': fill === 'outline', 'search-bar--full': !(options?.length || label) }"
             @update:model-value="$emit('update:search', $event)">
           </ion-searchbar>
         </ion-col>
@@ -72,6 +75,13 @@ defineEmits(['update:modelValue', 'update:search']);
   padding-top: 0;
   padding-bottom: 0;
   max-width: 260px;
+}
+/* Search-only bar: fill the card width instead of capping at 260px, so the
+   input (and its outline ring) spans the row rather than shrinking to the
+   icon. */
+.search-bar--full {
+  max-width: none;
+  width: 100%;
 }
 
 /* Outline variant — a 1px inset ring via the searchbar's --box-shadow
