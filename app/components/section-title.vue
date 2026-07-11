@@ -11,10 +11,10 @@
     <section-title>{{ greeting }}, {{ firstName }}.</section-title>
     <section-title>{{ course.title }}</section-title>
 
-  Sits ABOVE <section-heading> in the hierarchy:
+  Sits ABOVE <section-group> in the hierarchy:
 
     <section-title>      page hero — once per page
-    <section-heading>    grouping label — many per page
+    <section-group>      grouping label — many per page (static, or collapsible)
     <ion-list-header>    list caption — Ionic's built-in
 
   Slot-driven so consumers can include inline elements (icons, name

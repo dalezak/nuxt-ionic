@@ -1,0 +1,43 @@
+/*
+ * reveal-flash — a brief highlight bloomed on an element after it's scrolled
+ * into view (see the useRevealScroll composable). Pairs with an in-page
+ * "take me there" nav: the scroll lands you on the target but nothing says
+ * WHICH element to act on — the flash names it without a jarring blink. A soft
+ * ring that blooms then fades; contemplative, not attention-grabbing.
+ *
+ * Applied + removed by useRevealScroll().flashElement() — it adds the class and
+ * drops it on animationend. Ships in the layer so any app using the composable
+ * gets the effect for free, with no per-app copy to keep in sync.
+ *
+ * Colour follows the element's own `--accent-color` when it has one (a
+ * <section-card accent="act|reflect|learn|…"> exposes it on the same element
+ * that carries the id you scroll to), falling back to --ion-color-primary for
+ * plain surfaces. So a card flashes in its own semantic hue automatically.
+ *
+ * The ring is drawn with box-shadow (OUTSIDE the element, so a card's
+ * `overflow: hidden` doesn't clip it) and matches --card-radius so it hugs
+ * rounded cards. color-mix gives any accent hue a translucent bloom; where a
+ * webview lacks color-mix the ring simply doesn't paint and the scroll + focus
+ * still work — the effect degrades, the navigation doesn't.
+ */
+
+@keyframes reveal-flash {
+  0%   { box-shadow: 0 0 0 0 transparent; }
+  15%  { box-shadow: 0 0 0 4px var(--reveal-flash-ring); }
+  100% { box-shadow: 0 0 0 4px transparent; }
+}
+
+.reveal-flash {
+  --reveal-flash-ring: color-mix(in srgb, var(--accent-color, var(--ion-color-primary)) 35%, transparent);
+  animation: reveal-flash 1.4s ease-out;
+  border-radius: var(--card-radius, 12px);
+}
+
+/* Reduced-motion: skip the bloom, hold a static ring briefly so the
+   "which element" signal survives without animation. */
+@media (prefers-reduced-motion: reduce) {
+  .reveal-flash {
+    animation: none;
+    box-shadow: 0 0 0 3px var(--reveal-flash-ring);
+  }
+}

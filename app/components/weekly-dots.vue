@@ -65,7 +65,10 @@ const activeStyle = computed(() => ({
 .weekly-dots {
   display: flex;
   justify-content: space-between;
-  padding: 0.5rem 0;
+  /* Light top/bottom breathing room only — when placed in a card footer the
+     footer already supplies the outer gap, so the component keeps its own
+     padding minimal to avoid doubling up. */
+  padding: 0.25rem 0;
 }
 .weekly-day {
   display: flex;
@@ -84,7 +87,10 @@ const activeStyle = computed(() => ({
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  border: 1.5px solid var(--ion-color-light-shade);
+  /* Dashed outline for empty days so they read as "yet to come" rather than a
+     hard "missed". Active dots fill solid + border-color matches the fill, so
+     the dashes are invisible on them; today's ring is a separate outline. */
+  border: 1.5px dashed var(--ion-color-light-shade);
   background: transparent;
   transition: background 0.2s, border-color 0.2s;
 }

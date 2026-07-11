@@ -14,11 +14,12 @@ describe('textTitle', () => {
     expect(textTitle('hello world')).toBe('Hello World');
   });
 
-  it('title-cases an uppercase string', () => {
-    expect(textTitle('HELLO WORLD')).toBe('Hello World');
+  it('preserves all-uppercase words (acronyms)', () => {
+    expect(textTitle('self in IFS')).toBe('Self In IFS');
+    expect(textTitle('HELLO')).toBe('HELLO');
   });
 
-  it('title-cases a mixed-case string', () => {
+  it('title-cases a mixed-case (non-acronym) word', () => {
     expect(textTitle('hELLO wORLD')).toBe('Hello World');
   });
 

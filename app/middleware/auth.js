@@ -20,10 +20,12 @@ export default defineNuxtRouteMiddleware(async(to, from) => {
   });
 
   consoleLog(`auth ${isAuthenticated.value ? "private" : "public" } from ${from.path} to ${to.path}`);
+  // A Supabase password-recovery link signs the user in (a recovery session)
+  // BEFORE /reset renders — so bouncing authenticated users off /reset makes
+  // the reset form unreachable and recovery impossible. Always allow /reset
+  // through; the page owns setting the new password. (A normally-logged-in
+  // user visiting /reset just gets a change-password form, which is benign.)
   if (to.path == ROUTES.RESET || to.path == '/tabs/reset') {
-    if (isAuthenticated.value) {
-      return navigateTo(ROUTES.HOME);
-    }
     return;
   }
   else if (to.path == ROUTES.LOGOUT) {

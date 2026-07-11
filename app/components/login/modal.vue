@@ -202,7 +202,13 @@ async function doSignup() {
         email: state.email,
         password: state.password
       });
-      if (user) {
+      if (user?.confirmationPending) {
+        // Account created but email confirmation is required — no session yet.
+        // Don't navigate into the app (every RLS read would fail); tell the
+        // user to confirm, then log in.
+        showAlert("Check your email", `We sent a confirmation link to ${state.email}. Tap it to finish setting up your account, then log in.`);
+      }
+      else if (user) {
         showToast("Welcome friend");
         await finishAuth();
       }

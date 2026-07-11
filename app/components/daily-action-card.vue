@@ -7,6 +7,7 @@
     :subtitle="subtitle"
     disclosure
     :to="route"
+    :tappable="tappable"
     @click="$emit('click')" />
 </template>
 
@@ -19,7 +20,8 @@
 //
 // `route` uses section-card's built-in router-link navigation; the
 // `click` event still fires so callers can attach analytics or extra
-// side effects without taking over navigation.
+// side effects without taking over navigation. For an action that opens a
+// modal (no navigation), omit `route`, set `tappable`, and handle `@click`.
 //
 // Usage:
 //   <daily-action-card
@@ -35,6 +37,9 @@ defineProps({
   title: { type: String, required: true },
   subtitle: { type: String, default: '' },
   route: { type: String, default: null },
+  // Make the card tappable without navigating — for click-handled actions
+  // (e.g. opening a modal) where there's no `route`.
+  tappable: { type: Boolean, default: false },
 });
 
 defineEmits(['click']);

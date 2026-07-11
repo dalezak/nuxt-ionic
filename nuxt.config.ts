@@ -30,7 +30,8 @@ export default defineNuxtConfig({
     join(currentDir, 'app/assets/styles/default-dark.css'),
     join(currentDir, 'app/assets/styles/transition.css'),
     join(currentDir, 'app/assets/styles/card-tokens.css'),
-    join(currentDir, 'app/assets/styles/typography.css')
+    join(currentDir, 'app/assets/styles/typography.css'),
+    join(currentDir, 'app/assets/styles/reveal.css')
   ],
   modules: [
     '@pinia/nuxt',

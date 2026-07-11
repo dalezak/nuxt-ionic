@@ -2,16 +2,22 @@
   section-card — the workhorse card primitive for the suite. Wraps
   Ionic's `<ion-card>` family with a consistent header + body + footer
   shape, design-token-driven chrome, and an optional left-accent stripe
-  that encodes the card's PURPOSE (`learn` / `act` / `reflect` /
-  `witness` / `nudge` / `alert` — see `card-tokens.css`).
+  that encodes the card's MODE OF ENGAGEMENT — "what does this card want
+  from me?": `learn` (take in) · `act` (do) · `reflect` (turn inward) ·
+  `nudge` (respond) · `connect` (someone in your circle) · `alert` (careful).
+  Accent is opt-in — plain (no accent) is the default for neutral/glance
+  cards, so the accented ones read as signal. See `card-tokens.css` for the
+  rule. (`witness` is a legacy alias kept for any-learn.)
 
   The header row defaults to: [icon] [title + subtitle] [header-end slot
   or disclosure arrow]. Each piece is independently optional — every
   prop is nullable; pass only what you need.
 
-  Body is a default slot; footer is a slot. Footer markup varies too
-  much across cards (button, link, chip row, multiple actions) for
-  prop-shaped APIs to feel clean.
+  Body is a default slot. The footer supports both: prop-driven CTAs
+  (`primaryCta` / `secondaryCta` / `tertiaryCta` / `actions`) for the common
+  button case — centralized so spacing/order/fill stay consistent — AND a free-form
+  `#footer` slot for richer footers (links, chip rows, custom layout). The
+  slot renders above the prop CTAs, so they compose.
 
   Tappable + navigation:
     - `tappable` adds Ionic's `button` shape with hover/press states
@@ -123,12 +129,63 @@
       </slot>
     </ion-card-header>
 
-    <ion-card-content v-if="$slots.default" class="section-card-body">
+    <ion-card-content
+      v-if="$slots.default"
+      class="section-card-body"
+      :class="{ 'section-card-body--has-footer': hasFooter }">
       <slot />
     </ion-card-content>
 
-    <div v-if="$slots.footer" class="section-card-footer">
+    <div v-if="hasFooter" class="section-card-footer">
       <slot name="footer" />
+
+      <!-- Prop-driven CTAs — the common 1–3 button footer, centralized so
+           spacing/order/fill stay consistent across the suite. Left→right by
+           increasing prominence: tertiary (grey outline), secondary (outline),
+           primary (solid). Laid out as an ion-grid so they sit as equal columns
+           on wider screens and collapse to full-width stacked rows on small
+           screens (`size="12" size-md`). For anything richer (links, chip rows,
+           custom layout) use #footer. -->
+      <ion-grid v-if="resolvedCtas.length" class="section-card-ctas ion-no-padding">
+        <ion-row class="section-card-ctas-row">
+          <ion-col
+            v-for="c in resolvedCtas"
+            :key="c.kind"
+            class="ion-no-padding"
+            size="12"
+            size-md>
+            <ion-button
+              class="section-card-cta"
+              expand="block"
+              :fill="c.fill"
+              :color="c.color"
+              :disabled="c.cta.disabled || c.cta.loading || undefined"
+              @click.stop="run(c.cta, c.kind)">
+              <ion-spinner v-if="c.cta.loading" slot="start" name="dots" />
+              <ion-icon v-else-if="c.cta.icon" :icon="c.cta.icon" slot="start" />
+              {{ c.cta.label }}
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+      <!-- Additional/tertiary actions — clear icon+text buttons below the CTAs
+           (e.g. a quote's Favorite / Share / Reflect row). -->
+      <div v-if="actions.length" class="section-card-actions">
+        <ion-button
+          v-for="(a, i) in actions"
+          :key="a.key ?? i"
+          class="section-card-action"
+          fill="clear"
+          size="small"
+          :color="a.color || 'medium'"
+          :disabled="a.disabled || a.loading || undefined"
+          @click.stop="run(a, 'action', a.key ?? i)">
+          <ion-spinner v-if="a.loading" slot="start" name="dots" />
+          <ion-icon v-else-if="a.icon" :icon="a.icon" slot="start" />
+          {{ a.label }}
+        </ion-button>
+      </div>
     </div>
   </ion-card>
 </template>
@@ -149,7 +206,7 @@ const props = defineProps({
   accent: {
     type: String,
     default: null,
-    validator: (v) => v == null || ['learn', 'act', 'reflect', 'witness', 'nudge', 'alert'].includes(v),
+    validator: (v) => v == null || ['learn', 'act', 'reflect', 'nudge', 'connect', 'alert', 'witness'].includes(v),
   },
 
   // Raw color override for data-driven accents (e.g. a pillar color,
@@ -198,9 +255,38 @@ const props = defineProps({
   // Router navigation target. Uses ion-card's built-in `router-link`
   // support — no extra <NuxtLink> wrapper needed.
   to: { type: String, default: null },
+
+  // ── Footer CTAs (the common button-footer case, prop-driven) ──────────
+  // Primary/secondary render as a button row below the body; primary is
+  // solid, secondary outline (override via `fill`). Each is a self-describing
+  // action object:
+  //   { label, icon?, fill?, color?, disabled?, loading?, onClick? }
+  // `loading: true` swaps the icon for a spinner and disables the button (for
+  // in-flight saves). Tap runs the object's `onClick` if present, else emits
+  // `primary` / `secondary`. For richer footers (links, chip rows, custom
+  // layout), use the #footer slot — it still works and renders above these.
+  primaryCta: { type: Object, default: null },
+  secondaryCta: { type: Object, default: null },
+
+  // Tertiary CTA — a third button sharing the CTA row, sitting LEFT of
+  // secondary (weakest of the three). Same self-describing action-object shape
+  // as primary/secondary. Defaults to a subdued grey outline
+  // (`fill: 'outline'`, `color: 'medium'`) so it reads as the least prominent
+  // action without extra styling; override `fill`/`color` per use. Tap runs the
+  // object's `onClick` if present, else emits `tertiary`. Not to be confused
+  // with `actions` (clear icon+text buttons on their own row below the CTAs).
+  tertiaryCta: { type: Object, default: null },
+
+  // Additional/tertiary actions — an array of clear icon+text buttons below
+  // the CTAs (e.g. a quote's Favorite / Share / Reflect row). Each is the same
+  // action-object shape: { label, icon?, color?, disabled?, loading?, key?, onClick? }.
+  // Tap runs `onClick` if present, else emits `action` with `key` (or index).
+  // Build the array as a computed so labels/icons stay reactive (e.g. Favorite
+  // ⇄ Favorited). Order is preserved.
+  actions: { type: Array, default: () => [] },
 });
 
-const emit = defineEmits(['click']);
+const emit = defineEmits(['click', 'primary', 'secondary', 'tertiary', 'action']);
 
 // Resolve icon color: explicit prop wins, otherwise follow the accent.
 // Falls back to medium (Ionic's neutral gray) for un-accented icons so
@@ -208,6 +294,10 @@ const emit = defineEmits(['click']);
 const resolvedIconColor = computed(() => {
   if (props.iconColor) return props.iconColor;
   if (!props.accent) return 'medium';
+  // `connect` is a custom (non-Ionic) rose token, so Ionic's `color` attr
+  // can't name it — return undefined so the icon inherits currentColor and the
+  // scoped `.section-card--accent-connect .section-card-icon` rule tints it.
+  if (props.accent === 'connect') return undefined;
   // Map our semantic accent names to the Ionic color a stock icon
   // expects. Apps that override --card-accent-<name> in their theme
   // can override this mapping by passing iconColor explicitly.
@@ -234,6 +324,34 @@ const hasHeader = computed(() => {
     || !!slots['header-end'];
 });
 
+// Footer renders when there's slot content OR any prop-driven CTA/action.
+const hasFooter = computed(() => {
+  return !!slots.footer
+    || !!props.primaryCta
+    || !!props.secondaryCta
+    || !!props.tertiaryCta
+    || props.actions.length > 0;
+});
+
+// Present CTAs resolved to render order (weakest → strongest, left → right)
+// with each one's fill/color defaults folded in — so the template stays a
+// single v-for instead of three near-identical button blocks. tertiary defaults
+// to a subdued grey outline; secondary to a plain outline; primary to solid.
+const resolvedCtas = computed(() => {
+  return [
+    { kind: 'tertiary', cta: props.tertiaryCta, fill: 'outline', color: 'medium' },
+    { kind: 'secondary', cta: props.secondaryCta, fill: 'outline', color: undefined },
+    { kind: 'primary', cta: props.primaryCta, fill: 'solid', color: undefined },
+  ]
+    .filter(d => d.cta)
+    .map(d => ({
+      kind: d.kind,
+      cta: d.cta,
+      fill: d.cta.fill || d.fill,
+      color: d.cta.color || d.color,
+    }));
+});
+
 // True when either the semantic `accent` or the raw `accentColor`
 // resolves to a visible stripe. Drives the stripe v-if AND the
 // content-shift class so left-padding clears the stripe.
@@ -252,6 +370,14 @@ const cardClasses = computed(() => ({
 
 function onClick(event) {
   emit('click', event);
+}
+
+// Run a footer action. Prefer the action object's own `onClick` handler (the
+// self-describing style — no key→switch needed); fall back to the matching
+// event so consumers can use `@primary` / `@secondary` / `@action` instead.
+function run(action, eventName, key) {
+  if (typeof action?.onClick === 'function') { action.onClick(); return; }
+  emit(eventName, key);
 }
 </script>
 
@@ -288,9 +414,16 @@ function onClick(event) {
 .section-card--accent-learn   { --accent-color: var(--card-accent-learn); }
 .section-card--accent-act     { --accent-color: var(--card-accent-act); }
 .section-card--accent-reflect { --accent-color: var(--card-accent-reflect); }
-.section-card--accent-witness { --accent-color: var(--card-accent-witness); }
 .section-card--accent-nudge   { --accent-color: var(--card-accent-nudge); }
+.section-card--accent-connect { --accent-color: var(--card-accent-connect); }
 .section-card--accent-alert   { --accent-color: var(--card-accent-alert); }
+.section-card--accent-witness { --accent-color: var(--card-accent-witness); }
+
+/* `connect` uses a custom rose token (no Ionic colour name), so its header
+   icon is tinted via CSS rather than the ion-icon `color` attr. */
+.section-card--accent-connect .section-card-icon {
+  color: var(--card-accent-connect);
+}
 
 .section-card-header {
   padding: var(--card-padding) var(--card-padding) 0;
@@ -357,8 +490,40 @@ function onClick(event) {
   padding: var(--card-body-gap) var(--card-padding) var(--card-padding);
 }
 
+/* When a footer follows, drop the body's bottom padding so the footer's own
+   top gap is the sole separator — otherwise body-bottom (1rem) + footer-top
+   (1rem) stack into a doubled ~2rem gap between content and a footer CTA. */
+.section-card-body--has-footer {
+  padding-bottom: 0;
+}
+
 .section-card-footer {
   padding: var(--card-footer-gap) var(--card-padding) var(--card-padding);
+}
+
+/* Prop-driven CTA row — an ion-grid so the 1–3 CTAs sit as equal columns on
+   wider screens and collapse to full-width stacked rows on small screens (the
+   `size="12" size-md` on each col drives the responsive switch). Grid + col
+   padding is zeroed; the row's flex `gap` supplies a consistent 0.5rem gutter
+   both stacked (row-gap) and side-by-side (column-gap). Margins only kick in
+   when preceded by other footer content. */
+.section-card-ctas-row {
+  gap: 0.5rem;
+}
+
+.section-card-cta {
+  margin: 0;
+}
+
+.section-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.section-card-ctas:not(:first-child),
+.section-card-actions:not(:first-child) {
+  margin-top: 0.5rem;
 }
 
 /* Content shift when the left accent stripe is present — header, body,

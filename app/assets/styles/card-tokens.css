@@ -43,16 +43,27 @@
   --card-subtitle-color: var(--ion-color-medium);
 
   /*
-   * Semantic accent colors — apps map purpose to color here, then
-   * <section-card accent="learn"> reads --card-accent-learn.
-   * Defaults below are the Ionic palette; override per-app at :root.
+   * Semantic accent — each colour encodes ONE "mode of engagement" a card
+   * invites: the question "what does this card want from me?". Apps map purpose
+   * → colour here, then <section-card accent="learn"> reads --card-accent-learn.
+   *
+   * THE RULE: give a card an accent ONLY when it clearly plays one of these
+   * roles. Neutral containers, glances, lists, empty states, and settings stay
+   * PLAIN (no accent) — that restraint is what makes the accented cards read as
+   * signal, not decoration. One role per card; never pick by vibe.
+   *
+   * Defaults are the Ionic palette (override per-app at :root).
    */
-  --card-accent-learn:    var(--ion-color-primary);     /* lessons, info */
-  --card-accent-act:      var(--ion-color-success);     /* practice, do something */
-  --card-accent-reflect:  var(--ion-color-tertiary);    /* reflective, contemplative */
-  --card-accent-witness:  var(--ion-color-tertiary);    /* community presence */
-  --card-accent-nudge:    var(--ion-color-warning);     /* attention / soft prompt */
-  --card-accent-alert:    var(--ion-color-danger);      /* warnings, comebacks */
+  --card-accent-learn:    var(--ion-color-primary);     /* take in — lesson, reading, principle, quote, definition */
+  --card-accent-act:      var(--ion-color-success);     /* do — practice, commitment, the daily arc, mark-done, start */
+  --card-accent-reflect:  var(--ion-color-tertiary);    /* turn inward — journal, gratitude, intention, affirmation, review */
+  --card-accent-nudge:    var(--ion-color-warning);     /* respond — a prompt inviting engagement ("how did it go?", coach prompt, why-this-matters) */
+  --card-accent-connect:  #e0567c;                      /* someone in your circle — partner activity, mutual / paired */
+  --card-accent-alert:    var(--ion-color-danger);      /* careful — destructive / irreversible */
+
+  /* Legacy: community presence (any-learn's groups/social). Distinct meaning
+     from `connect` (1:1 relational), so both coexist. */
+  --card-accent-witness:  var(--ion-color-tertiary);
 }
 
 /*
@@ -62,7 +73,7 @@
  * Ionic's <ion-card> ships a default inline (left/right) margin — 10px on
  * Material, 16px on iOS — so out of the box every card is inset from the
  * container edge by a platform-dependent amount, leaving cards misaligned
- * with flush content like <section-heading> / <section-lede> and inconsistent
+ * with flush content like <section-group> / <section-lede> and inconsistent
  * across iOS vs web. Zeroing the inline margin makes every card surface
  * (section-card, accent-card, and any raw ion-card) align to the one content
  * edge the container defines.
