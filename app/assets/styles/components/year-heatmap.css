@@ -1,0 +1,120 @@
+/*
+ * year-heatmap — component stylesheet.
+ *
+ * One stylesheet per shared component: the single place its look is DEFINED and
+ * the single place an app OVERRIDES it (app CSS loads after the layer's, so an
+ * app rule wins without !important or a fork).
+ *
+ * NOT scoped. A `<style scoped>` block stamps a data attribute onto every
+ * selector, which an app's stylesheet cannot match — scoped styles in a SHARED
+ * component are unoverridable by definition.
+ *
+ * Selectors were prefixed with the component root on extraction: scoping used to
+ * isolate names like `.cell` / `.dot` / `.grid`, and without it they would style
+ * every matching element in the app.
+ */
+
+/* Layout: month labels row + grid row. Within the grid row, weekday
+   labels on the left, cell grid on the right. Cells flow column-first
+   so each column is a week and each row is a weekday. */
+
+.year-heatmap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.year-heatmap .month-row {
+  display: flex;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.year-heatmap .weekday-spacer {
+  width: 0.7rem;
+  flex-shrink: 0;
+}
+
+.year-heatmap .month-labels {
+  display: grid;
+  flex: 1;
+  gap: 0.15rem;
+  min-width: 0; /* allow the label grid to shrink below content, not overflow */
+}
+
+.year-heatmap .month-label {
+  font-size: 0.65rem;
+  color: var(--ion-color-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.year-heatmap .body {
+  display: flex;
+  gap: 0.4rem;
+  align-items: stretch;
+  min-width: 0;
+}
+
+.year-heatmap .weekday-labels {
+  display: grid;
+  grid-template-rows: repeat(7, minmax(0, 1fr));
+  gap: 0.15rem;
+  width: 0.7rem;
+  flex-shrink: 0;
+}
+
+.year-heatmap .weekday {
+  font-size: 0.55rem;
+  color: var(--ion-color-medium);
+  text-align: right;
+  align-self: center;
+  text-transform: uppercase;
+}
+
+.year-heatmap .grid {
+  display: grid;
+  grid-auto-flow: column;
+  /* minmax(0, …), not plain 1fr: a bare `1fr` track floors at the cell's
+     min-content, and `aspect-ratio: 1 / 1` makes that floor sizeable — so 53
+     columns overflowed their container instead of compressing, pushing the
+     grid off-screen on a phone. The whole point of this chart is that the
+     SHAPE of the year reads even at ~5px cells. */
+  grid-template-rows: repeat(7, minmax(0, 1fr));
+  gap: 0.15rem;
+  flex: 1;
+  min-width: 0; /* let the 1fr columns compress to fit instead of overflowing */
+}
+
+.year-heatmap .cell {
+  aspect-ratio: 1 / 1;
+  min-width: 0;
+  min-height: 0;
+  border-radius: 0.15rem;
+  background: transparent;
+  border: 1px solid transparent;
+}
+
+.year-heatmap .cell--in-year {
+  background: var(--ion-color-light);
+  border-color: var(--ion-color-light-shade);
+}
+
+.year-heatmap .cell--in-year.cell--done {
+  background: var(--ion-color-primary);
+  border-color: var(--ion-color-primary);
+}
+
+.year-heatmap .cell--today {
+  outline: 1.5px solid var(--ion-color-medium-tint);
+  outline-offset: 1px;
+}
+
+.year-heatmap .cell--today.cell--done {
+  outline-color: var(--ion-color-primary-tint);
+}

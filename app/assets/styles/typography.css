@@ -55,6 +55,48 @@
 }
 
 /*
+ * ── TYPE SCALE ───────────────────────────────────────────────────────────────
+ *
+ * Six sizes and three weights, as tokens. Use them instead of literal rem values
+ * in component styles.
+ *
+ * Why: an audit of love-well (2026-08-20) found **26 distinct font sizes** in
+ * app code, with 0.85 / 0.9 / 0.95rem used 36, 37 and 37 times respectively —
+ * three sizes doing one job, chosen by whoever wrote each component. Nothing was
+ * wrong on any single screen; the effect only shows when you use the app daily
+ * and every card sits at a slightly different pitch.
+ *
+ * The scale is deliberately short. A long scale is the same problem with extra
+ * steps: if there are ten sizes, the eleventh gets invented.
+ *
+ *   --text-xs    0.75rem   pills, timestamps, counts
+ *   --text-sm    0.85rem   secondary + supporting copy, card meta
+ *   --text-base  0.95rem   body copy — the default for prose
+ *   --text-md    1.05rem   card titles, list item titles
+ *   --text-lg    1.25rem   section/page subheads
+ *   --text-xl    1.5rem    page titles inside content (not the nav bar)
+ *
+ *   --weight-normal    400
+ *   --weight-medium    600   emphasis, card titles, button labels
+ *   --weight-bold      700   headings, the loudest thing in a card
+ *
+ * There is no 500: the audit found it used 7 times against 29 of 600, and two
+ * adjacent medium weights are indistinguishable in the UI but not in the diff.
+ */
+:root {
+  --text-xs: 0.75rem;
+  --text-sm: 0.85rem;
+  --text-base: 0.95rem;
+  --text-md: 1.05rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+
+  --weight-normal: 400;
+  --weight-medium: 600;
+  --weight-bold: 700;
+}
+
+/*
  * .hint — italic muted helper text. Sits next to or below a form
  * control, a list item, or a card body to add quiet context that
  * doesn't compete with the primary content. Works on any element so

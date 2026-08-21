@@ -1,0 +1,53 @@
+/*
+ * progress-meter — the suite's one progress bar.
+ *
+ * One stylesheet per component: this is the single place its look is DEFINED,
+ * and the single place an app OVERRIDES it. An app redeclares any rule here in
+ * its own `theme.css` (loaded after the layer's CSS, so it wins) — no forking
+ * the component, no indirection through variables.
+ *
+ * Not scoped, deliberately. A Vue `<style scoped>` block stamps a data attribute
+ * onto every selector, which an app's stylesheet cannot match — so scoped styles
+ * in a SHARED component are unoverridable by definition. Class names are
+ * prefixed to keep them collision-free without scoping.
+ *
+ * The component keeps nothing but its markup. Layout lives here too, since
+ * there's no reason to split one component's rules across two places.
+ */
+
+.progress-meter-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.progress-meter-track {
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--ion-color-light-shade);
+  overflow: hidden;
+}
+
+.progress-meter-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+  /* Hairline floor: without it, 1-of-40 rounds to nothing and a user who has
+     genuinely started reads as not started. */
+  min-width: 2px;
+}
+
+.progress-meter-label {
+  flex-shrink: 0;
+  font-size: 0.78rem;
+  font-weight: var(--weight-bold, 700);
+  color: var(--ion-color-medium);
+  text-align: right;
+}
+
+.progress-meter-caption {
+  margin: 0.35rem 0 0;
+  font-size: var(--text-sm, 0.85rem);
+  color: var(--ion-color-medium);
+}

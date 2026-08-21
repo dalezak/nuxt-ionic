@@ -70,7 +70,7 @@
       subtitle="Moments from your circle.">
       <witness-list :items="activity" />
       <template #footer>
-        <ion-button fill="clear" expand="block">Load More</ion-button>
+        <ion-button size="small" fill="clear" expand="block">Load More</ion-button>
       </template>
     </section-card>
 -->
@@ -130,10 +130,14 @@
     </ion-card-header>
 
     <ion-card-content
-      v-if="$slots.default"
+      v-if="$slots.default || labels.length"
       class="section-card-body"
       :class="{ 'section-card-body--has-footer': hasFooter }">
       <slot />
+      <!-- Prop-driven metadata pills — a consistent, same-spot chip row under the
+           body content on every card. (Slot content can still render its own
+           label-chips, but prefer the `labels` prop.) -->
+      <label-chips v-if="labels.length" :items="labels" class="section-card-labels" />
     </ion-card-content>
 
     <div v-if="hasFooter" class="section-card-footer">
@@ -142,21 +146,20 @@
       <!-- Prop-driven CTAs — the common 1–3 button footer, centralized so
            spacing/order/fill stay consistent across the suite. Left→right by
            increasing prominence: tertiary (grey outline), secondary (outline),
-           primary (solid). Laid out as an ion-grid so they sit as equal columns
-           on wider screens and collapse to full-width stacked rows on small
-           screens (`size="12" size-md`). For anything richer (links, chip rows,
-           custom layout) use #footer. -->
+           primary (solid). Laid out as an ion-grid of equal auto columns, so the
+           buttons sit SIDE-BY-SIDE on every breakpoint (a lone CTA grows to full
+           width). Keep labels short — long ones truncate in a narrow column. For
+           anything richer (links, chip rows, custom layout) use #footer. -->
       <ion-grid v-if="resolvedCtas.length" class="section-card-ctas ion-no-padding">
         <ion-row class="section-card-ctas-row">
           <ion-col
             v-for="c in resolvedCtas"
             :key="c.kind"
-            class="ion-no-padding"
-            size="12"
-            size-md>
+            class="ion-no-padding">
             <ion-button
               class="section-card-cta"
               expand="block"
+              size="small"
               :fill="c.fill"
               :color="c.color"
               :disabled="c.cta.disabled || c.cta.loading || undefined"
@@ -284,6 +287,13 @@ const props = defineProps({
   // Build the array as a computed so labels/icons stay reactive (e.g. Favorite
   // ⇄ Favorited). Order is preserved.
   actions: { type: Array, default: () => [] },
+
+  // Metadata pills, rendered under the body via <label-chips> — the consistent,
+  // declarative way to show chips on a card (same item shape as label-chips:
+  // { label, icon?, emoji?, color?, filled?, titlecase? }). Prefer this over
+  // dropping a <label-chips> in the default slot, so pills land in the same spot
+  // on every card across the suite.
+  labels: { type: Array, default: () => [] },
 });
 
 const emit = defineEmits(['click', 'primary', 'secondary', 'tertiary', 'action']);
@@ -381,158 +391,3 @@ function run(action, eventName, key) {
 }
 </script>
 
-<style scoped>
-.section-card {
-  /* Chrome (radius, shadow, background, margin, hover/press) is left
-     to Ionic's <ion-card> defaults so platform adaptations (iOS vs
-     Material) and theme inheritance work out of the box. Apps that
-     want a custom look re-skin in their own theme.css by targeting
-     `ion-card` or `.section-card` — we don't fight Ionic from here.
-
-     The two structural rules we do own:
-       position: relative — anchor for the accent stripe overlay
-       overflow: hidden   — clip the stripe inside the card's rounded
-                            corners (Ionic's default border-radius). */
-  position: relative;
-  overflow: hidden;
-}
-
-/* Left accent — uses a positioned div rather than `border-left` so it
-   sits crisply against the rounded corner without weird seam lines on
-   sub-pixel devices. Color is resolved from the accent name to its
-   token. */
-.section-card-accent {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: var(--card-accent-width);
-  background: var(--accent-color, transparent);
-  pointer-events: none;
-}
-
-.section-card--accent-learn   { --accent-color: var(--card-accent-learn); }
-.section-card--accent-act     { --accent-color: var(--card-accent-act); }
-.section-card--accent-reflect { --accent-color: var(--card-accent-reflect); }
-.section-card--accent-nudge   { --accent-color: var(--card-accent-nudge); }
-.section-card--accent-connect { --accent-color: var(--card-accent-connect); }
-.section-card--accent-alert   { --accent-color: var(--card-accent-alert); }
-.section-card--accent-witness { --accent-color: var(--card-accent-witness); }
-
-/* `connect` uses a custom rose token (no Ionic colour name), so its header
-   icon is tinted via CSS rather than the ion-icon `color` attr. */
-.section-card--accent-connect .section-card-icon {
-  color: var(--card-accent-connect);
-}
-
-.section-card-header {
-  padding: var(--card-padding) var(--card-padding) 0;
-}
-
-/* Header-only cards (no body slot, no footer slot) — give the header
-   its own bottom padding so the card doesn't collapse against the
-   subtitle. Catches evening-prompt-card, all-done-beat, and any other
-   icon+title+subtitle-only surface. */
-.section-card-header:last-child {
-  padding-bottom: var(--card-padding);
-}
-
-.section-card-header-row {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--card-header-gap);
-}
-
-.section-card-icon {
-  font-size: 1.4rem;
-  flex-shrink: 0;
-  margin-top: 0.1rem;
-}
-
-.section-card-titles {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
-.section-card-title {
-  font-size: var(--card-title-size);
-  font-weight: var(--card-title-weight);
-  margin: 0;
-  /* Break long words so a long title wraps inside the card on narrow screens
-     instead of overflowing the header row. The titles container is min-width:0
-     so normal multi-word titles already wrap; this covers unbreakable strings. */
-  overflow-wrap: break-word;
-}
-
-.section-card-subtitle {
-  margin: 0.15rem 0 0;
-  font-size: var(--card-subtitle-size);
-  color: var(--card-subtitle-color);
-  line-height: 1.4;
-  overflow-wrap: break-word;
-}
-
-.section-card-header-end {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-}
-
-.section-card-disclosure {
-  font-size: 1.1rem;
-  color: var(--ion-color-medium);
-}
-
-/* `.section-card-body` IS the ion-card-content (the class is applied
-   to the element), so our scoped class selector beats Ionic's default
-   padding without needing a `:deep` descendant rule. */
-.section-card-body {
-  padding: var(--card-body-gap) var(--card-padding) var(--card-padding);
-}
-
-/* When a footer follows, drop the body's bottom padding so the footer's own
-   top gap is the sole separator — otherwise body-bottom (1rem) + footer-top
-   (1rem) stack into a doubled ~2rem gap between content and a footer CTA. */
-.section-card-body--has-footer {
-  padding-bottom: 0;
-}
-
-.section-card-footer {
-  padding: var(--card-footer-gap) var(--card-padding) var(--card-padding);
-}
-
-/* Prop-driven CTA row — an ion-grid so the 1–3 CTAs sit as equal columns on
-   wider screens and collapse to full-width stacked rows on small screens (the
-   `size="12" size-md` on each col drives the responsive switch). Grid + col
-   padding is zeroed; the row's flex `gap` supplies a consistent 0.5rem gutter
-   both stacked (row-gap) and side-by-side (column-gap). Margins only kick in
-   when preceded by other footer content. */
-.section-card-ctas-row {
-  gap: 0.5rem;
-}
-
-.section-card-cta {
-  margin: 0;
-}
-
-.section-card-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem;
-}
-
-.section-card-ctas:not(:first-child),
-.section-card-actions:not(:first-child) {
-  margin-top: 0.5rem;
-}
-
-/* Content shift when the left accent stripe is present — header, body,
-   and footer all gain `accent-width` of additional left padding so the
-   stripe gets its own breathing room. Single class on the host card
-   keeps this declarative; no per-slot conditional logic. */
-.section-card--has-accent .section-card-header,
-.section-card--has-accent .section-card-body,
-.section-card--has-accent .section-card-footer {
-  padding-left: calc(var(--card-padding) + var(--card-accent-width));
-}
-</style>

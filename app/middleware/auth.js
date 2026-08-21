@@ -7,7 +7,14 @@ const ROUTES = {
 export default defineNuxtRouteMiddleware(async(to, from) => {
   const { tabs } = useAppConfig();
   const page = tabs.find(tab => tab.path == to.path);
-  const { isAuthenticated } = useAuthSession();
+  const { isAuthenticated, ready } = useAuthSession();
+
+  // Wait for the persisted session to be determined before choosing public vs
+  // private. Without this, a cold launch reads isAuthenticated=false (the
+  // session hasn't restored from storage yet), shows a public page, then
+  // corrects to the private tab — the launch flash. `ready()` is a resolved
+  // no-op after the first navigation, so it never slows later routing.
+  await ready();
 
   // Bounce an unauthenticated user off a private route onto the first public
   // tab (e.g. the start page). `?login` triggers the login-prompt plugin to

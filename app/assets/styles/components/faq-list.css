@@ -1,0 +1,33 @@
+/*
+ * faq-list — component stylesheet.
+ *
+ * One stylesheet per shared component: the single place its look is DEFINED and
+ * the single place an app OVERRIDES it (app CSS loads after the layer's, so an
+ * app rule wins without !important or a fork).
+ *
+ * NOT scoped. A `<style scoped>` block stamps a data attribute onto every
+ * selector, which an app's stylesheet cannot match — scoped styles in a SHARED
+ * component are unoverridable by definition.
+ *
+ * Selectors were prefixed with the component root on extraction: scoping used to
+ * isolate names like `.cell` / `.dot` / `.grid`, and without it they would style
+ * every matching element in the app.
+ */
+
+.faq-list .faq-item {
+  margin: 0 0 1.25rem;
+}
+
+.faq-list .faq-q {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 0.35rem;
+  color: var(--ion-text-color);
+}
+
+.faq-list .faq-a {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--ion-color-medium-shade);
+}

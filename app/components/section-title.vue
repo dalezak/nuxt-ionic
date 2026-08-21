@@ -23,10 +23,3 @@
   one place.
 -->
 
-<style scoped>
-.section-title {
-  font-size: 1.6rem;
-  font-weight: 700;
-  margin: 0.5rem 0 0.75rem;
-}
-</style>

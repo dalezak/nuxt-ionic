@@ -1,0 +1,28 @@
+/*
+ * player-wave — component stylesheet.
+ *
+ * One stylesheet per shared component: the single place its look is DEFINED and
+ * the single place an app OVERRIDES it (an app's own CSS loads after the
+ * layer's, so a rule there simply wins).
+ *
+ * NOT scoped, deliberately. A Vue `<style scoped>` block stamps a data attribute
+ * onto every selector, which an app's stylesheet cannot match — so scoped styles
+ * in a SHARED component are unoverridable by definition, which defeats the point
+ * of shipping the component. Class names are prefixed instead.
+ */
+
+/* Sizing lives here, not in each player. Four of them had their own clamp and
+   they'd already drifted (125px, 150px, 92px), which is the same failure mode
+   as the duplicated drawing code — a shared visual that four callers can size
+   differently isn't shared, it's copied.
+   Height is the pace control: the marker only travels vertically, so its speed
+   is amplitude × rate of change, and a shorter band reads as calmer. This is
+   about the floor — flatten it much further and the swell becomes a ripple,
+   where direction stops being legible. Override with a class where a surface
+   genuinely needs it. */
+.player-wave {
+  display: block;
+  width: 100%;
+  max-width: 560px;
+  height: clamp(88px, 13vh, 125px);
+}

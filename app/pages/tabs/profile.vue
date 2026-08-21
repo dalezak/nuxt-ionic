@@ -21,7 +21,7 @@
           </ion-list>
         </ion-card-content>
       </ion-card>
-      <ion-button class="ion-margin" expand="block" fill="outline" @click="showUserLogout">Logout</ion-button>
+      <ion-button size="small" class="ion-margin" expand="block" fill="outline" @click="showUserLogout">Logout</ion-button>
     </ion-content>
   </ion-page>
 </template>

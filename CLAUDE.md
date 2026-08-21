@@ -365,6 +365,188 @@ Apps add their own components (nested by feature) for app-specific surfaces.
 - **`<style scoped>`** is the default — keep styles co-located with the component, not in global CSS. Use `var(--ion-color-*)` and `var(--ion-text-color)` so themes propagate.
 - **No global CSS for component-specific styling** — global styles belong in `app/assets/styles/` (and theme files).
 
+## UI consistency rules
+
+Written 2026-08-20 after an audit of love-well found the app reading as
+inconsistent in daily use even though every individual screen was fine. Counts
+below are from that audit; the same drift exists in best-self and any-learn-co.
+
+These are rules for the SUITE. When adding UI, follow them rather than copying
+whatever the nearest component happens to do — that copying is how each of these
+diverged in the first place.
+
+### One stylesheet per shared component
+
+Every component in `nuxt-ionic/app/components` has exactly one stylesheet at
+`app/assets/styles/components/<name>.css`, registered in the layer's `nuxt.config`
+`css` array. That file is the single place its look is DEFINED and the single
+place an app OVERRIDES it — an app's own CSS loads after the layer's, so a rule
+in `theme.css` simply wins. No `!important`, no forking the component.
+
+**Shared components carry no `<style scoped>` block.** Scoped styles stamp a data
+attribute onto every selector, which an app's stylesheet cannot match — so a
+scoped style in a SHARED component is unoverridable by definition, which defeats
+the point of shipping the component. (Converted 2026-08-20: 44 components, ~1600
+declarations.)
+
+Consequences to respect when adding or editing one:
+
+- **Prefix every selector with the component root** (`.week-strip .dot`, not
+  `.dot`). Scoping used to isolate names like `.cell` / `.dot` / `.grid` / `.body`;
+  without it they would style every matching element in the app.
+- **A class ON the root is compound, not descendant** — `.consistency-grid.is-heatmap`.
+  Written as a descendant it silently stops matching, which is the failure mode
+  to watch for.
+- **No `:deep()` / `:slotted()`** — those are scoped-only syntax. In a global
+  sheet the plain descendant selector is what they meant.
+- **Literal values, not tokens**, unless a value is genuinely referenced many
+  times or is semantic. `section-card.css` keeps custom properties for exactly
+  that reason: its accent names encode PURPOSE ("learn", "act", "reflect"), so an
+  app re-skins the vocabulary rather than each card, and `--card-padding` appears
+  eight times including inside a `calc()`.
+
+### App styling belongs to the app's theme, not its components
+
+The same rule pointed at app code: **a component owns its LAYOUT, not its
+appearance.**
+
+- **Own**: `display`, flex/grid, `gap`, `align-items`, positioning, and the
+  spacing between a component's own parts.
+- **Don't own**: `font-size`, `font-weight`, `color`, `line-height`, `background`,
+  `border-radius`, `letter-spacing`, `text-transform`.
+
+Reach for a shared component and its props first, then an Ionic component and its
+NATIVE props (`size`, `fill`, `expand`, `rows`, `auto-grow`, `toggle-icon`,
+`mode`…). The apps ship to iOS and Android through Capacitor, and Ionic handles
+per-platform adaptation that hand-written CSS bypasses or breaks.
+
+Why it's a hard rule: **a theme can only restyle what it owns.** Every `font-size`
+in an app component's scoped block is a value the theme pass cannot change — so
+"warmer type" or "drop the borders" would have to be re-litigated in dozens of
+files. Audit of love-well (2026-08-20): 1616 CSS declarations across 79 scoped
+blocks, of which font-size (225), color (214), line-height (104) and margin (209)
+are about half.
+
+**When touching a component, delete its appearance CSS rather than tuning it.**
+Let the default land; add back only what's genuinely wrong, preferring a prop,
+then a shared component, then a commented local rule. **Strip first, tokenize
+what survives** — migrating literal sizes onto tokens preserves decisions that
+mostly shouldn't exist.
+
+### Buttons — fill says what kind of action it is
+
+What decides the fill is **whether the button is the point of the surface, or a
+secondary action attached to content**.
+
+- **`solid`** — the ONE primary action on a screen or modal footer. At most one
+  visible at a time.
+- **`outline`** — a button that IS the point: a full-width CTA in a card, a page,
+  or a modal footer. "Load more", "Add another direction", "Rate Capacities",
+  "Re-analyze", "Delete entry" (with `color="danger"`).
+- **`clear`** — a ROW of secondary actions hanging off a card's content: Edit,
+  Share, Hide, Delete, Save on an insight card; Save on a quote or affirmation.
+  Several small icon+label actions together, at the foot of the thing they act
+  on. Outlining these would put a rank of boxes on every card, competing with the
+  content they belong to — the row is meant to recede until wanted.
+  This is what `section-card`'s `actions` prop renders; use it rather than
+  hand-placing buttons in the `#footer` slot.
+- **`clear`** also covers navigation-ish affordances (a "See all", a toolbar icon
+  button).
+
+The failure to watch for is a SINGLE action that is the card's whole point wearing
+clear — a lone "Edit" or "Load more" then reads as a link and gets skipped. One
+action that matters → outline. Several that support → clear.
+
+Audit found 61 outline / 16 clear / 6 solid.
+
+Every button carries the native `size="small"` prop (suite convention, 2026-07),
+except icon-only header/toolbar buttons.
+
+### Save vs Favorite — one word: Save
+
+The heart action is **Save / Saved / Saving…**, and the surface it lands on is
+**Saves**. Never "Favorite", "Favorited", "Add to favorites" in user-facing copy.
+
+Audit: 21 uses of Save* against 4 of Favorite* for the identical action — the
+Quotes page said "Favorite" while the page it saved to was called Saves.
+
+CODE keeps `favorites` naming (`useLikeFavorites`, `toggleFavorite`, the `likes`
+table) — that's the layer's API and renaming it buys nothing. The rule is about
+what the user reads.
+
+### Modal dismiss — the label states what discarding costs
+
+- **Cancel** — a form with unsaved input. The button discards what was typed.
+- **Done** — a surface that saves as it goes; leaving commits nothing new.
+- **Close** — a read-only view with nothing at stake.
+- **An X icon** — only for immersive/full-screen content (a lesson, a player)
+  where a text button would compete with the content.
+
+Audit found all four in use with no rule, including "Close" on forms.
+
+iOS convention puts Cancel on the LEFT; `modal-header` only has an `end` slot
+today, so the whole suite sits on the right. Change it everywhere at once or not
+at all.
+
+### Text inputs
+
+- **`label-placement="stacked"`** everywhere. Not `floating` (it animates over
+  the value and is broken in WebKit — see the fix further down this file), not
+  `end`.
+- **`fill="outline"`** and **`mode="md"`** so the field has a visible boundary on
+  both platforms.
+- **`:rows="1"` with `:auto-grow="true"`** for anything free-text. A fixed
+  multi-row box promises a length the user doesn't owe you. Bind consistently —
+  `:rows="1"`, not `rows="1"` (both appear today; the second is a string).
+- **A label is required. A placeholder is optional and never repeats the label.**
+  Use a placeholder for an EXAMPLE of the answer, not a restatement of the
+  question.
+- **Stem-continuation fields** (label ends in "…" and the entry finishes the
+  sentence) take `autocapitalize="none"` — sentence-casing mid-sentence reads as
+  a typo. Standalone-answer fields keep `autocapitalize="sentences"`.
+- **Never use a full example sentence as a placeholder.** In a stacked-label
+  field it reads as text already typed. Offer starting points as tappable pills
+  instead.
+
+### Type — use the scale
+
+Six sizes, three weights, defined as tokens in `typography.css`
+(`--text-xs` … `--text-xl`, `--weight-normal/medium/bold`). Use the tokens, not
+literal rem values.
+
+Audit found 26 distinct font sizes in one app, with 0.85/0.9/0.95rem used 36/37/37
+times — three sizes doing one job. Nothing looks wrong on a single screen; it
+shows when every card sits at a slightly different pitch.
+
+### Alignment — left, with three exceptions
+
+Body copy, card content, list rows and form fields are **left-aligned**.
+
+Centre only: a full-screen empty state, a completion/celebration moment, a
+modal's own footer button row, a caption directly under a chart or image, and a
+column header over a tabular grid. Anything else centred is drift — centred prose
+is harder to scan and makes a card look like a dialog.
+
+(love-well audit 2026-08-20: 12 centred blocks, 11 of them legitimate under this
+list. The rule was incomplete, not the code — worth checking before "fixing" a
+centred block.)
+
+### Cards
+
+Use `<section-card>` for every card; never hand-roll card chrome (radius, shadow,
+padding) — it's token-driven so the suite can re-skin at once. Use its props
+rather than slots where a prop exists: `:labels` for metadata pills,
+`primary-cta` / `secondary-cta` for actions, `:disclosure` + `tappable` for
+tap-through. A prop CTA renders as the standard full-width outline button; a
+hand-placed `fill="clear"` button in the footer slot does not.
+
+### One-of-a-kind is a smell
+
+If a surface needs a look nothing else has, the answer is usually a prop on the
+shared component, not new CSS in that file. Three near-identical progress bars,
+five "Load more" buttons and three pill styles each began as one reasonable local
+choice.
+
 ## Capacitor plugins — wrap with web-safe fallbacks
 
 iOS and Android are distributed as Capacitor apps (`APP_ENV=mobile nuxt generate && npx cap sync`). The same code also runs on the web, so any Capacitor plugin call must work on both — wrap it in a util under `app/utils/` and never import `@capacitor/*` directly from a page or component.

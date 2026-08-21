@@ -1,0 +1,38 @@
+/*
+ * filter-chips — component stylesheet.
+ *
+ * One stylesheet per shared component: the single place its look is DEFINED and
+ * the single place an app OVERRIDES it (an app's own CSS loads after the
+ * layer's, so a rule there simply wins).
+ *
+ * NOT scoped, deliberately. A Vue `<style scoped>` block stamps a data attribute
+ * onto every selector, which an app's stylesheet cannot match — so scoped styles
+ * in a SHARED component are unoverridable by definition, which defeats the point
+ * of shipping the component. Class names are prefixed instead.
+ */
+
+/* The flex gap is the single source of spacing — Ionic's default ~4px ion-chip
+   margin is zeroed so wrapped rows don't read as too far apart. */
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0 0 1rem;
+}
+
+/* Single-line, horizontally-scrolling variant for longer option sets. */
+.filter-chips--scroll {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 0.25rem;
+}
+
+.filter-chips--scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-chips ion-chip {
+  margin: 0;
+  flex-shrink: 0;
+}

@@ -22,24 +22,3 @@ defineProps({
 });
 </script>
 
-<style scoped>
-.rating-bar {
-  display: flex;
-  gap: 0.2rem;
-  align-items: center;
-}
-
-.seg {
-  width: 0.9rem;
-  height: 0.45rem;
-  border-radius: 0.1rem;
-  border: 1px solid var(--ion-color-medium);
-  background: transparent;
-  transition: background 0.15s, border-color 0.15s;
-}
-
-.seg--filled {
-  background: var(--ion-color-primary);
-  border-color: var(--ion-color-primary);
-}
-</style>

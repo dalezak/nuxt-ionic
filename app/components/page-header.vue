@@ -27,11 +27,10 @@
     <label-chips v-if="chips.length" :items="chips" class="page-header-chips" />
     <p v-if="description" class="page-header-description">{{ description }}</p>
     <div v-if="progress != null" class="page-header-progress">
-      <ion-progress-bar :value="progress" color="success" class="page-header-progress-bar"></ion-progress-bar>
-      <span class="page-header-progress-label">{{ Math.round(progress * 100) }}%</span>
+      <progress-meter :value="progress" :label="`${Math.round(progress * 100)}%`" />
     </div>
     <slot />
-    <ion-button
+    <ion-button size="small"
       v-if="cta"
       expand="block"
       :color="cta.color || 'primary'"
@@ -62,51 +61,3 @@ defineProps({
 defineEmits(['cta']);
 </script>
 
-<style scoped>
-.page-header {
-  margin-bottom: 1.5rem;
-}
-.page-header-title {
-  font-size: 1.6rem;
-  font-weight: 700;
-  line-height: 1.25;
-  margin: 0 0 0.5rem;
-}
-.page-header-subtitle {
-  font-size: 1.05rem;
-  font-style: italic;
-  line-height: 1.5;
-  color: var(--ion-color-medium-shade);
-  margin: 0 0 0.5rem;
-}
-.page-header-chips {
-  margin: 0 0 0.75rem;
-}
-.page-header-description {
-  font-size: 0.95rem;
-  line-height: 1.5;
-  color: var(--ion-color-medium-shade);
-  margin: 0;
-}
-.page-header-progress {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-top: 0.85rem;
-}
-.page-header-progress-bar {
-  flex: 1;
-  height: 10px;
-  border-radius: 5px;
-}
-.page-header-progress-label {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--ion-color-medium);
-  min-width: 2.5rem;
-  text-align: right;
-}
-.page-header-cta {
-  margin-top: 1rem;
-}
-</style>

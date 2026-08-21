@@ -1,0 +1,106 @@
+/*
+ * dimension-bars — component stylesheet.
+ *
+ * One stylesheet per shared component: the single place its look is DEFINED and
+ * the single place an app OVERRIDES it (app CSS loads after the layer's, so an
+ * app rule wins without !important or a fork).
+ *
+ * NOT scoped. A `<style scoped>` block stamps a data attribute onto every
+ * selector, which an app's stylesheet cannot match — scoped styles in a SHARED
+ * component are unoverridable by definition.
+ *
+ * Selectors were prefixed with the component root on extraction: scoping used to
+ * isolate names like `.cell` / `.dot` / `.grid`, and without it they would style
+ * every matching element in the app.
+ */
+
+.dim-bars .db-empty {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--ion-color-medium-shade);
+}
+
+.dim-bars .db-item {
+  margin: 0 0 1rem;
+}
+
+.dim-bars .db-item-label {
+  margin: 0 0 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--ion-text-color);
+}
+
+.dim-bars .db-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.3rem;
+}
+
+/* Solo rows sit flush (no per-item heading above them). */
+.dim-bars .db-row--solo {
+  margin: 0 0 0.5rem;
+}
+
+.dim-bars .db-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex: 0 0 5.5rem;
+  min-width: 0;
+  font-size: 0.78rem;
+  color: var(--ion-color-medium-shade);
+}
+
+/* Wider column for the solo view, where the label is the item name
+   ("Interdependence") rather than a short series name. */
+.dim-bars .db-name--wide {
+  flex-basis: 8rem;
+  font-weight: 500;
+  color: var(--ion-text-color);
+}
+
+.dim-bars .db-emoji {
+  font-size: 0.85rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.dim-bars .db-name-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dim-bars .db-track {
+  position: relative;
+  flex: 1 1 auto;
+  height: 0.6rem;
+  border-radius: 999px;
+  background: var(--ion-color-light);
+  overflow: hidden;
+}
+
+.dim-bars .db-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 999px;
+  opacity: 0.85;
+  transition: width 200ms ease;
+}
+
+.dim-bars .db-val {
+  flex: 0 0 1rem;
+  text-align: right;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--ion-text-color);
+  opacity: 0.75;
+}
+
+.dim-bars .db-val--empty {
+  font-weight: 400;
+  opacity: 0.4;
+}

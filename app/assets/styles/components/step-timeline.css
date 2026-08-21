@@ -1,0 +1,168 @@
+/*
+ * step-timeline — component stylesheet.
+ *
+ * One stylesheet per shared component: the single place its look is DEFINED and
+ * the single place an app OVERRIDES it (app CSS loads after the layer's, so an
+ * app rule wins without !important or a fork).
+ *
+ * NOT scoped. A `<style scoped>` block stamps a data attribute onto every
+ * selector, which an app's stylesheet cannot match — scoped styles in a SHARED
+ * component are unoverridable by definition.
+ *
+ * Selectors were prefixed with the component root on extraction: scoping used to
+ * isolate names like `.cell` / `.dot` / `.grid`, and without it they would style
+ * every matching element in the app.
+ */
+
+.step-timeline {
+  display: flex;
+  flex-direction: column;
+}
+
+.step-timeline .step {
+  display: flex;
+  gap: 1rem;
+  cursor: pointer;
+}
+
+/* A header step whose sub-items carry the actions — not itself tappable. */
+.step-timeline .step--static {
+  cursor: default;
+}
+
+.step-timeline .step-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  width: 1.5rem;
+}
+
+.step-timeline .step-node {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 0.25rem;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.step-timeline .step-line {
+  flex: 1;
+  width: 2px;
+  background: var(--ion-color-light-shade);
+  min-height: 1.25rem;
+  margin: 0.25rem 0;
+}
+
+.step-timeline .step-body {
+  flex: 1;
+  padding-bottom: 1rem;
+}
+
+/* Trailing disclosure chevron — aligned to the title row, accent-tinted to
+   echo the current step's color. Pinned to the top so it tracks the title,
+   not the vertical center of a tall (subtitled) row. */
+.step-timeline .step-disclosure {
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: 0.4rem;
+  font-size: 1.05rem;
+  color: var(--ion-color-primary);
+}
+
+/* On a fully-tappable timeline (`disclosure="all"`), non-current chevrons
+   are muted so the current step's chevron still reads as the primary CTA. */
+.step-timeline .step-disclosure--muted {
+  color: var(--ion-color-medium);
+  opacity: 0.6;
+}
+
+.step-timeline .step-body-default {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.step-timeline .step-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--ion-text-color);
+}
+
+.step-timeline .step-subtitle {
+  font-size: 0.85rem;
+  margin: 0;
+  color: var(--ion-color-medium);
+  line-height: 1.4;
+}
+
+.step-timeline .step--completed .step-node {
+  background: var(--ion-color-primary);
+}
+
+.step-timeline .step--completed .step-node-icon {
+  color: white;
+  font-size: 1rem;
+}
+
+.step-timeline .step--completed .step-line {
+  background: var(--ion-color-primary);
+}
+
+.step--completed .step-title,
+.step-timeline .step--completed .step-subtitle {
+  opacity: 0.55;
+}
+
+.step-timeline .step--current .step-node {
+  background: transparent;
+  border: 2px solid var(--ion-color-primary);
+}
+
+.step-timeline .step--current .step-title {
+  color: var(--ion-color-primary);
+}
+
+.step-timeline .step--upcoming .step-node {
+  background: transparent;
+  border: 2px solid var(--ion-color-light-shade);
+}
+
+.step--upcoming .step-title,
+.step-timeline .step--upcoming .step-subtitle {
+  opacity: 0.5;
+}
+
+/* Emphasized current step (opt-in via `emphasizeCurrent`) — marks the one
+   "do this now" step as the primary CTA. The tinted panel is drawn as a
+   ::before with z-index -1 inside a step-local stacking context, so it sits
+   behind the body without shifting the rail or nodes. Left inset clears the
+   rail (1.5rem) + gap (1rem) so the tint hugs only the body. */
+.step-timeline.step-timeline--emphasize .step--current {
+  position: relative;
+  z-index: 0;
+}
+
+.step-timeline.step-timeline--emphasize .step--current::before {
+  content: '';
+  position: absolute;
+  inset: -0.15rem -0.6rem 0.35rem 2.3rem;
+  background: rgba(var(--ion-color-primary-rgb), 0.08);
+  border-radius: 0.75rem;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.step-timeline.step-timeline--emphasize .step--current .step-title {
+  font-weight: 700;
+}
+
+.step-timeline.step-timeline--emphasize .step--current .step-subtitle {
+  color: var(--ion-color-primary);
+  opacity: 0.85;
+}

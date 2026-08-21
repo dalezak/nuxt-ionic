@@ -16,16 +16,18 @@
     color      — an Ionic color name ('primary', 'success', …). Tints the
                  text/icon; with `filled`, becomes a solid background.
     filled     — color background + white text (status/emphasis)
-    titlecase — Title-case the label (lowercase slugs like a topic)
+    titlecase  — Title-case the label via textTitle (acronyms like NVC / IFS
+                 keep their capitalisation; the DOM text really changes, so
+                 screen readers and copy-paste get the cased string)
 
   props (apply to every chip; per-item `titlecase` still works for one-offs):
     uppercase  — render every label uppercase (with letter-spacing)
-    titlecase — Title-case every label
+    titlecase  — Title-case every label (same textTitle treatment)
 
   Example:
     <label-chips :items="[
-      { icon: ioniconsBookOutline, label: `${n} lessons` },
-      { icon: ioniconsTimeOutline, label: `${mins} min total` },
+      { icon: bookOutline, label: `${n} lessons` },
+      { icon: timeOutline, label: `${mins} min total` },
       { label: topic, titlecase: true },
     ]" />
 -->
@@ -36,21 +38,36 @@
       v-for="(chip, i) in items"
       :key="i"
       class="label-chip"
-      :class="{ 'label-chip--uppercase': uppercase, 'label-chip--titlecase': titlecase || chip.titlecase }"
+      :class="{ 'label-chip--uppercase': uppercase }"
       :style="chipStyle(chip)">
       <span v-if="chip.emoji" class="label-chip-emoji">{{ chip.emoji }}</span>
       <ion-icon v-else-if="chip.icon" :icon="chip.icon" class="label-chip-icon" />
-      <span class="label-chip-label">{{ chip.label }}</span>
+      <span class="label-chip-label">{{ chipLabel(chip) }}</span>
     </span>
   </div>
 </template>
 
 <script setup>
-defineProps({
+import { bookOutline, timeOutline } from 'ionicons/icons';
+const props = defineProps({
   items: { type: Array, default: () => [] },
   uppercase: { type: Boolean, default: false },
   titlecase: { type: Boolean, default: false },
 });
+
+// Title-casing runs in JS via textTitle, NOT CSS `text-transform: capitalize`.
+// Two reasons the CSS version was wrong:
+//   1. It capitalizes every word's first letter but lowercases nothing, so
+//      acronyms rendered as "Nvc" / "Ifs" / "Cbt". textTitle leaves an
+//      all-uppercase word (length > 1) alone, so NVC / IFS / CBT survive.
+//   2. text-transform only changes the PAINTED glyphs — the DOM text stayed
+//      the raw lowercase slug, so screen readers and copy-paste got that.
+// `uppercase` stays in CSS: it needs the paired letter-spacing, and there's no
+// acronym subtlety to preserve there.
+function chipLabel(chip) {
+  const label = chip.label ?? '';
+  return (props.titlecase || chip.titlecase) ? textTitle(label) : label;
+}
 
 function chipStyle(chip) {
   if (chip.filled && chip.color) return { background: `var(--ion-color-${chip.color})`, color: '#fff' };
@@ -59,40 +76,3 @@ function chipStyle(chip) {
 }
 </script>
 
-<style scoped>
-.label-chips {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.label-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  line-height: 1.2;
-  padding: 0.2rem 0.55rem;
-  border-radius: 0.6rem;
-  background: var(--ion-color-step-50, #f5f5f5);
-  color: var(--ion-color-medium-shade);
-  white-space: nowrap;
-}
-
-.label-chip--uppercase .label-chip-label {
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.label-chip--titlecase .label-chip-label {
-  text-transform: capitalize;
-}
-
-.label-chip-icon,
-.label-chip-emoji {
-  font-size: 0.9rem;
-  line-height: 1;
-}
-</style>

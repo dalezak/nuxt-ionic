@@ -1,0 +1,30 @@
+/*
+ * pill-toggle — component stylesheet.
+ *
+ * One stylesheet per shared component: the single place its look is DEFINED and
+ * the single place an app OVERRIDES it (an app's own CSS loads after the
+ * layer's, so a rule there simply wins).
+ *
+ * NOT scoped, deliberately. A Vue `<style scoped>` block stamps a data attribute
+ * onto every selector, which an app's stylesheet cannot match — so scoped styles
+ * in a SHARED component are unoverridable by definition, which defeats the point
+ * of shipping the component. Class names are prefixed instead.
+ */
+
+.pill-toggle {
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--ion-color-step-200, #cfcfcf);
+  background: transparent;
+  color: var(--ion-color-medium-shade);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.pill-toggle--active {
+  border-color: var(--pill-accent, var(--ion-color-primary));
+  background: rgba(var(--pill-accent-rgb, var(--ion-color-primary-rgb)), 0.12);
+  color: var(--pill-accent-shade, var(--ion-color-primary-shade));
+}

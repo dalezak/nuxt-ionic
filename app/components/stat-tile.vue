@@ -23,11 +23,11 @@
   Typical use is a row of 3 tiles at the top of a profile-style page:
 
     <div class="stats-row">
-      <stat-tile accent="learn" :icon="ioniconsBookOutline"
+      <stat-tile accent="learn" :icon="bookOutline"
                  :value="stats.courses" label="Courses" tinted />
-      <stat-tile accent="act" :icon="ioniconsCheckmarkDoneOutline"
+      <stat-tile accent="act" :icon="checkmarkDoneOutline"
                  :value="stats.lessons" label="Lessons" tinted />
-      <stat-tile accent="reflect" :icon="ioniconsSpeedometerOutline"
+      <stat-tile accent="reflect" :icon="speedometerOutline"
                  :value="`${stats.avgScore}%`" label="Avg Score" tinted />
     </div>
 
@@ -38,6 +38,7 @@
 -->
 
 <script setup>
+import { bookOutline, checkmarkDoneOutline, speedometerOutline } from 'ionicons/icons';
 const props = defineProps({
   // Section-card accent name. Drives stripe color, default icon color,
   // and (when `tinted`) the background tint.
@@ -88,40 +89,3 @@ const resolvedBackground = computed(() => {
 });
 </script>
 
-<style scoped>
-.stat-tile {
-  margin: 0;
-  /* Tighter inner padding than the default section-card (1rem) so short
-     single-word labels (COURSES, LESSONS) have enough content width to
-     fit on one line in narrow grid cells. */
-  --card-padding: 0.6rem;
-}
-.stat-tile-content {
-  text-align: center;
-}
-.stat-tile-icon {
-  font-size: 1.4rem;
-  margin-bottom: 0.4rem;
-}
-.stat-tile-value {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: var(--ion-text-color);
-  line-height: 1;
-  margin-bottom: 0.25rem;
-  /* Keep values like "80%" or "1.2k" intact — % and . are treated as
-     separable by default, so without nowrap they break to the next line
-     in narrow cells. */
-  white-space: nowrap;
-}
-.stat-tile-label {
-  /* Tightened size + letter-spacing so single-word labels (COURSES,
-     LESSONS, STREAK) fit on one line in narrow cells. Multi-word labels
-     still wrap on word boundary, single words now overflow gracefully
-     instead of breaking mid-word ("COURS / ES"). */
-  font-size: 0.65rem;
-  color: var(--ion-color-medium);
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-}
-</style>

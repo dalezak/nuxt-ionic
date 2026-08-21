@@ -1,0 +1,64 @@
+/*
+ * weekly-dots — component stylesheet.
+ *
+ * One stylesheet per shared component: the single place its look is DEFINED and
+ * the single place an app OVERRIDES it (app CSS loads after the layer's, so an
+ * app rule wins without !important or a fork).
+ *
+ * NOT scoped. A `<style scoped>` block stamps a data attribute onto every
+ * selector, which an app's stylesheet cannot match — scoped styles in a SHARED
+ * component are unoverridable by definition.
+ *
+ * Selectors were prefixed with the component root on extraction: scoping used to
+ * isolate names like `.cell` / `.dot` / `.grid`, and without it they would style
+ * every matching element in the app.
+ */
+
+.weekly-dots {
+  display: flex;
+  justify-content: space-between;
+  /* Light top/bottom breathing room only — when placed in a card footer the
+     footer already supplies the outer gap, so the component keeps its own
+     padding minimal to avoid doubling up. */
+  padding: 0.25rem 0;
+}
+.weekly-dots .weekly-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+.weekly-dots .weekly-day-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--ion-color-medium);
+  text-transform: uppercase;
+}
+.weekly-dots .weekly-day-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  /* Dashed outline for empty days so they read as "yet to come" rather than a
+     hard "missed". Active dots fill solid + border-color matches the fill, so
+     the dashes are invisible on them; today's ring is a separate outline. */
+  border: 1.5px dashed var(--ion-color-light-shade);
+  background: transparent;
+  transition: background 0.2s, border-color 0.2s;
+}
+/* Today's cell — outline ring around the dot, label tinted to match.
+   Uses the same palette color the consumer passed for the active fill. */
+.weekly-dots .weekly-day.is-today .weekly-day-dot {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+  color: var(--ion-color-warning-tint);
+}
+/* Today, not yet done — soft inner fill so it reads as a present marker rather
+   than a hollow ring. Lighter than a completed day's solid fill (which comes
+   from the inline active style), so "today, not yet" stays distinct from "done". */
+.weekly-dots .weekly-day.is-today .weekly-day-dot:not(.active) {
+  background: rgba(var(--ion-color-warning-rgb), 0.22);
+}
+.weekly-dots .weekly-day.is-today .weekly-day-label {
+  color: var(--ion-color-warning-shade);
+}

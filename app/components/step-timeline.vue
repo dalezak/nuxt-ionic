@@ -10,7 +10,7 @@
         <div class="step-node">
           <ion-icon
             v-if="statusOf(step) === 'completed'"
-            :icon="ioniconsCheckmark"
+            :icon="checkmark"
             class="step-node-icon" />
         </div>
         <div v-if="i < steps.length - 1" class="step-line" />
@@ -37,7 +37,7 @@
            that aren't tappable stay arrow-free. -->
       <ion-icon
         v-if="disclosureFor(step)"
-        :icon="ioniconsChevronForwardOutline"
+        :icon="chevronForwardOutline"
         class="step-disclosure"
         :class="{ 'step-disclosure--muted': statusOf(step) !== 'current' }" />
     </div>
@@ -45,6 +45,7 @@
 </template>
 
 <script setup>
+import { checkmark, chevronForwardOutline } from 'ionicons/icons';
 // Vertical step timeline. Renders a sequence of steps as connected nodes
 // down a left-edge rail — completed steps get a filled checkmark, the
 // current step gets an open accent ring (and is auto-derived as the
@@ -117,157 +118,3 @@ function onStepClick(step, index) {
 }
 </script>
 
-<style scoped>
-.step-timeline {
-  display: flex;
-  flex-direction: column;
-}
-
-.step {
-  display: flex;
-  gap: 1rem;
-  cursor: pointer;
-}
-
-/* A header step whose sub-items carry the actions — not itself tappable. */
-.step--static {
-  cursor: default;
-}
-
-.step-rail {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex-shrink: 0;
-  width: 1.5rem;
-}
-
-.step-node {
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  margin-top: 0.25rem;
-  transition: background 0.15s ease, border-color 0.15s ease;
-}
-
-.step-line {
-  flex: 1;
-  width: 2px;
-  background: var(--ion-color-light-shade);
-  min-height: 1.25rem;
-  margin: 0.25rem 0;
-}
-
-.step-body {
-  flex: 1;
-  padding-bottom: 1rem;
-}
-
-/* Trailing disclosure chevron — aligned to the title row, accent-tinted to
-   echo the current step's color. Pinned to the top so it tracks the title,
-   not the vertical center of a tall (subtitled) row. */
-.step-disclosure {
-  flex-shrink: 0;
-  align-self: flex-start;
-  margin-top: 0.4rem;
-  font-size: 1.05rem;
-  color: var(--ion-color-primary);
-}
-
-/* On a fully-tappable timeline (`disclosure="all"`), non-current chevrons
-   are muted so the current step's chevron still reads as the primary CTA. */
-.step-disclosure--muted {
-  color: var(--ion-color-medium);
-  opacity: 0.6;
-}
-
-.step-body-default {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-}
-
-.step-title {
-  font-size: 1rem;
-  font-weight: 600;
-  margin: 0;
-  color: var(--ion-text-color);
-}
-
-.step-subtitle {
-  font-size: 0.85rem;
-  margin: 0;
-  color: var(--ion-color-medium);
-  line-height: 1.4;
-}
-
-.step--completed .step-node {
-  background: var(--ion-color-primary);
-}
-
-.step--completed .step-node-icon {
-  color: white;
-  font-size: 1rem;
-}
-
-.step--completed .step-line {
-  background: var(--ion-color-primary);
-}
-
-.step--completed .step-title,
-.step--completed .step-subtitle {
-  opacity: 0.55;
-}
-
-.step--current .step-node {
-  background: transparent;
-  border: 2px solid var(--ion-color-primary);
-}
-
-.step--current .step-title {
-  color: var(--ion-color-primary);
-}
-
-.step--upcoming .step-node {
-  background: transparent;
-  border: 2px solid var(--ion-color-light-shade);
-}
-
-.step--upcoming .step-title,
-.step--upcoming .step-subtitle {
-  opacity: 0.5;
-}
-
-/* Emphasized current step (opt-in via `emphasizeCurrent`) — marks the one
-   "do this now" step as the primary CTA. The tinted panel is drawn as a
-   ::before with z-index -1 inside a step-local stacking context, so it sits
-   behind the body without shifting the rail or nodes. Left inset clears the
-   rail (1.5rem) + gap (1rem) so the tint hugs only the body. */
-.step-timeline--emphasize .step--current {
-  position: relative;
-  z-index: 0;
-}
-
-.step-timeline--emphasize .step--current::before {
-  content: '';
-  position: absolute;
-  inset: -0.15rem -0.6rem 0.35rem 2.3rem;
-  background: rgba(var(--ion-color-primary-rgb), 0.08);
-  border-radius: 0.75rem;
-  z-index: -1;
-  pointer-events: none;
-}
-
-.step-timeline--emphasize .step--current .step-title {
-  font-weight: 700;
-}
-
-.step-timeline--emphasize .step--current .step-subtitle {
-  color: var(--ion-color-primary);
-  opacity: 0.85;
-}
-</style>

@@ -13,7 +13,7 @@
     <ion-toolbar>
       <ion-title>Get Started</ion-title>
       <ion-buttons slot="end">
-        <ion-button @click="onCancel">Cancel</ion-button>
+        <ion-button size="small" @click="onCancel">Cancel</ion-button>
       </ion-buttons>
     </ion-toolbar>
   </ion-header>
@@ -37,9 +37,9 @@
   </ion-content>
   <ion-footer>
     <ion-toolbar>
-      <ion-button expand="block" color="primary" @click="doSignup" v-if="isSignup">Signup</ion-button>
-      <ion-button expand="block" color="primary" @click="doLogin" v-else-if="isLogin">Login</ion-button>
-      <ion-button expand="block" color="primary" @click="doReset" v-else-if="isReset">Reset Password</ion-button>
+      <ion-button size="small" expand="block" color="primary" @click="doSignup" v-if="isSignup">Signup</ion-button>
+      <ion-button size="small" expand="block" color="primary" @click="doLogin" v-else-if="isLogin">Login</ion-button>
+      <ion-button size="small" expand="block" color="primary" @click="doReset" v-else-if="isReset">Reset Password</ion-button>
     </ion-toolbar>
   </ion-footer>
 </template>
@@ -51,14 +51,21 @@ const props = defineProps({
   returnPath: { type: String, default: null },
 });
 
+// Remembered email from the last successful login/signup (1-year cookie).
+// Present → a returning user: default to LOGIN with the email prefilled.
+// Absent → almost certainly a first-time visitor: default to SIGNUP (the old
+// login-first default made every new user find the "Don't have an account?"
+// link). The manual mode links below still switch freely either way.
+const lastEmail = useCookie("last_login_email", { maxAge: 60 * 60 * 24 * 365, sameSite: "lax" });
+
 const state = reactive({
   name: "",
   nameInput: null,
-  email: "",
+  email: lastEmail.value ?? "",
   emailInput: null,
   password: "",
   passwordInput: null,
-  form: "login"
+  form: lastEmail.value ? "login" : "signup"
 });
 
 let isLogin = computed(() => state.form == "login");
@@ -125,46 +132,58 @@ async function onCancel() {
 }
 
 // Success — dismiss the modal, kick off navigation to the return path
-// (deep-link bounce) or the app root, then HOLD until the route actually
-// leaves the public page we're on.
+// (deep-link bounce) or the app root, then HOLD until the destination has
+// visually COVERED the public page we're leaving.
 //
 // Why the hold: showPage/showPageIndex fire `$ionRouter.navigate` and return
-// immediately, but the destination (e.g. Today) only becomes the active route
-// after its auth middleware + initial load resolve (~1s). The caller dismisses
-// the "Logging in…" spinner in its `finally` right after this returns — if we
-// don't wait, the spinner clears while navigation is still in flight, the
-// just-dismissed modal reveals the public Start page, and it flashes for ~1s
-// until the destination swaps in. Awaiting the route change keeps the spinner
-// up across the whole transition. Safety timeout so a navigation hiccup can't
-// strand the spinner.
+// immediately. The caller dismisses the "Logging in…" spinner in its `finally`
+// right after this returns — if we don't wait, the spinner clears while the
+// public Start page is still on screen, and it flashes for ~1s until the
+// destination swaps in.
+//
+// Why not wait on the Vue route: `router.currentRoute` flips to `/today` the
+// instant navigation COMMITS — which is the START of Ionic's root-replace
+// transition, not the end. The outgoing Start page keeps painting for the whole
+// ~300ms animation after that. Waiting on the route change therefore released
+// the spinner mid-transition and the Start page flashed (the bug this replaces).
+//
+// Instead we grab the `ion-page` that's currently on top (the Start page, once
+// the modal is dismissed) and wait until Ionic hides it (`ion-page-hidden`) or
+// tears it out of the DOM — i.e. the destination now fully covers it. Only then
+// is it safe to drop the spinner. Safety timeout so a navigation hiccup can't
+// strand it.
 async function finishAuth() {
   clearInputs();
-  const router = useRouter();
-  const fromPath = router.currentRoute.value.path;
   await hideModal();
+  // Capture AFTER the modal dismisses, so the topmost page is the one we're
+  // leaving (the public Start page), not the modal's own inner ion-page.
+  const outgoing = topVisiblePage();
   const path = typeof props.returnPath === 'string' && props.returnPath.startsWith('/') ? props.returnPath : null;
   if (path) showPage(path, true, true);
   else showPageIndex();
-  await waitForRouteLeave(router, fromPath);
+  await waitForPageCovered(outgoing);
 }
 
-// Resolve once the active route path differs from `fromPath` (i.e. the
-// destination has taken over), or after `timeoutMs` as a backstop.
-function waitForRouteLeave(router, fromPath, timeoutMs = 5000) {
-  if (router.currentRoute.value.path !== fromPath) return Promise.resolve();
+// The topmost visible Ionic page in the router outlet, or null (SSR / none).
+function topVisiblePage() {
+  if (typeof document === 'undefined') return null;
+  const pages = document.querySelectorAll('.ion-page:not(.ion-page-hidden)');
+  return pages.length ? pages[pages.length - 1] : null;
+}
+
+// Resolve once `outgoing` is covered by the incoming page — Ionic marks a page
+// that's no longer on top with `.ion-page-hidden`, and a root-replace removes it
+// from the DOM entirely — or after `timeoutMs` as a backstop.
+function waitForPageCovered(outgoing, timeoutMs = 5000) {
+  if (typeof document === 'undefined' || !outgoing) return Promise.resolve();
+  const covered = () => !outgoing.isConnected || outgoing.classList.contains('ion-page-hidden');
+  if (covered()) return Promise.resolve();
   return new Promise((resolve) => {
     let done = false;
-    const finish = () => {
-      if (done) return;
-      done = true;
-      stop();
-      clearTimeout(timer);
-      resolve();
-    };
-    const stop = watch(() => router.currentRoute.value.path, (p) => {
-      if (p !== fromPath) finish();
-    });
+    const finish = () => { if (done) return; done = true; clearTimeout(timer); resolve(); };
+    const tick = () => { if (done) return; if (covered()) finish(); else requestAnimationFrame(tick); };
     const timer = setTimeout(finish, timeoutMs);
+    requestAnimationFrame(tick);
   });
 }
 
@@ -177,6 +196,7 @@ async function doLogin() {
         password: state.password
       });
       if (user) {
+        lastEmail.value = state.email;  // remember for next launch's prefill
         showToast("Welcome back friend");
         await finishAuth();
       }
@@ -205,10 +225,14 @@ async function doSignup() {
       if (user?.confirmationPending) {
         // Account created but email confirmation is required — no session yet.
         // Don't navigate into the app (every RLS read would fail); tell the
-        // user to confirm, then log in.
+        // user to confirm, then log in. Remember the email NOW so their return
+        // trip lands on Login, prefilled — exactly the path we just told them
+        // to take.
+        lastEmail.value = state.email;
         showAlert("Check your email", `We sent a confirmation link to ${state.email}. Tap it to finish setting up your account, then log in.`);
       }
       else if (user) {
+        lastEmail.value = state.email;  // remember for next launch's prefill
         showToast("Welcome friend");
         await finishAuth();
       }
@@ -259,46 +283,3 @@ function clearInputs() {
 }
 </script>
 
-<style scoped>
-.login-title {
-  font-size: 1.4rem;
-  font-weight: 700;
-  line-height: 1.25;
-  margin: 0.25rem 0 0.35rem;
-}
-
-.login-subtitle {
-  font-size: 0.95rem;
-  line-height: 1.5;
-  color: var(--ion-color-medium-shade);
-  margin: 0 0 1.25rem;
-}
-
-.login-fields {
-  background: transparent;
-  /* Top padding clears the first floating label — MD's `label-placement="floating"`
-     positions the active label ~8px above the input outline. */
-  padding: 0.5rem 0 0;
-}
-
-/* Space between inputs since they're no longer wrapped in ion-item
-   rows that provided implicit row spacing. */
-.login-input {
-  margin-bottom: 0.75rem;
-}
-
-.login-links {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  margin-top: 0.25rem;
-}
-
-/* Inset the footer submit button so it isn't edge-to-edge. */
-ion-footer ion-toolbar {
-  --padding-start: 1rem;
-  --padding-end: 1rem;
-}
-</style>

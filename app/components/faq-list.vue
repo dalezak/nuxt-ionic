@@ -19,22 +19,3 @@ defineProps({
 });
 </script>
 
-<style scoped>
-.faq-item {
-  margin: 0 0 1.25rem;
-}
-
-.faq-q {
-  font-size: 1.05rem;
-  font-weight: 700;
-  margin: 0 0 0.35rem;
-  color: var(--ion-text-color);
-}
-
-.faq-a {
-  margin: 0;
-  font-size: 0.95rem;
-  line-height: 1.6;
-  color: var(--ion-color-medium-shade);
-}
-</style>

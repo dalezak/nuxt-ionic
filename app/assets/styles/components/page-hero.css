@@ -1,0 +1,46 @@
+/*
+ * page-hero — component stylesheet.
+ *
+ * One stylesheet per shared component: the single place its look is DEFINED and
+ * the single place an app OVERRIDES it (app CSS loads after the layer's, so an
+ * app rule wins without !important or a fork).
+ *
+ * NOT scoped. A `<style scoped>` block stamps a data attribute onto every
+ * selector, which an app's stylesheet cannot match — scoped styles in a SHARED
+ * component are unoverridable by definition.
+ *
+ * Selectors were prefixed with the component root on extraction: scoping used to
+ * isolate names like `.cell` / `.dot` / `.grid`, and without it they would style
+ * every matching element in the app.
+ */
+
+.page-hero {
+  padding-top: 2.5rem;
+  padding-bottom: 1.5rem;
+}
+
+.page-hero-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  display: inline-block;
+}
+
+.page-hero-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+}
+
+.page-hero-body {
+  font-size: 1rem;
+  opacity: 0.7;
+  max-width: 28rem;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Trim default <p> margins so consumers can pass `<p>...</p>` without
+   the body block jumping vertically. */
+.page-hero-body p {
+  margin: 0;
+}

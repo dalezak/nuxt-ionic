@@ -30,13 +30,14 @@
       </ion-chip>
     </div>
     <ion-button fill="clear" size="small" expand="block" class="suggestion-chips-refresh" @click="$emit('refresh')">
-      <ion-icon :icon="ioniconsRefreshOutline" slot="start"></ion-icon>
+      <ion-icon :icon="refreshOutline" slot="start"></ion-icon>
       {{ refreshLabel }}
     </ion-button>
   </div>
 </template>
 
 <script setup>
+import { refreshOutline } from 'ionicons/icons';
 defineProps({
   // Array of label strings to render as chips.
   suggestions: { type: Array, default: () => [] },
@@ -51,19 +52,3 @@ defineProps({
 defineEmits(['select', 'refresh']);
 </script>
 
-<style scoped>
-.suggestion-chips-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem;
-}
-.suggestion-chips-list--center {
-  justify-content: center;
-}
-.suggestion-chips-list ion-chip {
-  margin: 0;
-}
-.suggestion-chips-refresh {
-  margin-top: 0.5rem;
-}
-</style>

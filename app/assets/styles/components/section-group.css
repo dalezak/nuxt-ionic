@@ -1,0 +1,192 @@
+/*
+ * section-group — component stylesheet.
+ *
+ * One stylesheet per shared component: the single place its look is DEFINED and
+ * the single place an app OVERRIDES it (app CSS loads after the layer's, so an
+ * app rule wins without !important or a fork).
+ *
+ * NOT scoped. A `<style scoped>` block stamps a data attribute onto every
+ * selector, which an app's stylesheet cannot match — scoped styles in a SHARED
+ * component are unoverridable by definition.
+ *
+ * Selectors were prefixed with the component root on extraction: scoping used to
+ * isolate names like `.cell` / `.dot` / `.grid`, and without it they would style
+ * every matching element in the app.
+ */
+
+/* ── Eyebrow, defined ONCE and shared by both branches ─────────────────────
+ Mirrors <section-title>'s quiet supporting sibling: uppercase, letterspaced,
+ medium — a grouping label that doesn't compete with card titles. */
+.section-group-heading,
+.section-group-label {
+ font-size: 0.8rem;
+ font-weight: 600;
+ text-transform: uppercase;
+ letter-spacing: 0.06em;
+ color: var(--ion-color-medium);
+}
+
+/* Static branch — the old .section-heading box model. The block margin lives on
+ the ROOT (not the <h3>) so a caller's fall-through class (e.g. a divider that
+ tightens `margin-top`) overrides it just like it did on the old bare <h3>. */
+.section-group--static {
+ margin: 1.5rem 0 0.25rem;
+}
+.section-group-heading {
+ margin: 0;
+}
+
+/* Quiet secondary line under the title (both modes). Absorbs patterns that used
+ to be hand-rolled as a <p> after the heading. */
+.section-group-subtitle {
+ margin: 0 0 0.25rem;
+ font-size: 0.8rem;
+ line-height: 1.4;
+ color: var(--ion-color-medium-shade);
+}
+
+/* ── Collapsible branch ───────────────────────────────────────────────────── */
+
+/* Same top/bottom rhythm the static eyebrow carries; transparent so the section
+ inherits the page background (no card surface). */
+.section-group--collapsible {
+ display: block;
+ margin: 1.5rem 0 0.25rem;
+ background: transparent;
+}
+
+/* Strip ion-accordion's default card/item chrome. It exposes only shadow parts
+ (no CSS custom properties), so ::part is the sanctioned hook for background;
+ the header is an internal ion-item whose row chrome is zeroed via item CSS
+ vars (divider, ripple, inset padding, min-height). */
+.section-group--collapsible ion-accordion {
+ background: transparent;
+ /* Ionic sets :host{overflow:hidden} on the accordion purely to protect a
+ border-radius/stacking context during the animation. We stripped the
+ radius, so that host clip does nothing but shear the section-card
+ box-shadow at the edges — and it re-clips the negative margin below. Let
+ the host show overflow: the collapse animation is clipped independently by
+ #content (part=content) via max-height + its own overflow:hidden, so the
+ fold still works. */
+ overflow: visible;
+}
+.section-group--collapsible ion-accordion::part(header),
+.section-group--collapsible ion-accordion::part(content) {
+ background: transparent;
+}
+/* The content region is clipped (overflow:hidden) so ion-accordion can animate
+ its height. That shears the section-card box-shadow at the left/right edges
+ (the left is masked by the accent stripe, so only the right reads as "cut
+ off"). Pad the region by the shadow's spread, then pull it back out with an
+ equal negative margin so the cards stay aligned with the eyebrow above. Only
+ horizontal — vertical padding would offset the height animation. */
+.section-group--collapsible ion-accordion::part(content) {
+ padding-inline: 12px;
+ margin-inline: -12px;
+}
+.section-group--collapsible ion-item {
+ --background: transparent;
+ --background-hover: transparent;
+ --background-activated: transparent;
+ --background-focused: transparent;
+ --border-width: 0; /* kill the MD/iOS row divider */
+ --inner-border-width: 0;
+ --padding-start: 0;
+ --inner-padding-end: 0;
+ --min-height: auto;
+ --ripple-color: transparent; /* no MD ripple */
+ width: 100%;
+}
+/* Let our header row own the full width inside the item's content area (ion-item
+ lays default-slot content in a flex track; stretch it so the spacer can push
+ the badge/chevron to the right edge). */
+.section-group-header-item::part(native) {
+ padding: 0;
+}
+/* Ionic's built-in disclosure chevron (auto-rotates with the accordion's real
+ state). Tint it like the eyebrow, primary when active, with a little breathing
+ room from the badge. */
+.section-group--collapsible .ion-accordion-toggle-icon {
+ color: var(--ion-color-medium);
+ font-size: 1.1rem;
+ margin-inline-start: 0.5rem;
+}
+.section-group--active .ion-accordion-toggle-icon {
+ color: var(--ion-color-primary);
+}
+
+/* Header row — mirrors the old .section-collapsible-heading flexbox. */
+.section-group-header {
+ display: flex;
+ align-items: center;
+ gap: 0.5rem;
+ width: 100%;
+ padding: 0.25rem 0;
+ text-align: left;
+}
+
+/* Title + subtitle stack on the left. */
+.section-group-heading-block {
+ flex: 0 0 auto;
+ display: flex;
+ flex-direction: column;
+ gap: 0.1rem;
+}
+.section-group-header .section-group-subtitle {
+ margin: 0;
+}
+
+.section-group--active .section-group-label {
+ color: var(--ion-color-primary);
+}
+
+.section-group-label {
+ flex: 0 0 auto;
+}
+
+.section-group-badge {
+ flex: 0 0 auto;
+ padding: 0.05rem 0.4rem;
+ border-radius: 999px;
+ background: var(--ion-color-primary);
+ color: var(--ion-color-primary-contrast);
+ font-size: 0.6rem;
+ letter-spacing: 0.04em;
+}
+
+/* Flexible middle — grows to fill the row so the badge (and the built-in toggle
+ icon after it) stay pinned right whether or not a summary is present. Clips a
+ long preview. */
+.section-group-spacer {
+ flex: 1 1 auto;
+ min-width: 0;
+ overflow: hidden;
+}
+
+/* Collapsed preview line — normal case (not the eyebrow uppercase), muted,
+ truncates so it never pushes the badge/chevron off-row. */
+.section-group-summary {
+ display: block;
+ overflow: hidden;
+ text-overflow: ellipsis;
+ white-space: nowrap;
+ text-transform: none;
+ letter-spacing: normal;
+ font-weight: 400;
+ font-size: 0.75rem;
+ color: var(--ion-color-medium);
+}
+
+/* Body flush with the eyebrow (Ionic pads the content region on iOS; zero it to
+ match the old v-show div). */
+/* The body wrapper is a plain light-DOM div, so it can carry the vertical
+   breathing room the clipped `::part(content)` cannot.
+   The same clip that shears the cards' side shadows also shears the TOP shadow
+   of the first card: `--card-shadow` is `0 2px 8px`, so it reaches ~6px above
+   the card, and the content region starts flush with it. Vertical padding on
+   the PART is out (it offsets the height animation — see above), but padding
+   here is inside the animated box and simply moves with it. */
+.section-group-body {
+  padding: 0;
+  padding-block-start: 8px;
+}

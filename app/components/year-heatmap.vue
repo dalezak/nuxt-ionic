@@ -2,7 +2,7 @@
   <div class="year-heatmap">
     <div v-if="monthLabels.length > 0" class="month-row" :aria-hidden="true">
       <span class="weekday-spacer"></span>
-      <div class="month-labels" :style="`grid-template-columns: repeat(${weekCount}, 1fr)`">
+      <div class="month-labels" :style="`grid-template-columns: repeat(${weekCount}, minmax(0, 1fr))`">
         <span
           v-for="(label, i) in monthLabels"
           :key="i"
@@ -16,7 +16,7 @@
       </div>
       <div
         class="grid"
-        :style="`grid-template-columns: repeat(${weekCount}, 1fr)`">
+        :style="`grid-template-columns: repeat(${weekCount}, minmax(0, 1fr))`">
         <div
           v-for="(cell, i) in cells"
           :key="i"
@@ -187,96 +187,3 @@ function monthName(monthIdx) {
 }
 </script>
 
-<style scoped>
-/* Layout: month labels row + grid row. Within the grid row, weekday
-   labels on the left, cell grid on the right. Cells flow column-first
-   so each column is a week and each row is a weekday. */
-
-.year-heatmap {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  width: 100%;
-}
-
-.month-row {
-  display: flex;
-  gap: 0.4rem;
-}
-
-.weekday-spacer {
-  width: 0.7rem;
-  flex-shrink: 0;
-}
-
-.month-labels {
-  display: grid;
-  flex: 1;
-  gap: 0.15rem;
-}
-
-.month-label {
-  font-size: 0.65rem;
-  color: var(--ion-color-medium);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.body {
-  display: flex;
-  gap: 0.4rem;
-  align-items: stretch;
-}
-
-.weekday-labels {
-  display: grid;
-  grid-template-rows: repeat(7, 1fr);
-  gap: 0.15rem;
-  width: 0.7rem;
-  flex-shrink: 0;
-}
-
-.weekday {
-  font-size: 0.55rem;
-  color: var(--ion-color-medium);
-  text-align: right;
-  align-self: center;
-  text-transform: uppercase;
-}
-
-.grid {
-  display: grid;
-  grid-auto-flow: column;
-  grid-template-rows: repeat(7, 1fr);
-  gap: 0.15rem;
-  flex: 1;
-}
-
-.cell {
-  aspect-ratio: 1 / 1;
-  border-radius: 0.15rem;
-  background: transparent;
-  border: 1px solid transparent;
-}
-
-.cell--in-year {
-  background: var(--ion-color-light);
-  border-color: var(--ion-color-light-shade);
-}
-
-.cell--in-year.cell--done {
-  background: var(--ion-color-primary);
-  border-color: var(--ion-color-primary);
-}
-
-.cell--today {
-  outline: 1.5px solid var(--ion-color-medium-tint);
-  outline-offset: 1px;
-}
-
-.cell--today.cell--done {
-  outline-color: var(--ion-color-primary-tint);
-}
-</style>

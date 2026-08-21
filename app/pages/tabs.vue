@@ -33,10 +33,16 @@
 definePageMeta({
   alias: ['/'],
   middleware: [
-    function rootRedirect(to) {
+    async function rootRedirect(to) {
       if (to.path !== '/' && to.path !== '') return;
       const { tabs } = useAppConfig();
-      const { isAuthenticated } = useAuthSession();
+      const { isAuthenticated, ready } = useAuthSession();
+      // Wait for the persisted session before picking the first tab — otherwise
+      // a cold launch reads isAuthenticated=false (session not restored yet),
+      // redirects to the first PUBLIC tab (Home), then corrects to the private
+      // tab once auth resolves: the launch flash. `ready()` is a resolved no-op
+      // after the first navigation, so later '/' hits aren't slowed.
+      await ready();
       const first = (tabs ?? []).find(tab => tab.public == !isAuthenticated.value);
       if (first?.path) return navigateTo(first.path, { replace: true });
     },

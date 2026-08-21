@@ -1,10 +1,11 @@
 <template>
-  <ion-button fill="clear" :title="title" :class="css" @click="onShare">
-    <ion-icon :icon="ioniconsShareSocialOutline"></ion-icon>
+  <ion-button size="small" fill="clear" :title="title" :class="css" @click="onShare">
+    <ion-icon :icon="shareSocialOutline"></ion-icon>
   </ion-button>
 </template>
 
 <script setup>
+import { shareSocialOutline } from 'ionicons/icons';
 const props = defineProps({
   css: {
     type: String,

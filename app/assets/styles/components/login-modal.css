@@ -1,0 +1,57 @@
+/*
+ * login-modal — component stylesheet.
+ *
+ * One stylesheet per shared component: the single place its look is DEFINED and
+ * the single place an app OVERRIDES it (app CSS loads after the layer's, so an
+ * app rule wins without !important or a fork).
+ *
+ * NOT scoped. A `<style scoped>` block stamps a data attribute onto every
+ * selector, which an app's stylesheet cannot match — scoped styles in a SHARED
+ * component are unoverridable by definition.
+ *
+ * Selectors were prefixed with the component root on extraction: scoping used to
+ * isolate names like `.cell` / `.dot` / `.grid`, and without it they would style
+ * every matching element in the app.
+ */
+
+.login-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0.25rem 0 0.35rem;
+}
+
+.login-subtitle {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--ion-color-medium-shade);
+  margin: 0 0 1.25rem;
+}
+
+.login-fields {
+  background: transparent;
+  /* Top padding clears the first floating label — MD's `label-placement="floating"`
+     positions the active label ~8px above the input outline. */
+  padding: 0.5rem 0 0;
+}
+
+/* Space between inputs since they're no longer wrapped in ion-item
+   rows that provided implicit row spacing. */
+.login-input {
+  margin-bottom: 0.75rem;
+}
+
+.login-links {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  margin-top: 0.25rem;
+}
+
+/* Inset the footer submit button so it isn't edge-to-edge. */
+ion-footer ion-toolbar {
+  --padding-start: 1rem;
+  --padding-end: 1rem;
+}

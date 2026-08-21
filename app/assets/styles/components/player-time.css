@@ -1,0 +1,28 @@
+/*
+ * player-time — component stylesheet.
+ *
+ * One stylesheet per shared component: the single place its look is DEFINED and
+ * the single place an app OVERRIDES it (an app's own CSS loads after the
+ * layer's, so a rule there simply wins).
+ *
+ * NOT scoped, deliberately. A Vue `<style scoped>` block stamps a data attribute
+ * onto every selector, which an app's stylesheet cannot match — so scoped styles
+ * in a SHARED component are unoverridable by definition, which defeats the point
+ * of shipping the component. Class names are prefixed instead.
+ */
+
+.player-time {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 300;
+  /* Tabular figures so the number doesn't shuffle sideways as digits tick — on
+     a still screen it's the only thing moving, and any shift reads as a twitch. */
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  color: var(--ion-color-medium-shade);
+}
+
+.player-time-total {
+  font-size: 1.1rem;
+  color: var(--ion-color-medium);
+}

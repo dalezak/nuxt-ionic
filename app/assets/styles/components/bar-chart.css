@@ -1,0 +1,89 @@
+/*
+ * bar-chart — component stylesheet.
+ *
+ * One stylesheet per shared component: the single place its look is DEFINED and
+ * the single place an app OVERRIDES it (app CSS loads after the layer's, so an
+ * app rule wins without !important or a fork).
+ *
+ * NOT scoped. A `<style scoped>` block stamps a data attribute onto every
+ * selector, which an app's stylesheet cannot match — scoped styles in a SHARED
+ * component are unoverridable by definition.
+ *
+ * Selectors were prefixed with the component root on extraction: scoping used to
+ * isolate names like `.cell` / `.dot` / `.grid`, and without it they would style
+ * every matching element in the app.
+ */
+
+.bar-chart {
+  padding: 0.5rem 0 1.5rem;
+}
+.empty,
+.bar-chart .not-attempted {
+  color: var(--ion-color-medium);
+  font-style: italic;
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 0.5rem 0;
+}
+.bar-chart .group-card {
+  margin: 0.75rem 1rem;
+}
+.bar-chart .group-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+.bar-chart .group-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--ion-text-color);
+  flex: 1;
+}
+.bar-chart .group-content {
+  padding-top: 0;
+}
+.bar-chart .bar-row {
+  display: grid;
+  grid-template-columns: 64px 1fr 48px;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 4px 0;
+  font-size: 0.8rem;
+}
+.bar-chart .bar-name {
+  font-weight: 600;
+  color: var(--bar-color, var(--ion-color-medium-shade));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bar-chart .is-highlight .bar-name {
+  color: var(--ion-color-primary);
+  font-weight: 700;
+}
+.bar-chart .bar-track {
+  height: 10px;
+  background: var(--ion-color-light-shade);
+  border-radius: 5px;
+  overflow: hidden;
+}
+.bar-chart .bar-fill {
+  height: 100%;
+  background: var(--bar-color, var(--ion-color-medium));
+  border-radius: 5px;
+  transition: width 0.3s ease;
+}
+.bar-chart .is-highlight .bar-fill {
+  background: var(--ion-color-primary);
+}
+.bar-chart .bar-score {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  font-size: 0.75rem;
+  color: var(--bar-color, var(--ion-color-medium-shade));
+  text-align: right;
+}
+.bar-chart .is-highlight .bar-score {
+  color: var(--ion-color-primary);
+}

@@ -22,11 +22,3 @@
   any-learn) picks up changes in one place.
 -->
 
-<style scoped>
-.section-lede {
-  color: var(--ion-color-medium-shade);
-  font-size: 0.95rem;
-  line-height: 1.55;
-  margin: 0 0 1.25rem;
-}
-</style>

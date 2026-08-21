@@ -1,0 +1,23 @@
+/*
+ * provenance-chip — component stylesheet.
+ *
+ * One stylesheet per shared component: the single place its look is DEFINED and
+ * the single place an app OVERRIDES it (an app's own CSS loads after the
+ * layer's, so a rule there simply wins).
+ *
+ * NOT scoped, deliberately. A Vue `<style scoped>` block stamps a data attribute
+ * onto every selector, which an app's stylesheet cannot match — so scoped styles
+ * in a SHARED component are unoverridable by definition, which defeats the point
+ * of shipping the component. Class names are prefixed instead.
+ */
+
+.provenance-chip {
+  margin: 0.75rem 0 0;
+  font-size: 0.8rem;
+  --background: var(--ion-color-step-100, #ececec);
+  --color: var(--ion-color-medium-shade);
+}
+
+.provenance-chip ion-icon {
+  font-size: 0.9rem;
+}

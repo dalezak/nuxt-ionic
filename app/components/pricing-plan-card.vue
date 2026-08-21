@@ -56,17 +56,30 @@
     </ion-list>
 
     <template #footer>
-      <ion-button
+      <!-- The user's current plan on a manage/subscribe surface — a quiet,
+           non-actionable marker instead of a "choose" CTA. -->
+      <ion-button size="small"
+        v-if="current"
+        expand="block"
+        fill="clear"
+        color="medium"
+        disabled>
+        <ion-icon :icon="checkmarkCircle" slot="start" />
+        Current plan
+      </ion-button>
+      <ion-button size="small"
+        v-else
         expand="block"
         :fill="highlight ? 'solid' : 'outline'"
         @click="$emit('select', plan)">
-        {{ plan.price === 0 ? 'Get started' : `Choose ${plan.label}` }}
+        {{ ctaLabel ?? (plan.price === 0 ? 'Get started' : `Choose ${plan.label}`) }}
       </ion-button>
     </template>
   </section-card>
 </template>
 
 <script setup>
+import { checkmarkCircle } from 'ionicons/icons';
 defineProps({
   // One entry from app.config `plans`. Chrome keys: id, label, price,
   // annual_price, description. (Entitlement keys are the host's business —
@@ -76,97 +89,14 @@ defineProps({
   features: { type: Array, default: () => [] },
   // Recommended plan: solid CTA + glow border (vs outline CTA, plain border).
   highlight: { type: Boolean, default: false },
+  // The user's current plan (manage/subscribe surface) — swaps the CTA for a
+  // quiet "Current plan" marker and suppresses `select`.
+  current: { type: Boolean, default: false },
+  // Override the CTA label (e.g. "Upgrade to Companion" on the subscribe page).
+  // Falls back to the public "Get started" / "Choose {label}" wording.
+  ctaLabel: { type: String, default: null },
 });
 
 defineEmits(['select']);
 </script>
 
-<style scoped>
-/* Card chrome comes from <section-card> + card-tokens.css. Local rules are
-   only: zero the Ionic default margin so the card fills its flex item, and
-   the highlighted-plan variant. (Width comes from the parent /plans layout.) */
-.plan-card {
-  margin: 0;
-}
-
-/* Highlighted "recommended" plan — full border + soft glow. A variant
-   highlight, not generic chrome, so it stays here rather than in tokens. */
-.plan-highlight {
-  border: 1.5px solid var(--ion-color-primary);
-  box-shadow: 0 2px 16px rgba(var(--ion-color-primary-rgb), 0.12);
-}
-
-.plan-label {
-  display: block;
-  font-size: 0.8rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 0.4rem;
-}
-
-.plan-price {
-  display: flex;
-  align-items: baseline;
-  gap: 0.1rem;
-  margin-bottom: 0.2rem;
-}
-
-.price-currency {
-  font-size: 1.2rem;
-  font-weight: 600;
-  opacity: 0.7;
-}
-
-.price-amount {
-  font-size: 2.4rem;
-  font-weight: 800;
-  line-height: 1;
-  color: var(--ion-color-dark);
-}
-
-.price-period {
-  font-size: 0.85rem;
-  opacity: 0.5;
-  margin-left: 0.1rem;
-}
-
-.plan-annual {
-  font-size: 0.8rem;
-  opacity: 0.5;
-  margin: 0 0 0.5rem;
-}
-
-.plan-description {
-  font-size: 0.9rem;
-  line-height: 1.5;
-  color: var(--ion-color-medium-shade);
-  margin: 0 0 1rem;
-}
-
-.feature-list {
-  --background: transparent;
-}
-
-:deep(.feature-list.list-md),
-:deep(.feature-list.list-ios) {
-  background: transparent;
-}
-
-.feature-list ion-item {
-  --background: transparent;
-  --padding-start: 0.5rem;
-  --inner-padding-start: 0;
-  --min-height: 2.2rem;
-  font-size: 0.9rem;
-}
-
-.feature-list ion-item.disabled {
-  opacity: 0.4;
-}
-
-.feature-list ion-item ion-icon {
-  margin-inline-end: 0.4rem;
-  font-size: 1.05rem;
-}
-</style>

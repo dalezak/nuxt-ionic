@@ -1,0 +1,48 @@
+/*
+ * stat-tile — component stylesheet.
+ *
+ * One stylesheet per shared component: the single place its look is DEFINED and
+ * the single place an app OVERRIDES it (an app's own CSS loads after the
+ * layer's, so a rule there simply wins).
+ *
+ * NOT scoped, deliberately. A Vue `<style scoped>` block stamps a data attribute
+ * onto every selector, which an app's stylesheet cannot match — so scoped styles
+ * in a SHARED component are unoverridable by definition, which defeats the point
+ * of shipping the component. Class names are prefixed instead.
+ */
+
+.stat-tile {
+  margin: 0;
+  /* Tighter inner padding than the default section-card (1rem) so short
+     single-word labels (COURSES, LESSONS) have enough content width to
+     fit on one line in narrow grid cells. */
+  --card-padding: 0.6rem;
+}
+.stat-tile-content {
+  text-align: center;
+}
+.stat-tile-icon {
+  font-size: 1.4rem;
+  margin-bottom: 0.4rem;
+}
+.stat-tile-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--ion-text-color);
+  line-height: 1;
+  margin-bottom: 0.25rem;
+  /* Keep values like "80%" or "1.2k" intact — % and . are treated as
+     separable by default, so without nowrap they break to the next line
+     in narrow cells. */
+  white-space: nowrap;
+}
+.stat-tile-label {
+  /* Tightened size + letter-spacing so single-word labels (COURSES,
+     LESSONS, STREAK) fit on one line in narrow cells. Multi-word labels
+     still wrap on word boundary, single words now overflow gracefully
+     instead of breaking mid-word ("COURS / ES"). */
+  font-size: 0.65rem;
+  color: var(--ion-color-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}

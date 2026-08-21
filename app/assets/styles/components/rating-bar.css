@@ -1,0 +1,35 @@
+/*
+ * rating-bar — component stylesheet.
+ *
+ * One stylesheet per shared component: the single place its look is DEFINED and
+ * the single place an app OVERRIDES it (app CSS loads after the layer's, so an
+ * app rule wins without !important or a fork).
+ *
+ * NOT scoped. A `<style scoped>` block stamps a data attribute onto every
+ * selector, which an app's stylesheet cannot match — scoped styles in a SHARED
+ * component are unoverridable by definition.
+ *
+ * Selectors were prefixed with the component root on extraction: scoping used to
+ * isolate names like `.cell` / `.dot` / `.grid`, and without it they would style
+ * every matching element in the app.
+ */
+
+.rating-bar {
+  display: flex;
+  gap: 0.2rem;
+  align-items: center;
+}
+
+.rating-bar .seg {
+  width: 0.9rem;
+  height: 0.45rem;
+  border-radius: 0.1rem;
+  border: 1px solid var(--ion-color-medium);
+  background: transparent;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.rating-bar .seg--filled {
+  background: var(--ion-color-primary);
+  border-color: var(--ion-color-primary);
+}

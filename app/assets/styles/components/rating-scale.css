@@ -1,0 +1,99 @@
+/*
+ * rating-scale — component stylesheet.
+ *
+ * One stylesheet per shared component: the single place its look is DEFINED and
+ * the single place an app OVERRIDES it (app CSS loads after the layer's, so an
+ * app rule wins without !important or a fork).
+ *
+ * NOT scoped. A `<style scoped>` block stamps a data attribute onto every
+ * selector, which an app's stylesheet cannot match — scoped styles in a SHARED
+ * component are unoverridable by definition.
+ *
+ * Selectors were prefixed with the component root on extraction: scoping used to
+ * isolate names like `.cell` / `.dot` / `.grid`, and without it they would style
+ * every matching element in the app.
+ */
+
+.rating-scale {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+}
+
+.rating-scale .pill {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--pill-color, var(--ion-color-medium));
+  transition: color 0.15s;
+}
+
+.rating-scale .pill-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  border: 1.5px solid var(--pill-color, var(--ion-color-medium));
+  font-weight: 700;
+  font-size: 0.95rem;
+  background: transparent;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.rating-scale .pill-label {
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.1;
+}
+
+.rating-scale .pill.active .pill-num {
+  background: var(--pill-color, var(--ion-color-primary));
+  color: #fff;
+}
+
+.rating-scale .pill.active .pill-label {
+  font-weight: 600;
+}
+
+/* A lone pill shouldn't stretch: the interactive scale gives each pill an equal
+   share of the row for tap targets, which at a count of one means a circle
+   floating in the middle of a full-width box. */
+.rating-scale.rating-scale--single {
+  justify-content: flex-start;
+}
+
+.rating-scale.rating-scale--single .pill {
+  flex: 0 0 auto;
+}
+
+/* Display-only: inert, and never dimmed by the browser's disabled styling —
+   this is a value being shown, not a control that's unavailable. */
+.rating-scale .pill--readonly {
+  cursor: default;
+  opacity: 1;
+}
+
+/* Unpicked pills recede when the whole scale is reporting a value, so the
+   marked one reads first. They stay visible because the scale is the context —
+   "1 of 5" says more than "1". Excluded in single mode, where the only pill
+   rendered IS the answer and must not be dimmed. */
+.rating-scale:not(.rating-scale--single) .pill--readonly:not(.active) {
+  opacity: 0.35;
+}
+
+/* The red→green gradient is bound inline from `ratingColor()` (app/utils/
+   rating-colors.js) rather than declared here, so the one definition also
+   serves surfaces that echo a rating back in prose and need the raw value.
+   Pills past the ramp's 5 stops bind nothing and fall through to the
+   `var(--pill-color, …)` neutrals above. */

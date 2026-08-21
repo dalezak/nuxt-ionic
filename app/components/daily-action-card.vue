@@ -12,6 +12,7 @@
 </template>
 
 <script setup>
+import { flashOutline } from 'ionicons/icons';
 // Generic single-row "daily action" card — tap-to-navigate call-to-action
 // with accent stripe, icon, title, subtitle, and a trailing chevron. A
 // thin semantic wrapper over section-card so call sites can express
@@ -25,7 +26,7 @@
 //
 // Usage:
 //   <daily-action-card
-//     :icon="ioniconsFlashOutline"
+//     :icon="flashOutline"
 //     title="Daily Challenge"
 //     subtitle="5 questions across your recent lessons"
 //     route="/daily-challenge" />

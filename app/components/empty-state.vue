@@ -8,7 +8,7 @@
     </ion-icon>
     <h3>{{ title }}</h3>
     <p v-if="subtitle">{{ subtitle }}</p>
-    <ion-button
+    <ion-button size="small"
       v-if="actionLabel"
       expand="block"
       class="empty-action ion-margin-top"
@@ -36,32 +36,3 @@ defineProps({
 defineEmits(['action']);
 </script>
 
-<style scoped>
-.empty-state {
-  padding-top: 4rem;
-}
-.empty-icon {
-  font-size: 4rem;
-  opacity: 0.3;
-  margin-bottom: 1rem;
-}
-.empty-icon.vivid {
-  opacity: 1;
-}
-.empty-state h3 {
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin: 0 0 0.5rem;
-}
-.empty-state p {
-  opacity: 0.6;
-  font-size: 0.9rem;
-  margin: 0;
-  line-height: 1.5;
-}
-.empty-action {
-  max-width: 280px;
-  margin-left: auto;
-  margin-right: auto;
-}
-</style>

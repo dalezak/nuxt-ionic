@@ -58,22 +58,3 @@ watch(() => props.active, (active) => {
 }, { immediate: true });
 </script>
 
-<style scoped>
-.confetti-container {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  overflow: hidden;
-  z-index: 999;
-}
-.confetti-piece {
-  position: absolute;
-  top: -10px;
-  animation: confetti-fall linear forwards;
-}
-@keyframes confetti-fall {
-  0%   { transform: translateY(0) rotate(0deg);    opacity: 1; }
-  80%  { opacity: 1; }
-  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
-}
-</style>

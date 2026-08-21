@@ -26,7 +26,7 @@
   computed parts, etc.
 
     <page-hero
-      :icon="ioniconsCompassOutline"
+      :icon="compassOutline"
       icon-color="primary"
       title="Become your best self.">
       <p>Start where you are. Walk with us — quietly, patiently — through the long becoming.</p>
@@ -37,6 +37,7 @@
 -->
 
 <script setup>
+import { compassOutline } from 'ionicons/icons';
 defineProps({
   icon: { type: [String, Object], default: null },
   iconColor: { type: String, default: 'primary' },
@@ -44,35 +45,3 @@ defineProps({
 });
 </script>
 
-<style scoped>
-.page-hero {
-  padding-top: 2.5rem;
-  padding-bottom: 1.5rem;
-}
-
-.page-hero-icon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
-  display: inline-block;
-}
-
-.page-hero-title {
-  font-size: 2rem;
-  font-weight: 700;
-  margin: 0 0 0.5rem;
-}
-
-.page-hero-body {
-  font-size: 1rem;
-  opacity: 0.7;
-  max-width: 28rem;
-  margin: 0 auto;
-  line-height: 1.6;
-}
-
-/* Trim default <p> margins so consumers can pass `<p>...</p>` without
-   the body block jumping vertically. */
-.page-hero-body :deep(p) {
-  margin: 0;
-}
-</style>

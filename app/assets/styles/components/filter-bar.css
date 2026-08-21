@@ -1,0 +1,53 @@
+/*
+ * filter-bar — component stylesheet.
+ *
+ * One stylesheet per shared component: the single place its look is DEFINED and
+ * the single place an app OVERRIDES it (app CSS loads after the layer's, so an
+ * app rule wins without !important or a fork).
+ *
+ * NOT scoped. A `<style scoped>` block stamps a data attribute onto every
+ * selector, which an app's stylesheet cannot match — scoped styles in a SHARED
+ * component are unoverridable by definition.
+ *
+ * Selectors were prefixed with the component root on extraction: scoping used to
+ * isolate names like `.cell` / `.dot` / `.grid`, and without it they would style
+ * every matching element in the app.
+ */
+
+.filter-bar {
+  margin: 0 0 1rem;
+}
+.filter-bar .filter-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding-left: 0.25rem;
+}
+.filter-bar .filter-select {
+  font-size: 0.9rem;
+  --padding-start: 0.25rem;
+}
+.filter-bar .search-bar {
+  --box-shadow: none;
+  --background: transparent;
+  padding-top: 0;
+  padding-bottom: 0;
+  max-width: 260px;
+}
+/* Search-only bar: fill the card width instead of capping at 260px, so the
+   input (and its outline ring) spans the row rather than shrinking to the
+   icon. */
+.filter-bar .search-bar--full {
+  max-width: none;
+  width: 100%;
+}
+
+/* Outline variant — a 1px inset ring via the searchbar's --box-shadow
+   var (works in either Ionic mode, no `fill` prop on ion-searchbar).
+   Colour + radius mirror Ionic's MD `fill="outline"` defaults
+   (--ion-color-step-300 border, 4px radius) so the field matches the
+   app's other outlined inputs (e.g. the reflection textareas). */
+.filter-bar .search-bar--outline {
+  --box-shadow: inset 0 0 0 1px var(--ion-color-step-300, #b3b3b3);
+  --border-radius: 4px;
+  --background: var(--ion-background-color, #fff);
+}

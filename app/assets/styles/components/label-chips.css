@@ -1,0 +1,46 @@
+/*
+ * label-chips — the suite's one labeled-pill row.
+ *
+ * One stylesheet per component: defined here, overridden here (or by an app's
+ * `theme.css`, which loads after this and wins). Not scoped — a `<style scoped>`
+ * block in a shared component is unoverridable by an app, which defeats the
+ * point of shipping the component.
+ */
+
+.label-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.label-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: var(--weight-medium, 600);
+  line-height: 1.2;
+  padding: 0.25rem 0.7rem;
+  /* Fully round, like pill-toggle and filter-chips. This was 0.6rem — a rounded
+     RECTANGLE — so metadata pills were the only squarish ones in the app and
+     read as a different family beside every tappable pill next to them. One
+     shape language for all pills; what still separates them is fill. */
+  border-radius: 999px;
+  /* Filled + borderless stays deliberate: interactive pills are outlined, so a
+     solid pill says "this is a label, not a control" without another shape. */
+  background: var(--ion-color-step-50, #f5f5f5);
+  color: var(--ion-color-medium-shade);
+  white-space: nowrap;
+}
+
+.label-chip--uppercase .label-chip-label {
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.label-chip-icon,
+.label-chip-emoji {
+  font-size: 0.9rem;
+  line-height: 1;
+}

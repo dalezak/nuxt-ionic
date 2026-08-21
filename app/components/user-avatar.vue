@@ -1,11 +1,12 @@
 <template>
   <ion-avatar>
     <img v-if="user?.avatar_url" :src="user.avatar_url" :alt="user?.name ?? user?.email ?? ''" loading="lazy" />
-    <ion-icon v-else :icon="ioniconsPersonCircle" style="font-size: 2rem;"></ion-icon>
+    <ion-icon v-else :icon="personCircle" style="font-size: 2rem;"></ion-icon>
   </ion-avatar>
 </template>
 
 <script setup>
+import { personCircle } from 'ionicons/icons';
 // User avatar with a person-circle ionicon fallback when no uploaded photo
 // exists. Pass any object with an optional `avatar_url` field — works with
 // joined user rows (`r.user`), top-level user records, or `member.users`

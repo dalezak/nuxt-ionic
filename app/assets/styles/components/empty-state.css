@@ -1,0 +1,43 @@
+/*
+ * empty-state — component stylesheet.
+ *
+ * One stylesheet per shared component: the single place its look is DEFINED and
+ * the single place an app OVERRIDES it (app CSS loads after the layer's, so an
+ * app rule wins without !important or a fork).
+ *
+ * NOT scoped. A `<style scoped>` block stamps a data attribute onto every
+ * selector, which an app's stylesheet cannot match — scoped styles in a SHARED
+ * component are unoverridable by definition.
+ *
+ * Selectors were prefixed with the component root on extraction: scoping used to
+ * isolate names like `.cell` / `.dot` / `.grid`, and without it they would style
+ * every matching element in the app.
+ */
+
+.empty-state {
+  padding-top: 4rem;
+}
+.empty-state .empty-icon {
+  font-size: 4rem;
+  opacity: 0.3;
+  margin-bottom: 1rem;
+}
+.empty-state .empty-icon.vivid {
+  opacity: 1;
+}
+.empty-state h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+}
+.empty-state p {
+  opacity: 0.6;
+  font-size: 0.9rem;
+  margin: 0;
+  line-height: 1.5;
+}
+.empty-state .empty-action {
+  max-width: 280px;
+  margin-left: auto;
+  margin-right: auto;
+}

@@ -1,0 +1,37 @@
+/*
+ * completion-hero — component stylesheet.
+ *
+ * One stylesheet per shared component: the single place its look is DEFINED and
+ * the single place an app OVERRIDES it (an app's own CSS loads after the
+ * layer's, so a rule there simply wins).
+ *
+ * NOT scoped, deliberately. A Vue `<style scoped>` block stamps a data attribute
+ * onto every selector, which an app's stylesheet cannot match — so scoped styles
+ * in a SHARED component are unoverridable by definition, which defeats the point
+ * of shipping the component. Class names are prefixed instead.
+ */
+
+.completion-hero {
+  text-align: center;
+  padding-top: 1.5rem;
+}
+
+.completion-hero-icon {
+  font-size: 4rem;
+  color: var(--ion-color-success);
+}
+
+.completion-hero-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0.75rem 0;
+  color: var(--ion-text-color);
+}
+
+.completion-hero-body {
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: var(--ion-color-medium-shade);
+  margin: 0 auto;
+  max-width: 30rem;
+}

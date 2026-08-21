@@ -1,0 +1,69 @@
+/*
+ * markdown-text — component stylesheet.
+ *
+ * One stylesheet per shared component: the single place its look is DEFINED and
+ * the single place an app OVERRIDES it (app CSS loads after the layer's, so an
+ * app rule wins without !important or a fork).
+ *
+ * NOT scoped. A `<style scoped>` block stamps a data attribute onto every
+ * selector, which an app's stylesheet cannot match — scoped styles in a SHARED
+ * component are unoverridable by definition.
+ *
+ * Selectors were prefixed with the component root on extraction: scoping used to
+ * isolate names like `.cell` / `.dot` / `.grid`, and without it they would style
+ * every matching element in the app.
+ */
+
+.markdown-text {
+ font-size: 0.95rem;
+ line-height: 1.55;
+ color: var(--ion-text-color);
+}
+
+.markdown-text p {
+ margin: 0 0 0.75rem;
+}
+
+.markdown-text p:last-child,
+.markdown-text ul:last-child,
+.markdown-text ol:last-child {
+ margin-bottom: 0;
+}
+
+.markdown-text h2,
+.markdown-text h3 {
+ font-size: 1rem;
+ font-weight: 700;
+ line-height: 1.4;
+ margin: 1rem 0 0.4rem;
+}
+
+.markdown-text h2:first-child,
+.markdown-text h3:first-child {
+ margin-top: 0;
+}
+
+.markdown-text ul,
+.markdown-text ol {
+ margin: 0 0 0.75rem;
+ padding-inline-start: 1.25rem;
+}
+
+.markdown-text li {
+ margin: 0.15rem 0;
+}
+
+.markdown-text strong {
+ font-weight: 700;
+}
+
+.markdown-text code {
+ font-size: 0.9em;
+ padding: 0.05rem 0.3rem;
+ border-radius: 0.3rem;
+ background: var(--ion-color-step-50, #f5f5f5);
+}
+
+.markdown-text a {
+ color: var(--ion-color-primary);
+}

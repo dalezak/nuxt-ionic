@@ -14,7 +14,7 @@
           <ion-card-subtitle v-else>Something went wrong.</ion-card-subtitle>
         </ion-card-header>
         <ion-card-content v-if="error">{{ error.description }}</ion-card-content>
-        <ion-button fill="clear" @click="goHome">Go Home</ion-button>
+        <ion-button size="small" fill="clear" @click="goHome">Go Home</ion-button>
       </ion-card>
     </ion-content>
   </ion-page>

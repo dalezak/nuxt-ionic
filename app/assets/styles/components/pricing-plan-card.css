@@ -1,0 +1,100 @@
+/*
+ * pricing-plan-card — component stylesheet.
+ *
+ * One stylesheet per shared component: the single place its look is DEFINED and
+ * the single place an app OVERRIDES it (app CSS loads after the layer's, so an
+ * app rule wins without !important or a fork).
+ *
+ * NOT scoped. A `<style scoped>` block stamps a data attribute onto every
+ * selector, which an app's stylesheet cannot match — scoped styles in a SHARED
+ * component are unoverridable by definition.
+ *
+ * Selectors were prefixed with the component root on extraction: scoping used to
+ * isolate names like `.cell` / `.dot` / `.grid`, and without it they would style
+ * every matching element in the app.
+ */
+
+/* Card chrome comes from <section-card> + card-tokens.css. Local rules are
+ only: zero the Ionic default margin so the card fills its flex item, and
+ the highlighted-plan variant. (Width comes from the parent /plans layout.) */
+.plan-card {
+ margin: 0;
+}
+
+/* Highlighted "recommended" plan — full border + soft glow. A variant
+ highlight, not generic chrome, so it stays here rather than in tokens. */
+.plan-card.plan-highlight {
+ border: 1.5px solid var(--ion-color-primary);
+ box-shadow: 0 2px 16px rgba(var(--ion-color-primary-rgb), 0.12);
+}
+
+.plan-card .plan-label {
+ display: block;
+ font-size: 0.8rem;
+ font-weight: 700;
+ text-transform: uppercase;
+ letter-spacing: 0.08em;
+ margin-bottom: 0.4rem;
+}
+
+.plan-card .plan-price {
+ display: flex;
+ align-items: baseline;
+ gap: 0.1rem;
+ margin-bottom: 0.2rem;
+}
+
+.plan-card .price-currency {
+ font-size: 1.2rem;
+ font-weight: 600;
+ opacity: 0.7;
+}
+
+.plan-card .price-amount {
+ font-size: 2.4rem;
+ font-weight: 800;
+ line-height: 1;
+ color: var(--ion-color-dark);
+}
+
+.plan-card .price-period {
+ font-size: 0.85rem;
+ opacity: 0.5;
+ margin-left: 0.1rem;
+}
+
+.plan-card .plan-annual {
+ font-size: 0.8rem;
+ opacity: 0.5;
+ margin: 0 0 0.5rem;
+}
+
+.plan-card .plan-description {
+ font-size: 0.9rem;
+ line-height: 1.5;
+ color: var(--ion-color-medium-shade);
+ margin: 0 0 1rem;
+}
+
+.plan-card .feature-list {
+ --background: transparent;
+} .feature-list.list-md, .feature-list.list-ios {
+ background: transparent;
+}
+
+.plan-card .feature-list ion-item {
+ --background: transparent;
+ --padding-start: 0.5rem;
+ --inner-padding-start: 0;
+ --min-height: 2.2rem;
+ font-size: 0.9rem;
+}
+
+.plan-card .feature-list ion-item.disabled {
+ opacity: 0.4;
+}
+
+.plan-card .feature-list ion-item ion-icon {
+ margin-inline-end: 0.4rem;
+ font-size: 1.05rem;
+}

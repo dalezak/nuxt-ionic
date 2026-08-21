@@ -1,0 +1,263 @@
+/*
+ * section-card — component stylesheet.
+ *
+ * One stylesheet per shared component: the single place its look is DEFINED and
+ * the single place an app OVERRIDES it (an app's own CSS loads after the
+ * layer's, so a rule there simply wins).
+ *
+ * NOT scoped, deliberately. A Vue `<style scoped>` block stamps a data attribute
+ * onto every selector, which an app's stylesheet cannot match — so scoped styles
+ * in a SHARED component are unoverridable by definition, which defeats the point
+ * of shipping the component. Class names are prefixed instead.
+ */
+
+.section-card {
+  /* Chrome (radius, shadow, background, margin, hover/press) is left
+     to Ionic's <ion-card> defaults so platform adaptations (iOS vs
+     Material) and theme inheritance work out of the box. Apps that
+     want a custom look re-skin in their own theme.css by targeting
+     `ion-card` or `.section-card` — we don't fight Ionic from here.
+
+     The two structural rules we do own:
+       position: relative — anchor for the accent stripe overlay
+       overflow: hidden   — clip the stripe inside the card's rounded
+                            corners (Ionic's default border-radius). */
+  position: relative;
+  overflow: hidden;
+}
+
+/* Left accent — uses a positioned div rather than `border-left` so it
+   sits crisply against the rounded corner without weird seam lines on
+   sub-pixel devices. Color is resolved from the accent name to its
+   token. */
+.section-card-accent {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--card-accent-width);
+  background: var(--accent-color, transparent);
+  pointer-events: none;
+}
+
+.section-card--accent-learn   { --accent-color: var(--card-accent-learn); }
+.section-card--accent-act     { --accent-color: var(--card-accent-act); }
+.section-card--accent-reflect { --accent-color: var(--card-accent-reflect); }
+.section-card--accent-nudge   { --accent-color: var(--card-accent-nudge); }
+.section-card--accent-connect { --accent-color: var(--card-accent-connect); }
+.section-card--accent-alert   { --accent-color: var(--card-accent-alert); }
+.section-card--accent-witness { --accent-color: var(--card-accent-witness); }
+
+/* `connect` uses a custom rose token (no Ionic colour name), so its header
+   icon is tinted via CSS rather than the ion-icon `color` attr. */
+.section-card--accent-connect .section-card-icon {
+  color: var(--card-accent-connect);
+}
+
+.section-card-header {
+  padding: var(--card-padding) var(--card-padding) 0;
+}
+
+/* Header-only cards (no body slot, no footer slot) — give the header
+   its own bottom padding so the card doesn't collapse against the
+   subtitle. Catches evening-prompt-card, all-done-beat, and any other
+   icon+title+subtitle-only surface. */
+.section-card-header:last-child {
+  padding-bottom: var(--card-padding);
+}
+
+.section-card-header-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--card-header-gap);
+}
+
+.section-card-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.section-card-titles {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.section-card-title {
+  font-size: var(--card-title-size);
+  font-weight: var(--card-title-weight);
+  margin: 0;
+  /* Break long words so a long title wraps inside the card on narrow screens
+     instead of overflowing the header row. The titles container is min-width:0
+     so normal multi-word titles already wrap; this covers unbreakable strings. */
+  overflow-wrap: break-word;
+}
+
+.section-card-subtitle {
+  margin: 0.15rem 0 0;
+  font-size: var(--card-subtitle-size);
+  color: var(--card-subtitle-color);
+  line-height: 1.4;
+  overflow-wrap: break-word;
+}
+
+.section-card-header-end {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.section-card-disclosure {
+  font-size: 1.1rem;
+  color: var(--ion-color-medium);
+}
+
+/* `.section-card-body` IS the ion-card-content (the class is applied
+   to the element), so our scoped class selector beats Ionic's default
+   padding without needing a `:deep` descendant rule. */
+.section-card-body {
+  padding: var(--card-body-gap) var(--card-padding) var(--card-padding);
+}
+
+/* Prop-driven metadata pills — a small gap from the body content above (nil when
+   the labels are the only body content, which reads fine). */
+.section-card-body > .section-card-labels:not(:first-child) {
+  margin-top: 0.5rem;
+}
+
+/* When a footer follows, drop the body's bottom padding so the footer's own
+   top gap is the sole separator — otherwise body-bottom (1rem) + footer-top
+   (1rem) stack into a doubled ~2rem gap between content and a footer CTA. */
+.section-card-body--has-footer {
+  padding-bottom: 0;
+}
+
+.section-card-footer {
+  padding: var(--card-footer-gap) var(--card-padding) var(--card-padding);
+}
+
+/* Prop-driven CTA row — an ion-grid so the 1–3 CTAs sit as equal columns on
+   wider screens and collapse to full-width stacked rows on small screens (the
+   `size="12" size-md` on each col drives the responsive switch). Grid + col
+   padding is zeroed; the row's flex `gap` supplies a consistent 0.5rem gutter
+   both stacked (row-gap) and side-by-side (column-gap). Margins only kick in
+   when preceded by other footer content. */
+.section-card-ctas-row {
+  gap: 0.5rem;
+}
+
+.section-card-cta {
+  margin: 0;
+}
+
+.section-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.section-card-ctas:not(:first-child),
+.section-card-actions:not(:first-child) {
+  margin-top: 0.5rem;
+}
+
+/* Content shift when the left accent stripe is present — header, body,
+   and footer all gain `accent-width` of additional left padding so the
+   stripe gets its own breathing room. Single class on the host card
+   keeps this declarative; no per-slot conditional logic. */
+.section-card--has-accent .section-card-header,
+.section-card--has-accent .section-card-body,
+.section-card--has-accent .section-card-footer {
+  padding-left: calc(var(--card-padding) + var(--card-accent-width));
+}
+
+/*
+ * ── Values ───────────────────────────────────────────────────────────────────
+ *
+ * The card's values live here as custom properties rather than as literals,
+ * which is the ONE exception to "no tokens" in this folder — and it earns it:
+ *
+ *   - the accent NAMES are semantic ("learn", "act", "reflect", "connect"), so a
+ *     card declares its PURPOSE and the palette maps purpose → colour. An app
+ *     re-skins the vocabulary without touching a single card.
+ *   - `--card-padding` is referenced in eight places across this file, including
+ *     inside a `calc()`; one name beats eight copies of the same number.
+ *
+ * They were in `card-tokens.css` until 2026-08-20. Same values, now in the
+ * component's own stylesheet so there is one file per component — nothing else
+ * consumed them, and an app can still override any of these (or any rule below)
+ * from its own `theme.css`.
+ */
+
+:root {
+  /* Geometry */
+  --card-radius: 12px;
+  --card-padding: 1rem;
+  --card-header-gap: 0.5rem;        /* icon ↔ title */
+  --card-body-gap: 0.75rem;         /* between header and body */
+  --card-footer-gap: 1rem;          /* between body and footer */
+  --card-accent-width: 4px;
+
+  /* Depth */
+  --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --card-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.12);
+
+  /* Surface */
+  --card-background: var(--ion-card-background, #ffffff);
+  --card-border: 1px solid var(--ion-color-step-100, #eeeeee);
+
+  /* Typography (overrideable but rarely changed) */
+  --card-title-size: 1.15rem;
+  --card-title-weight: 700;
+  --card-subtitle-size: 0.9rem;
+  --card-subtitle-color: var(--ion-color-medium);
+
+  /*
+   * Semantic accent — each colour encodes ONE "mode of engagement" a card
+   * invites: the question "what does this card want from me?". Apps map purpose
+   * → colour here, then <section-card accent="learn"> reads --card-accent-learn.
+   *
+   * THE RULE: give a card an accent ONLY when it clearly plays one of these
+   * roles. Neutral containers, glances, lists, empty states, and settings stay
+   * PLAIN (no accent) — that restraint is what makes the accented cards read as
+   * signal, not decoration. One role per card; never pick by vibe.
+   *
+   * Defaults are the Ionic palette (override per-app at :root).
+   */
+  --card-accent-learn:    var(--ion-color-primary);     /* take in — lesson, reading, principle, quote, definition */
+  --card-accent-act:      var(--ion-color-success);     /* do — practice, commitment, the daily arc, mark-done, start */
+  --card-accent-reflect:  var(--ion-color-tertiary);    /* turn inward — journal, gratitude, intention, affirmation, review */
+  --card-accent-nudge:    var(--ion-color-warning);     /* respond — a prompt inviting engagement ("how did it go?", coach prompt, why-this-matters) */
+  --card-accent-connect:  #e0567c;                      /* someone in your circle — partner activity, mutual / paired */
+  --card-accent-alert:    var(--ion-color-danger);      /* careful — destructive / irreversible */
+
+  /* Legacy: community presence (any-learn's groups/social). Distinct meaning
+     from `connect` (1:1 relational), so both coexist. */
+  --card-accent-witness:  var(--ion-color-tertiary);
+}
+
+/*
+ * Horizontal spacing is owned by the PAGE CONTAINER (the <page-content>
+ * column + <ion-content class="ion-padding">), never by individual cards.
+ *
+ * Ionic's <ion-card> ships a default inline (left/right) margin — 10px on
+ * Material, 16px on iOS — so out of the box every card is inset from the
+ * container edge by a platform-dependent amount, leaving cards misaligned
+ * with flush content like <section-group> / <section-lede> and inconsistent
+ * across iOS vs web. Zeroing the inline margin makes every card surface
+ * (section-card, accent-card, and any raw ion-card) align to the one content
+ * edge the container defines.
+ *
+ * Only the INLINE (left/right) axis is zeroed — vertical (block) margin is
+ * left to Ionic's default so cards keep their top/bottom stacking gap.
+ *
+ * `!important` is required: Ionic sets the margin via `:host { margin-inline-
+ * start: 10px }`, and a `:host` rule (specificity 0,1,0) outranks a plain
+ * `ion-card` selector (0,0,1). A deliberate per-card override via the
+ * `.ion-margin` utility still wins (higher specificity, also !important).
+ * Cards laid out in a horizontal row/grid should space with `gap` on their
+ * flex/grid container, not card margins.
+ */
+ion-card {
+  margin-inline: 0 !important;
+}

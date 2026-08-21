@@ -1,0 +1,106 @@
+/*
+ * consistency-grid — component stylesheet.
+ *
+ * One stylesheet per shared component: the single place its look is DEFINED and
+ * the single place an app OVERRIDES it (app CSS loads after the layer's, so an
+ * app rule wins without !important or a fork).
+ *
+ * NOT scoped. A `<style scoped>` block stamps a data attribute onto every
+ * selector, which an app's stylesheet cannot match — scoped styles in a SHARED
+ * component are unoverridable by definition.
+ *
+ * Selectors were prefixed with the component root on extraction: scoping used to
+ * isolate names like `.cell` / `.dot` / `.grid`, and without it they would style
+ * every matching element in the app.
+ */
+
+.consistency-grid {
+  min-width: 0;
+}
+
+.consistency-grid .weekday {
+  font-size: 0.6rem;
+  color: var(--ion-color-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Calendar orientation — weeks stack downward as 7 day-columns. */
+.consistency-grid.is-calendar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.consistency-grid.is-calendar .weekday-labels {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.25rem;
+  padding: 0 0.1rem;
+}
+
+.consistency-grid.is-calendar .weekday {
+  text-align: center;
+}
+
+.consistency-grid.is-calendar .grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.25rem;
+}
+
+/* Heatmap orientation — weeks run left→right as columns, 7 day-rows down.
+   Weekday labels sit on the left; the grid shrinks to fit (min-width: 0). */
+.consistency-grid.is-heatmap {
+  display: flex;
+  gap: 0.4rem;
+  align-items: stretch;
+}
+
+.consistency-grid.is-heatmap .weekday-labels {
+  display: grid;
+  grid-template-rows: repeat(7, 1fr);
+  gap: 0.15rem;
+  width: 0.7rem;
+  flex-shrink: 0;
+}
+
+.consistency-grid.is-heatmap .weekday {
+  text-align: right;
+  align-self: center;
+}
+
+.consistency-grid.is-heatmap .grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(7, 1fr);
+  gap: 0.15rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.consistency-grid .cell {
+  aspect-ratio: 1 / 1;
+  border-radius: 0.2rem;
+  background: transparent;
+  border: 1px solid transparent;
+}
+
+.consistency-grid .cell--in-range {
+  background: var(--ion-color-light);
+  border-color: var(--ion-color-light-shade);
+}
+
+.consistency-grid .cell--in-range.cell--done {
+  background: var(--ion-color-primary);
+  border-color: var(--ion-color-primary);
+}
+
+.consistency-grid .cell--today {
+  outline: 1.5px solid var(--ion-color-medium-tint);
+  outline-offset: 1px;
+}
+
+.consistency-grid .cell--today.cell--done {
+  outline-color: var(--ion-color-primary-tint);
+}

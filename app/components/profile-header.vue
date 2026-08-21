@@ -49,11 +49,3 @@ defineProps({
 });
 </script>
 
-<style scoped>
-.profile-header {
-  padding-top: 1.5rem;
-}
-.profile-header-badge {
-  margin-top: 0.25rem;
-}
-</style>

@@ -27,23 +27,16 @@
       Could not load this friend.
     </page-error>
 
-    <page-error v-else :icon="ioniconsAlertCircleOutline">
+    <page-error v-else :icon="alertCircleOutline">
       Something went wrong. Pull to refresh.
     </page-error>
 -->
 
 <script setup>
+import { alertCircleOutline } from 'ionicons/icons';
 defineProps({
   icon: { type: [String, Object], default: null },
   iconColor: { type: String, default: 'medium' },
 });
 </script>
 
-<style scoped>
-.page-error-icon {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-  display: block;
-  opacity: 0.5;
-}
-</style>

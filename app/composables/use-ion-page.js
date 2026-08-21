@@ -5,6 +5,11 @@
  *     The `initialized` guard prevents a double-load on first entry.
  *   - params: a reactive ref of the CURRENT route params — use this instead of
  *     `useRoute().params` on `[slug]` pages (see below).
+ *   - query: the same for the query string. Deep links from notifications and
+ *     emails arrive as `?surface=evening`-style params, and they hit the exact
+ *     cold-load problem described below — `useRoute().query` is empty on the
+ *     entry the link actually creates, which is the only entry that matters for
+ *     a deep link.
  *
  * Why `params` (and not `useRoute().params`):
  * Under Ionic's router integration, on a cold/deep load (hard reload or a
@@ -26,6 +31,7 @@ export function useIonPage() {
   const router = useRouter();
 
   const params = computed(() => router.currentRoute.value.params);
+  const query = computed(() => router.currentRoute.value.query);
 
   function onPageLoad(loadFn) {
     let initialized = false;
@@ -37,5 +43,5 @@ export function useIonPage() {
     onIonViewWillEnter(() => { if (initialized) loadFn(); });
   }
 
-  return { onPageLoad, params };
+  return { onPageLoad, params, query };
 }

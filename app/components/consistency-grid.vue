@@ -1,5 +1,5 @@
 <template>
-  <div class="consistency-grid">
+  <div class="consistency-grid" :class="`is-${orientation}`">
     <div class="weekday-labels" :aria-hidden="true">
       <span v-for="(d, i) in weekdayLabels" :key="i" class="weekday">{{ d }}</span>
     </div>
@@ -13,7 +13,8 @@
           'cell--done': cell.inRange && cell.done,
           'cell--today': cell.isToday,
         }"
-        :title="cell.label"></div>
+        :style="levelStyle(cell)"
+        :title="cell.title"></div>
     </div>
   </div>
 </template>
@@ -33,12 +34,36 @@
 //   events:      [{ created_at }, ...]   — any objects with a date field
 //   days:        number (default 30)     — how many days back to highlight
 //   startWeekOn: 'sunday' | 'monday'     — first column day (default sunday)
+//   orientation: 'calendar' | 'heatmap'  — 'calendar' (default) stacks weeks
+//                downward as 7 day-columns; 'heatmap' runs weeks LEFT→RIGHT as
+//                columns with 7 day-rows (the GitHub-contributions band). Use
+//                'heatmap' for a compact activity view of a trailing window.
+//   maxLevel:    number (default 4)      — intensity buckets. A day's cell
+//                shades darker with more events (GitHub-style): 1 event = the
+//                lightest tint, `maxLevel`+ events = full accent. maxLevel=1
+//                gives the old binary done/not-done look.
+//   accentColor: string (optional)       — hex/CSS color the shades ramp toward;
+//                falls back to --ion-color-primary.
 
 const props = defineProps({
   events: { type: Array, default: () => [] },
   days: { type: Number, default: 30 },
   startWeekOn: { type: String, default: 'sunday' },
+  orientation: { type: String, default: 'calendar' },
+  maxLevel: { type: Number, default: 4 },
+  accentColor: { type: String, default: null },
 });
+
+// Graded fill for a day: mix the accent toward the empty-cell color by how
+// many events landed (level 1 → lightest, maxLevel → full accent). Empty days
+// keep the flat "in-range" background from CSS.
+function levelStyle(cell) {
+  if (!cell.inRange || cell.level <= 0) return null;
+  const accent = props.accentColor || 'var(--ion-color-primary)';
+  const pct = Math.round(30 + (cell.level / props.maxLevel) * 70); // 30%..100%
+  const col = `color-mix(in srgb, ${accent} ${pct}%, var(--ion-color-light))`;
+  return { background: col, borderColor: col };
+}
 
 const weekdayLabels = computed(() =>
   props.startWeekOn === 'monday'
@@ -70,13 +95,17 @@ const cells = computed(() => {
   const gridEnd = new Date(today);
   gridEnd.setDate(today.getDate() + offsetToEnd);
 
-  // Bucket events by yyyy-mm-dd.
-  const doneDays = new Set();
+  // Bucket events by yyyy-mm-dd, counting how many landed each day.
+  const counts = new Map();
   for (const e of props.events ?? []) {
     if (!e?.created_at) continue;
-    const d = new Date(e.created_at);
+    // parseTimestamp — created_at is offset-less from a `timestamp without
+    // time zone` column; `new Date()` reads it as local and buckets evening
+    // events into the wrong square.
+    const d = parseTimestamp(e.created_at);
     d.setHours(0, 0, 0, 0);
-    doneDays.add(d.getTime());
+    const key = d.getTime();
+    counts.set(key, (counts.get(key) ?? 0) + 1);
   }
 
   const out = [];
@@ -86,69 +115,20 @@ const cells = computed(() => {
     cellDate.setHours(0, 0, 0, 0);
     const inRange = cellDate >= windowStart && cellDate <= today;
     const t = cellDate.getTime();
+    const count = counts.get(t) ?? 0;
+    const label = cellDate.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
     out.push({
       date: cellDate,
       inRange,
-      done: doneDays.has(t),
+      done: count > 0,
+      count,
+      level: count === 0 ? 0 : Math.min(props.maxLevel, count),
       isToday: t === todayTime,
-      label: cellDate.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }),
+      label,
+      title: count > 0 ? `${label} · ${count}` : label,
     });
   }
   return out;
 });
 </script>
 
-<style scoped>
-.consistency-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.weekday-labels {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 0.25rem;
-  padding: 0 0.1rem;
-}
-
-.weekday {
-  font-size: 0.65rem;
-  color: var(--ion-color-medium);
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 0.25rem;
-}
-
-.cell {
-  aspect-ratio: 1 / 1;
-  border-radius: 0.2rem;
-  background: transparent;
-  border: 1px solid transparent;
-}
-
-.cell--in-range {
-  background: var(--ion-color-light);
-  border-color: var(--ion-color-light-shade);
-}
-
-.cell--in-range.cell--done {
-  background: var(--ion-color-primary);
-  border-color: var(--ion-color-primary);
-}
-
-.cell--today {
-  outline: 1.5px solid var(--ion-color-medium-tint);
-  outline-offset: 1px;
-}
-
-.cell--today.cell--done {
-  outline-color: var(--ion-color-primary-tint);
-}
-</style>

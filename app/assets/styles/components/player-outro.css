@@ -1,0 +1,56 @@
+/*
+ * player-outro — component stylesheet.
+ *
+ * One stylesheet per shared component: the single place its look is DEFINED and
+ * the single place an app OVERRIDES it (an app's own CSS loads after the
+ * layer's, so a rule there simply wins).
+ *
+ * NOT scoped, deliberately. A Vue `<style scoped>` block stamps a data attribute
+ * onto every selector, which an app's stylesheet cannot match — so scoped styles
+ * in a SHARED component are unoverridable by definition, which defeats the point
+ * of shipping the component. Class names are prefixed instead.
+ */
+
+.player-outro {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-align: center;
+  animation: player-outro-in 1100ms ease-out both;
+}
+
+.player-outro-icon {
+  font-size: 3rem;
+  color: var(--ion-color-tertiary);
+  margin-bottom: 0.5rem;
+  animation: player-outro-in 900ms 500ms ease-out both;
+}
+
+.player-outro-title {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.player-outro-sub {
+  margin: 0 0 1.5rem;
+  color: var(--ion-color-medium-shade);
+  line-height: 1.5;
+  max-width: 18rem;
+}
+
+@keyframes player-outro-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* The motion is decoration — the acknowledgement reads the same without it. */
+@media (prefers-reduced-motion: reduce) {
+  .player-outro,
+  .player-outro-icon {
+    animation: none;
+  }
+}

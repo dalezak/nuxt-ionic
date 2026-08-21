@@ -1,0 +1,57 @@
+/*
+ * rating-sparkline — component stylesheet.
+ *
+ * One stylesheet per shared component: the single place its look is DEFINED and
+ * the single place an app OVERRIDES it (app CSS loads after the layer's, so an
+ * app rule wins without !important or a fork).
+ *
+ * NOT scoped. A `<style scoped>` block stamps a data attribute onto every
+ * selector, which an app's stylesheet cannot match — scoped styles in a SHARED
+ * component are unoverridable by definition.
+ *
+ * Selectors were prefixed with the component root on extraction: scoping used to
+ * isolate names like `.cell` / `.dot` / `.grid`, and without it they would style
+ * every matching element in the app.
+ */
+
+.rating-sparkline {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.18rem;
+  /* Taller than a typical sparkline on purpose: on a 1–5 scale each cell is a
+     discrete step, so extra height makes "3 vs 4" a clear one-cell jump rather
+     than a hairline. */
+  height: 2.75rem;
+}
+
+.rating-sparkline .col {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column-reverse; /* fill from the bottom */
+  gap: 2px;
+  opacity: 0.75;
+  transition: opacity 0.15s;
+}
+
+.rating-sparkline .col--current {
+  opacity: 1;
+}
+
+.rating-sparkline .col--empty {
+  opacity: 0.4;
+}
+
+.rating-sparkline .cell {
+  flex: 1 1 0;
+  min-height: 0;
+  border-radius: 1px;
+  border: 1px solid var(--ion-color-medium);
+  background: transparent;
+  opacity: 0.5;
+}
+
+.rating-sparkline .cell--filled {
+  opacity: 1;
+}
