@@ -5,6 +5,10 @@
       :key="step.id ?? i"
       class="step"
       :class="[`step--${statusOf(step)}`, { 'step--static': !isInteractive(step) }]"
+      :style="step.color ? {
+        '--step-color': `var(--ion-color-${step.color})`,
+        '--step-ink': `var(--ion-color-${step.color}-contrast)`,
+      } : null"
       @click="isInteractive(step) && onStepClick(step, i)">
       <div class="step-rail">
         <div class="step-node">
@@ -58,7 +62,14 @@ import { checkmark, chevronForwardOutline } from 'ionicons/icons';
 // upcoming from the first non-completed step.
 //
 // Props:
-//   steps:       [{ id, title, subtitle?, status?: 'completed'|'current'|'upcoming', ... }]
+//   steps:       [{ id, title, subtitle?, status?: 'completed'|'current'|'upcoming',
+//                  color?: Ionic palette name, ... }]
+//
+// `color` lets a step own its node, rail and title colour instead of the
+// timeline's primary. For a timeline whose steps are IDENTITIES rather than
+// numbered stages — love-well's Commit / Learn / Practice / Reflect, which the
+// week strip also draws — that keeps the two surfaces saying the same thing in
+// the same colour. Omit it and the step is primary, exactly as before.
 //   disclosure:  show a trailing chevron (default off). `true` → the current
 //                step only (the "do this now" affordance); `"all"` → every
 //                step, for a fully tappable timeline. Non-current chevrons
@@ -118,3 +129,166 @@ function onStepClick(step, index) {
 }
 </script>
 
+<style lang="scss">
+/* Every step carries its own bottom padding (see .step-body), so each one clears
+   the step above it — but the FIRST step had nothing above it to clear, and sat
+   flush against the card's subtitle. The card body's own top padding isn't
+   enough on its own, because a step's title is a heading-weight line rather than
+   the body copy that padding was sized for. */
+.step-timeline {
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--space-2);
+}
+
+.step-timeline .step {
+  display: flex;
+  gap: var(--space-4);
+  cursor: pointer;
+}
+
+/* A header step whose sub-items carry the actions — not itself tappable. */
+.step-timeline .step--static {
+  cursor: default;
+}
+
+.step-timeline .step-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  width: 1.5rem;
+}
+
+.step-timeline .step-node {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: var(--space-1);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.step-timeline .step-line {
+  flex: 1;
+  width: 2px;
+  background: var(--ion-color-light-shade);
+  min-height: 1.25rem;
+  margin: var(--space-1) 0;
+}
+
+.step-timeline .step-body {
+  flex: 1;
+  padding-bottom: var(--space-4);
+}
+
+/* Trailing disclosure chevron — aligned to the title row, accent-tinted to
+   echo the current step's color. Pinned to the top so it tracks the title,
+   not the vertical center of a tall (subtitled) row. */
+.step-timeline .step-disclosure {
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: var(--space-2);
+  font-size: var(--text-md);
+  color: var(--step-color, var(--ion-color-primary));
+}
+
+/* On a fully-tappable timeline (`disclosure="all"`), non-current chevrons
+   are muted so the current step's chevron still reads as the primary CTA. */
+.step-timeline .step-disclosure--muted {
+  color: var(--ion-color-medium);
+  opacity: 0.6;
+}
+
+.step-timeline .step-body-default {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.step-timeline .step-title {
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  margin: 0;
+  color: var(--ion-text-color);
+}
+
+.step-timeline .step-subtitle {
+  font-size: var(--text-sm);
+  margin: 0;
+  color: var(--ion-color-medium);
+  line-height: var(--leading-tight);
+}
+
+.step-timeline .step--completed .step-node {
+  background: var(--step-color, var(--ion-color-primary));
+}
+
+/* The tick sits ON the node, so its ink has to come from the node's colour —
+   white is only legible on a dark one. A palette that ramps through light
+   values needs the contrast token or its checkmarks disappear. */
+.step-timeline .step--completed .step-node-icon {
+  color: var(--step-ink, white);
+  font-size: 1rem;
+}
+
+.step-timeline .step--completed .step-line {
+  background: var(--step-color, var(--ion-color-primary));
+}
+
+.step--completed .step-title,
+.step-timeline .step--completed .step-subtitle {
+  opacity: 0.55;
+}
+
+.step-timeline .step--current .step-node {
+  background: transparent;
+  border: 2px solid var(--step-color, var(--ion-color-primary));
+}
+
+.step-timeline .step--current .step-title {
+  color: var(--step-color, var(--ion-color-primary));
+}
+
+.step-timeline .step--upcoming .step-node {
+  background: transparent;
+  border: 2px solid var(--ion-color-light-shade);
+}
+
+.step--upcoming .step-title,
+.step-timeline .step--upcoming .step-subtitle {
+  opacity: 0.5;
+}
+
+/* Emphasized current step (opt-in via `emphasizeCurrent`) — marks the one
+   "do this now" step as the primary CTA. The tinted panel is drawn as a
+   ::before with z-index -1 inside a step-local stacking context, so it sits
+   behind the body without shifting the rail or nodes. Left inset clears the
+   rail (1.5rem) + gap (1rem) so the tint hugs only the body. */
+.step-timeline.step-timeline--emphasize .step--current {
+  position: relative;
+  z-index: 0;
+}
+
+.step-timeline.step-timeline--emphasize .step--current::before {
+  content: '';
+  position: absolute;
+  inset: -0.15rem -0.6rem 0.35rem 2.3rem;
+  background: rgba(var(--ion-color-primary-rgb), 0.08);
+  border-radius: var(--radius-md);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.step-timeline.step-timeline--emphasize .step--current .step-title {
+  font-weight: var(--weight-bold);
+}
+
+.step-timeline.step-timeline--emphasize .step--current .step-subtitle {
+  color: var(--ion-color-primary);
+  opacity: 0.85;
+}
+</style>
