@@ -114,8 +114,14 @@ const cells = computed(() => {
   for (const e of props.events ?? []) {
     const raw = e?.[props.dateField];
     if (!raw) continue;
-    const d = new Date(raw);
-    if (d.getFullYear() !== year) continue;
+    // parseDisplayDate, not `new Date(raw)`: this prop is fed both DB
+    // timestamps (offset-less UTC, which `new Date` would read as local) and
+    // bare `date` values from day-bucketed views (which `new Date` would read
+    // as UTC midnight and so land on the PREVIOUS day west of Greenwich —
+    // lighting the wrong cell). The util pins a date-only value to local
+    // midnight and reads a date-time as UTC.
+    const d = parseDisplayDate(raw);
+    if (!d || d.getFullYear() !== year) continue;
     d.setHours(0, 0, 0, 0);
     doneDays.add(d.getTime());
   }
@@ -187,3 +193,109 @@ function monthName(monthIdx) {
 }
 </script>
 
+<style lang="scss">
+/* Layout: month labels row + grid row. Within the grid row, weekday
+   labels on the left, cell grid on the right. Cells flow column-first
+   so each column is a week and each row is a weekday. */
+
+.year-heatmap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.year-heatmap .month-row {
+  display: flex;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.year-heatmap .weekday-spacer {
+  width: 0.7rem;
+  flex-shrink: 0;
+}
+
+.year-heatmap .month-labels {
+  display: grid;
+  flex: 1;
+  gap: 0.15rem;
+  min-width: 0; /* allow the label grid to shrink below content, not overflow */
+}
+
+.year-heatmap .month-label {
+  font-size: 0.65rem;
+  color: var(--ion-color-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.year-heatmap .body {
+  display: flex;
+  gap: var(--space-2);
+  align-items: stretch;
+  min-width: 0;
+}
+
+.year-heatmap .weekday-labels {
+  display: grid;
+  grid-template-rows: repeat(7, minmax(0, 1fr));
+  gap: 0.15rem;
+  width: 0.7rem;
+  flex-shrink: 0;
+}
+
+.year-heatmap .weekday {
+  font-size: 0.55rem;
+  color: var(--ion-color-medium);
+  text-align: right;
+  align-self: center;
+  text-transform: uppercase;
+}
+
+.year-heatmap .grid {
+  display: grid;
+  grid-auto-flow: column;
+  /* minmax(0, …), not plain 1fr: a bare `1fr` track floors at the cell's
+     min-content, and `aspect-ratio: 1 / 1` makes that floor sizeable — so 53
+     columns overflowed their container instead of compressing, pushing the
+     grid off-screen on a phone. The whole point of this chart is that the
+     SHAPE of the year reads even at ~5px cells. */
+  grid-template-rows: repeat(7, minmax(0, 1fr));
+  gap: 0.15rem;
+  flex: 1;
+  min-width: 0; /* let the 1fr columns compress to fit instead of overflowing */
+}
+
+.year-heatmap .cell {
+  aspect-ratio: 1 / 1;
+  min-width: 0;
+  min-height: 0;
+  border-radius: 0.15rem;
+  background: transparent;
+  border: 1px solid transparent;
+}
+
+.year-heatmap .cell--in-year {
+  background: var(--ion-color-light);
+  border-color: var(--ion-color-light-shade);
+}
+
+.year-heatmap .cell--in-year.cell--done {
+  background: var(--ion-color-primary);
+  border-color: var(--ion-color-primary);
+}
+
+.year-heatmap .cell--today {
+  outline: 1.5px solid var(--ion-color-medium-tint);
+  outline-offset: 1px;
+}
+
+.year-heatmap .cell--today.cell--done {
+  outline-color: var(--ion-color-primary-tint);
+}
+</style>

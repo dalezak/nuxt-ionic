@@ -1,3 +1,5 @@
+import parseDisplayDate from './parse-display-date.js';
+
 /**
  * Formats a datetime string as a human-readable time string.
  * Output example: "Saturday, Apr 5, 2025 at 10:30:00 AM".
@@ -9,9 +11,8 @@
  * textDatetime('2025-04-05T10:30:00') // → "Saturday, Apr 5, 2025 at 10:30:00 AM"
  */
 export default function (text) {
-  if (text) {
-    let date = new Date(text);
-    if (isNaN(date.getTime())) return "";
+  const date = parseDisplayDate(text);
+  if (date) {
     return date.toLocaleTimeString('en-us', {
       weekday: "long", 
       year: "numeric", 

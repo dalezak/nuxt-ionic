@@ -1,3 +1,5 @@
+import parseDisplayDate from './parse-display-date.js';
+
 /**
  * Formats a date string compactly, for list rows and card subtitles.
  * Output example: "Tue, Aug 19" — or "Tue, Aug 19, 2025" for a date outside the
@@ -19,9 +21,8 @@
  * textDateShort('2026-08-19') // → "Tue, Aug 19"
  */
 export default function (value, now = new Date()) {
-  if (!value) return "";
-  const date = value instanceof Date ? value : new Date(value);
-  if (isNaN(date.getTime())) return "";
+  const date = parseDisplayDate(value);
+  if (!date) return "";
   return date.toLocaleDateString('en-us', {
     weekday: "short",
     month: "short",

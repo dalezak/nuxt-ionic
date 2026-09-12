@@ -1,3 +1,5 @@
+import parseDisplayDate from './parse-display-date.js';
+
 /**
  * Formats a date string as a human-readable relative time.
  * Output examples: "just now", "5m ago", "3h ago", "2d ago", "Apr 5, 2024".
@@ -18,8 +20,8 @@
  */
 export default function (text) {
   if (!text) return '';
-  const date = new Date(text);
-  if (isNaN(date.getTime())) return '';
+  const date = parseDisplayDate(text);
+  if (!date) return '';
   const diff = Date.now() - date.getTime();
   const mins = Math.floor(diff / 60000);
   if (mins <= 0) return 'just now';

@@ -1,3 +1,5 @@
+import parseDisplayDate from './parse-display-date.js';
+
 /**
  * Formats a datetime string as a locale-aware clock time (no date).
  * Output example: "10:30 AM" (en-US) / "10:30" (locales without AM/PM).
@@ -13,8 +15,8 @@
  */
 export default function (text) {
   if (!text) return "";
-  const date = new Date(text);
-  if (isNaN(date.getTime())) return "";
+  const date = parseDisplayDate(text);
+  if (!date) return "";
   return date.toLocaleTimeString(undefined, {
     hour: 'numeric',
     minute: '2-digit',
