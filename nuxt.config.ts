@@ -15,69 +15,22 @@ export default defineNuxtConfig({
     // 'github:dalezak/nuxt-layer-supabase'
     '../nuxt-supabase'
   ],
-  // Explicit override: register our `showError` from app/utils so it beats
-  // Nuxt's built-in `showError` (from `#app/composables/error`) which would
-  // navigate to the full-screen error page. The auto-import scan picks up
-  // app/utils/* but in conflict cases Nuxt's built-in can win; this entry
-  // pins precedence.
-  imports: {
-    imports: [
-      { name: 'default', as: 'showError', from: join(currentDir, 'app/utils/show-error') },
-    ],
-  },
+  // (An `imports.presets` override used to pin `showError` to
+  // `app/utils/show-error`. That file was renamed to `show-alert-error.js` in
+  // b1984d9 — deliberately, so the util would stop colliding with Nuxt's
+  // built-in instead of racing it — but the pin was left behind, aimed at a
+  // path that no longer exists. An unresolvable auto-import is SILENTLY
+  // SKIPPED, so the effect was to shadow Nuxt's own `showError` with nothing:
+  // every build warned three times, and any future call to the documented Nuxt
+  // API would have failed at runtime rather than at build. Removed; callers
+  // want `showAlertError`, which 50 files already use.)
   css: [
     join(currentDir, 'app/assets/styles/default-white.css'),
     join(currentDir, 'app/assets/styles/default-dark.css'),
     join(currentDir, 'app/assets/styles/transition.css'),
-    // One stylesheet per shared component — the single place its look is
-    // defined AND the single place an app overrides it (app CSS loads after
-    // these, so an app rule wins without needing !important or a fork).
-    join(currentDir, 'app/assets/styles/components/accent-card.css'),
-    join(currentDir, 'app/assets/styles/components/bar-chart.css'),
-    join(currentDir, 'app/assets/styles/components/completion-hero.css'),
-    join(currentDir, 'app/assets/styles/components/confetti.css'),
-    join(currentDir, 'app/assets/styles/components/consistency-grid.css'),
-    join(currentDir, 'app/assets/styles/components/dimension-bars.css'),
-    join(currentDir, 'app/assets/styles/components/empty-state.css'),
-    join(currentDir, 'app/assets/styles/components/faq-list.css'),
-    join(currentDir, 'app/assets/styles/components/feature-list.css'),
-    join(currentDir, 'app/assets/styles/components/filter-bar.css'),
-    join(currentDir, 'app/assets/styles/components/filter-chips.css'),
-    join(currentDir, 'app/assets/styles/components/label-chips.css'),
-    join(currentDir, 'app/assets/styles/components/login-modal.css'),
-    join(currentDir, 'app/assets/styles/components/markdown-text.css'),
-    join(currentDir, 'app/assets/styles/components/modal-footer-nav.css'),
-    join(currentDir, 'app/assets/styles/components/page-error.css'),
-    join(currentDir, 'app/assets/styles/components/page-header.css'),
-    join(currentDir, 'app/assets/styles/components/page-hero.css'),
-    join(currentDir, 'app/assets/styles/components/page-welcome.css'),
-    join(currentDir, 'app/assets/styles/components/pill-toggle.css'),
-    join(currentDir, 'app/assets/styles/components/player-outro.css'),
-    join(currentDir, 'app/assets/styles/components/player-time.css'),
-    join(currentDir, 'app/assets/styles/components/player-wave.css'),
-    join(currentDir, 'app/assets/styles/components/pricing-plan-card.css'),
-    join(currentDir, 'app/assets/styles/components/profile-header.css'),
-    join(currentDir, 'app/assets/styles/components/progress-meter.css'),
-    join(currentDir, 'app/assets/styles/components/provenance-chip.css'),
-    join(currentDir, 'app/assets/styles/components/rating-bar.css'),
-    join(currentDir, 'app/assets/styles/components/rating-scale.css'),
-    join(currentDir, 'app/assets/styles/components/rating-sparkline.css'),
-    join(currentDir, 'app/assets/styles/components/section-card.css'),
-    join(currentDir, 'app/assets/styles/components/section-group.css'),
-    join(currentDir, 'app/assets/styles/components/section-lede.css'),
-    join(currentDir, 'app/assets/styles/components/section-title.css'),
-    join(currentDir, 'app/assets/styles/components/slides-pager.css'),
-    join(currentDir, 'app/assets/styles/components/stat-tile.css'),
-    join(currentDir, 'app/assets/styles/components/stats-card.css'),
-    join(currentDir, 'app/assets/styles/components/stats-grid.css'),
-    join(currentDir, 'app/assets/styles/components/step-timeline.css'),
-    join(currentDir, 'app/assets/styles/components/suggestion-chips.css'),
-    join(currentDir, 'app/assets/styles/components/thinking-indicator.css'),
-    join(currentDir, 'app/assets/styles/components/week-strip.css'),
-    join(currentDir, 'app/assets/styles/components/weekly-dots.css'),
-    join(currentDir, 'app/assets/styles/components/wheel-chart.css'),
-    join(currentDir, 'app/assets/styles/components/year-heatmap.css'),
     join(currentDir, 'app/assets/styles/typography.css'),
+    join(currentDir, 'app/assets/styles/shape.css'),
+    join(currentDir, 'app/assets/styles/spacing.css'),
     join(currentDir, 'app/assets/styles/reveal.css')
   ],
   modules: [

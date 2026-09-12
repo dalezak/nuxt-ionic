@@ -352,6 +352,14 @@ Generic UI primitives lifted from suite apps. Use these directly via auto-import
 
   Use this for ~70% of cards. Use `<AccentCard>` for the colored-header-bar treatment when you want the title visually emphasized.
 - **`<StepTimeline>`** (`step-timeline.vue`) — vertical sequence of steps rendered as connected nodes down a left-edge rail (✓ completed / ◯ current / ◯ upcoming). Communicates progression through a sequence — today's plan, daily ritual, onboarding flow — rather than a flat list. Props: `steps` (array of `{ id, title, subtitle?, status? }`); status is auto-derived as the first non-completed step if not set. Slots: `step` (global body override), `step-{id}` (per-step override). Emits `step-click(step, index)`.
+- **`<WeeklyDots>`** (`weekly-dots.vue`) — 7 Mon-Sun cells, one dot each: did this happen that day? For a single tracked thing with a yes-or-no answer (a habit, an action, a login). Props: `days` (7 booleans, index 0 = Mon), `color` (palette for a done dot + today's label, default `'warning'`), `size` (dot diameter in px, default 10), `todayIndex` (override the clock). Grey dot vs coloured dot — a lightness difference before a hue one, and every cell carries its own aria-label.
+- **`<WeeklyRings>`** (`weekly-rings.vue`) — the same 7 cells, but each drawing SEVERAL things about that day and how far each one got: a centre dot plus concentric rings, innermost first. Props: `days` (7 entries, each an array of `{ value: 0..1, color }` channels), `color` (accent for today's label), `size` (default 32 — every channel after the dot takes a band), `todayIndex`. Radius encodes ORDER, so it suits a day that runs from a first beat at the centre outward to a last one at the rim.
+
+  **Which to use:** one thing per day that either happened or didn't → `<WeeklyDots>`. Several things per day, each with a fraction → `<WeeklyRings>`.
+
+  **Breaking change (2026-09-09):** these were one component. `<WeeklyDots>` accepted four shapes — boolean, a `0..1` fraction, a `{ done, total }` pair, and an array of channels — and silently rendered a *different mark* for the last one. That made call sites unreadable: `<weekly-dots :days="x" />` drew one thing or another depending on the runtime shape of `x`, computed in some other file. The multi-channel form moved to `<WeeklyRings>`; the fraction forms were dropped (nothing used them, and a "dots" component drawing a three-quarters-filled donut was the same category confusion in miniature). Each component now takes exactly one shape and has no branch. **To migrate:** passing channel arrays → rename the tag to `<weekly-rings>`; passing a fraction or `{ done, total }` → there is no drop-in, reach for `<WeeklyRings>` with a single channel.
+- **`<AiDisclaimer>`** (`ai-disclaimer.vue`) — quiet grey chip naming what an AI-touched surface is and isn't. Put it on every surface where AI shaped what the user is reading; never make it dismissible (the point is that it's *there*, not that it was acknowledged once). Props: `text` (per-surface override). The default comes from `aiDisclaimer` in the app's `app.config.ts`, falling back to a cautious generic line — the wording is a per-app ethical commitment, so apps set it once rather than repeating it at each call site. Lifted from love-well 2026-09-09 when best-self wanted the same chip; both apps had independently let it drift onto only some of their AI surfaces, which is the failure a single component prevents.
+- **`<QuickActionsFab>`** (`quick-actions-fab.vue`) — a FAB that opens an action sheet of "what can I do right now". The tabs answer *where do I go*; this answers *what can I do from here*, for the unscheduled impulse rather than the day's plan. Props: `actions` (`[{ label, onClick }]`, rendered in order), `title`, `subtitle`, `ariaLabel`. A sheet rather than `ion-fab-list` because fab-list renders icon-only mini buttons, and an unlabelled circle is a guess. Omit an action that can't currently do anything rather than disabling it.
 - **`<ShareButton>`**, **`<SharePopover>`** — see share-social pattern.
 
 `<BadgeCard>` is now provided by `nuxt-badges` (not this layer) — apps that extend `nuxt-badges` get it automatically.
@@ -375,19 +383,47 @@ These are rules for the SUITE. When adding UI, follow them rather than copying
 whatever the nearest component happens to do — that copying is how each of these
 diverged in the first place.
 
-### One stylesheet per shared component
+### Shared components: one `<style lang="scss">` block, never scoped
 
-Every component in `nuxt-ionic/app/components` has exactly one stylesheet at
-`app/assets/styles/components/<name>.css`, registered in the layer's `nuxt.config`
-`css` array. That file is the single place its look is DEFINED and the single
-place an app OVERRIDES it — an app's own CSS loads after the layer's, so a rule
-in `theme.css` simply wins. No `!important`, no forking the component.
+Every component in a LAYER keeps its styles in the `.vue` file, in a single
+`<style lang="scss">` block. Template, script and style stay together; there are
+no standalone stylesheets and no component entries in a layer's `nuxt.config`
+`css` array.
 
-**Shared components carry no `<style scoped>` block.** Scoped styles stamp a data
-attribute onto every selector, which an app's stylesheet cannot match — so a
-scoped style in a SHARED component is unoverridable by definition, which defeats
-the point of shipping the component. (Converted 2026-08-20: 44 components, ~1600
-declarations.)
+**Never `scoped`.** A scoped block stamps a data attribute onto every selector,
+which an app's stylesheet cannot match — so a scoped style in a SHARED component
+is unoverridable by definition, which defeats the point of shipping it. App
+components (in an app's own `app/components`) may still use `scoped`: nothing
+outside the app is meant to restyle them.
+
+(Converted across 18 layers, 140 components, 2026-08-21.)
+
+#### Overriding from an app's theme.css — mind the specificity
+
+An SFC `<style>` block is appended AFTER the `css:` array, where `theme.css`
+lives. So at EQUAL specificity the layer wins and the app's override loses,
+silently.
+
+**Give theme overrides one extra class or element:**
+
+```css
+/* layer, in the component */          .section-lede { color: … }
+/* app theme.css — needs to outrank */ body .section-lede { color: … }
+```
+
+`body` is the reliable prefix — it always matches, and adds exactly the one step
+of specificity needed. Verified on device 2026-08-21: the bare `.section-lede`
+form in `theme.css` had NO effect; `body .section-lede` took immediately.
+
+Do NOT invent a wrapper class to prefix with. `<page-content>`'s root is an
+`<ion-row>`, so `.page-content` matches nothing — a selector that silently never
+applies looks exactly like an override that lost.
+
+`@layer components` was tried as a way to avoid this and REVERTED the same day.
+Cascade layers are not selective: wrapping component styles in a layer drops them
+below `theme.css` as intended, but also below every other unlayered stylesheet —
+including Ionic's own. Card padding across the whole app reverted to Ionic's
+20px defaults. If you reach for `@layer` again, that is the failure to expect.
 
 Consequences to respect when adding or editing one:
 
@@ -461,6 +497,65 @@ Audit found 61 outline / 16 clear / 6 solid.
 
 Every button carries the native `size="small"` prop (suite convention, 2026-07),
 except icon-only header/toolbar buttons.
+
+### Ionic styles bare `<p>` inside a card — beat it with two classes
+
+`ion-card-content` ships this, injected at runtime:
+
+```css
+.card-content-ios p { font-size: 0.875rem; margin-top: 0; margin-bottom: 2px }
+.card-content-md  p { font-size: 0.875rem; font-weight: normal; ... }
+```
+
+Element+class is specificity **(0,1,1)**. A single-class rule — `.lesson-body`,
+`.section-lede` — is **(0,1,0)** and loses, so a paragraph inside a card renders
+at 14px with no top margin no matter what its own class says.
+
+**Scoped SFC styles never hit this**: Vue's `data-v-` attribute makes them
+(0,2,0). Which is the trap — the moment a rule moves OUT of a scoped block into a
+shared stylesheet (see "One stylesheet per shared component"), it silently drops
+below Ionic and stops applying. The file looks right, the build output looks
+right, and only the device shows it.
+
+So in an unscoped stylesheet, any rule targeting a `<p>` that can appear inside a
+card needs **two classes**:
+
+```css
+.section-card-body .lesson-body { font-size: var(--text-lg); }
+```
+
+There is no way to write a blanket reset for this. Neutralising Ionic's rule
+requires beating (0,1,1), and anything that does also beats the single-class rule
+you were trying to let through — you cannot un-set a more specific declaration
+and defer to a less specific one. The specificity has to go on the content class.
+
+Caught 2026-08-21: seventeen lesson content types were normalised onto a shared
+sheet, and every font-size in it was inert on device.
+
+### Button labels are Title Case
+
+**Start Lesson**, **Load More**, **Name a Direction**, **Skip for Now**. Short
+articles, conjunctions and prepositions stay lowercase unless they lead: a / an /
+and / as / at / by / for / in / of / on / or / the / to / with.
+
+Sentence case on a button reads as prose that happens to be tappable — and the
+inconsistency is what you actually notice, since the same app had "Start Lesson"
+next to "Load more" and "Sign out". Audit (love-well, 2026-08-21): 48 of ~90
+button labels were sentence case.
+
+This is STATIC chrome only. Never re-case:
+
+- **data-driven text** — a lesson title, a practice framing, a template name;
+- **pills and chips** (`label-chips`, `:labels`) — those are metadata, not
+  actions, and `titlecase: true` handles raw slugs;
+- **input labels and placeholders** — they're questions and prompts
+  ("What are you facing?"), which are sentence case by nature;
+- **prose the user picks from** — the aspiration suggestion pills are sentence
+  fragments completing a sentence ("steadier when things get tense"), so Title
+  Case would break the sentence they finish;
+- **select options** derived from content values.
+
+Same rule as modal titles, which are already Title Case.
 
 ### Save vs Favorite — one word: Save
 

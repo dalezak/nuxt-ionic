@@ -1,6 +1,6 @@
 <template>
   <transition appear name="fade" mode="out-in">
-    <ion-card>
+    <ion-card class="breadcrumb-bar">
       <ion-grid>
         <ion-row>
           <ion-col v-if="breadcrumbs && breadcrumbs.length > 0">
@@ -68,8 +68,8 @@ function doSearch(event) {
 }
 </script>
 
-<style scoped lang="scss">
-.sc-ion-searchbar-md-h {
+<style lang="scss">
+.breadcrumb-bar .sc-ion-searchbar-md-h {
   --box-shadow: none !important;
   border-radius: 5px !important;
   border: 1px solid var(--ion-color-light) !important;
@@ -78,7 +78,7 @@ function doSearch(event) {
   padding-inline-start: 0px;
   padding-inline-end: 0px;
 }
-ion-breadcrumb {
+.breadcrumb-bar ion-breadcrumb {
   cursor: pointer;
 }
 </style>

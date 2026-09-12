@@ -35,7 +35,7 @@
     </div>
 
   </ion-content>
-  <ion-footer>
+  <ion-footer class="login-modal-footer">
     <ion-toolbar>
       <ion-button size="small" expand="block" color="primary" @click="doSignup" v-if="isSignup">Signup</ion-button>
       <ion-button size="small" expand="block" color="primary" @click="doLogin" v-else-if="isLogin">Login</ion-button>
@@ -283,3 +283,46 @@ function clearInputs() {
 }
 </script>
 
+<style lang="scss">
+.login-title {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  margin: var(--space-1) 0 var(--space-1);
+}
+
+.login-subtitle {
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--ion-color-medium-shade);
+  margin: 0 0 var(--space-5);
+}
+
+.login-fields {
+  background: transparent;
+  /* Top padding clears the first floating label — MD's `label-placement="floating"`
+     positions the active label ~8px above the input outline. */
+  padding: var(--space-2) 0 0;
+}
+
+/* Space between inputs since they're no longer wrapped in ion-item
+   rows that provided implicit row spacing. */
+.login-input {
+  margin-bottom: var(--space-3);
+}
+
+.login-links {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  margin-top: var(--space-1);
+}
+
+/* Inset the footer submit button so it isn't edge-to-edge. */
+.login-modal-footer ion-toolbar {
+  --padding-start: 1rem;
+  --padding-end: 1rem;
+}
+</style>

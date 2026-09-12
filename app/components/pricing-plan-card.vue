@@ -45,7 +45,7 @@
 
     <p class="plan-description">{{ plan.description }}</p>
 
-    <ion-list lines="none" class="feature-list">
+    <ion-list lines="none" class="plan-card-feature-list">
       <ion-item
         v-for="(feature, i) in features"
         :key="i"
@@ -65,7 +65,7 @@
         color="medium"
         disabled>
         <ion-icon :icon="checkmarkCircle" slot="start" />
-        Current plan
+        Current Plan
       </ion-button>
       <ion-button size="small"
         v-else
@@ -100,3 +100,97 @@ defineProps({
 defineEmits(['select']);
 </script>
 
+<style lang="scss">
+/* Card chrome comes from <section-card> + card-tokens.css. Local rules are
+ only: zero the Ionic default margin so the card fills its flex item, and
+ the highlighted-plan variant. (Width comes from the parent /plans layout.) */
+.plan-card {
+ margin: 0;
+}
+
+/* Highlighted "recommended" plan — full border + soft glow. A variant
+ highlight, not generic chrome, so it stays here rather than in tokens. */
+.plan-card.plan-highlight {
+ border: 1.5px solid var(--ion-color-primary);
+ box-shadow: 0 2px 16px rgba(var(--ion-color-primary-rgb), 0.12);
+}
+
+.plan-card .plan-label {
+ display: block;
+ font-size: var(--text-xs);
+ font-weight: var(--weight-bold);
+ text-transform: uppercase;
+ letter-spacing: 0.08em;
+ margin-bottom: var(--space-2);
+}
+
+.plan-card .plan-price {
+ display: flex;
+ align-items: baseline;
+ gap: 0.1rem;
+ margin-bottom: var(--space-1);
+}
+
+/* The currency mark beside the amount — a symbol scaled to the price, not a
+   step on the type scale. */
+.plan-card .price-currency {
+ font-size: 1.25rem;
+ font-weight: var(--weight-medium);
+ opacity: 0.7;
+}
+
+.plan-card .price-amount {
+ font-size: 2.4rem;
+ font-weight: 800;
+ line-height: 1;
+ color: var(--ion-color-dark);
+}
+
+.plan-card .price-period {
+ font-size: var(--text-sm);
+ opacity: 0.5;
+ margin-left: 0.1rem;
+}
+
+.plan-card .plan-annual {
+ font-size: var(--text-xs);
+ opacity: 0.5;
+ margin: 0 0 var(--space-2);
+}
+
+.plan-card .plan-description {
+ font-size: var(--text-sm);
+ line-height: var(--leading-normal);
+ color: var(--ion-color-medium-shade);
+ margin: 0 0 var(--space-4);
+}
+
+.plan-card .plan-card-feature-list {
+ --background: transparent;
+}
+
+/* Ionic paints `ion-list` opaque via a mode class; the card wants it to sit on
+   the card's own background. Scoped to this card — unprefixed, it was styling
+   any `.feature-list` in the app, including the <feature-list> COMPONENT's. */
+.plan-card .plan-card-feature-list.list-md,
+.plan-card .plan-card-feature-list.list-ios {
+ background: transparent;
+}
+
+.plan-card .plan-card-feature-list ion-item {
+ --background: transparent;
+ --padding-start: 0.5rem;
+ --inner-padding-start: 0;
+ --min-height: 2.2rem;
+ font-size: var(--text-sm);
+}
+
+.plan-card .plan-card-feature-list ion-item.disabled {
+ opacity: 0.4;
+}
+
+.plan-card .plan-card-feature-list ion-item ion-icon {
+ margin-inline-end: 0.4rem;
+ font-size: 1.05rem;
+}
+</style>
