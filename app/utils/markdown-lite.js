@@ -29,11 +29,37 @@ function inline(text) {
     .replace(/`([^`]+)`/g, '<code>$1</code>')
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
     .replace(/__([^_]+)__/g, '<strong>$1</strong>')
-    .replace(/(^|[\s(])\*([^*\n]+)\*/g, '$1<em>$2</em>')
-    .replace(/(^|[\s(])_([^_\n]+)_/g, '$1<em>$2</em>')
+    // The emphasised run must START and END on a non-space character, which is
+    // what real Markdown requires and what keeps arithmetic out of it: with a
+    // plain `[^*\n]+` here, "3 * 4 * 5" renders as "3 <em> 4 </em> 5". Either a
+    // single non-space character, or non-space ... non-space.
+    .replace(/(^|[\s(])\*(\S|\S[^*\n]*\S)\*/g, '$1<em>$2</em>')
+    .replace(/(^|[\s(])_(\S|\S[^_\n]*\S)_/g, '$1<em>$2</em>')
     // Links: only http(s), and the URL is already escaped — no javascript: path.
     .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
       '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+}
+
+/**
+ * The INLINE half of the subset only — bold, italic, code, links — with no
+ * block handling: no paragraphs, no lists, no headings, no wrapping element.
+ *
+ * For prose that is already inside a `<p>`, a `<li>`, or a `<span>` and must
+ * stay inline. `markdownLite` cannot be used there: it emits block elements,
+ * and a `<p>` inside a `<p>` is closed by the parser before the text arrives.
+ *
+ * Same safety contract as `markdownLite` — the input is HTML-escaped BEFORE any
+ * markup is introduced, so the output is safe for `v-html` and a `<script>` in
+ * a lesson renders as the characters someone typed.
+ *
+ * @param {string} text
+ * @returns {string} HTML fragment, no block wrapper.
+ * @example
+ * inlineMarkdown("the pattern that feels like *you*")
+ * // → 'the pattern that feels like <em>you</em>'
+ */
+export function inlineMarkdown(text) {
+  return inline(escapeHtml(String(text ?? '')));
 }
 
 /**
