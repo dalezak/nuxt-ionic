@@ -68,3 +68,90 @@ function ariaFor(n) {
 }
 </script>
 
+<style lang="scss">
+.rating-scale {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: nowrap;
+  align-items: flex-start;
+}
+
+.rating-scale .pill {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--pill-color, var(--ion-color-medium));
+  transition: color 0.15s;
+}
+
+.rating-scale .pill-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  border: 1.5px solid var(--pill-color, var(--ion-color-medium));
+  font-weight: var(--weight-bold);
+  font-size: var(--text-base);
+  background: transparent;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.rating-scale .pill-label {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  text-align: center;
+  line-height: 1.1;
+}
+
+.rating-scale .pill.active .pill-num {
+  background: var(--pill-color, var(--ion-color-primary));
+  /* The palette's own contrast colour, so a theme that darkens or lightens the
+     fill takes the label with it. */
+  color: var(--ion-color-primary-contrast);
+}
+
+.rating-scale .pill.active .pill-label {
+  font-weight: var(--weight-medium);
+}
+
+/* A lone pill shouldn't stretch: the interactive scale gives each pill an equal
+   share of the row for tap targets, which at a count of one means a circle
+   floating in the middle of a full-width box. */
+.rating-scale.rating-scale--single {
+  justify-content: flex-start;
+}
+
+.rating-scale.rating-scale--single .pill {
+  flex: 0 0 auto;
+}
+
+/* Display-only: inert, and never dimmed by the browser's disabled styling —
+   this is a value being shown, not a control that's unavailable. */
+.rating-scale .pill--readonly {
+  cursor: default;
+  opacity: 1;
+}
+
+/* Unpicked pills recede when the whole scale is reporting a value, so the
+   marked one reads first. They stay visible because the scale is the context —
+   "1 of 5" says more than "1". Excluded in single mode, where the only pill
+   rendered IS the answer and must not be dimmed. */
+.rating-scale:not(.rating-scale--single) .pill--readonly:not(.active) {
+  opacity: 0.35;
+}
+
+/* The red→green gradient is bound inline from `ratingColor()` (app/utils/
+   rating-colors.js) rather than declared here, so the one definition also
+   serves surfaces that echo a rating back in prose and need the raw value.
+   Pills past the ramp's 5 stops bind nothing and fall through to the
+   `var(--pill-color, …)` neutrals above. */
+</style>

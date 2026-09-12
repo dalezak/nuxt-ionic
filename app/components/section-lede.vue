@@ -22,3 +22,11 @@
   any-learn) picks up changes in one place.
 -->
 
+<style lang="scss">
+.section-lede {
+  color: var(--ion-color-medium-shade);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  margin: 0 0 var(--space-5);
+}
+</style>

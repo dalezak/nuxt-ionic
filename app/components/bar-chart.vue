@@ -57,3 +57,78 @@ function pct(row) {
 }
 </script>
 
+<style lang="scss">
+.bar-chart {
+  padding: var(--space-2) 0 var(--space-5);
+}
+.empty,
+.bar-chart .not-attempted {
+  color: var(--ion-color-medium);
+  font-style: italic;
+  font-size: var(--text-sm);
+  text-align: center;
+  padding: var(--space-2) 0;
+}
+.bar-chart .group-card {
+  margin: var(--space-3) var(--space-4);
+}
+.bar-chart .group-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-bottom: var(--space-2);
+}
+.bar-chart .group-title {
+  font-weight: var(--weight-bold);
+  font-size: var(--text-base);
+  color: var(--ion-text-color);
+  flex: 1;
+}
+.bar-chart .group-content {
+  padding-top: 0;
+}
+.bar-chart .bar-row {
+  display: grid;
+  grid-template-columns: 64px 1fr 48px;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) 0;
+  font-size: var(--text-xs);
+}
+.bar-chart .bar-name {
+  font-weight: var(--weight-medium);
+  color: var(--bar-color, var(--ion-color-medium-shade));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bar-chart .is-highlight .bar-name {
+  color: var(--ion-color-primary);
+  font-weight: var(--weight-bold);
+}
+.bar-chart .bar-track {
+  height: 10px;
+  background: var(--ion-color-light-shade);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.bar-chart .bar-fill {
+  height: 100%;
+  background: var(--bar-color, var(--ion-color-medium));
+  border-radius: var(--radius-sm);
+  transition: width 0.3s ease;
+}
+.bar-chart .is-highlight .bar-fill {
+  background: var(--ion-color-primary);
+}
+.bar-chart .bar-score {
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--weight-medium);
+  font-size: var(--text-xs);
+  color: var(--bar-color, var(--ion-color-medium-shade));
+  text-align: right;
+}
+.bar-chart .is-highlight .bar-score {
+  color: var(--ion-color-primary);
+}
+</style>

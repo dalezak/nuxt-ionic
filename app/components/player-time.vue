@@ -38,3 +38,20 @@ function format(seconds) {
 }
 </script>
 
+<style lang="scss">
+.player-time {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 300;
+  /* Tabular figures so the number doesn't shuffle sideways as digits tick — on
+     a still screen it's the only thing moving, and any shift reads as a twitch. */
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  color: var(--ion-color-medium-shade);
+}
+
+.player-time-total {
+  font-size: var(--text-md);
+  color: var(--ion-color-medium);
+}
+</style>

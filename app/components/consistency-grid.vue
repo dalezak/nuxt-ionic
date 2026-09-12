@@ -132,3 +132,95 @@ const cells = computed(() => {
 });
 </script>
 
+<style lang="scss">
+.consistency-grid {
+  min-width: 0;
+}
+
+.consistency-grid .weekday {
+  font-size: 0.6rem;
+  color: var(--ion-color-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Calendar orientation — weeks stack downward as 7 day-columns. */
+.consistency-grid.is-calendar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.consistency-grid.is-calendar .weekday-labels {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--space-1);
+  padding: 0 0.1rem;
+}
+
+.consistency-grid.is-calendar .weekday {
+  text-align: center;
+}
+
+.consistency-grid.is-calendar .grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--space-1);
+}
+
+/* Heatmap orientation — weeks run left→right as columns, 7 day-rows down.
+   Weekday labels sit on the left; the grid shrinks to fit (min-width: 0). */
+.consistency-grid.is-heatmap {
+  display: flex;
+  gap: var(--space-2);
+  align-items: stretch;
+}
+
+.consistency-grid.is-heatmap .weekday-labels {
+  display: grid;
+  grid-template-rows: repeat(7, 1fr);
+  gap: 0.15rem;
+  width: 0.7rem;
+  flex-shrink: 0;
+}
+
+.consistency-grid.is-heatmap .weekday {
+  text-align: right;
+  align-self: center;
+}
+
+.consistency-grid.is-heatmap .grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(7, 1fr);
+  gap: 0.15rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.consistency-grid .cell {
+  aspect-ratio: 1 / 1;
+  border-radius: 0.2rem;
+  background: transparent;
+  border: 1px solid transparent;
+}
+
+.consistency-grid .cell--in-range {
+  background: var(--ion-color-light);
+  border-color: var(--ion-color-light-shade);
+}
+
+.consistency-grid .cell--in-range.cell--done {
+  background: var(--ion-color-primary);
+  border-color: var(--ion-color-primary);
+}
+
+.consistency-grid .cell--today {
+  outline: 1.5px solid var(--ion-color-medium-tint);
+  outline-offset: 1px;
+}
+
+.consistency-grid .cell--today.cell--done {
+  outline-color: var(--ion-color-primary-tint);
+}
+</style>

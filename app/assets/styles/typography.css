@@ -82,6 +82,30 @@
  *
  * There is no 500: the audit found it used 7 times against 29 of 600, and two
  * adjacent medium weights are indistinguishable in the UI but not in the diff.
+ *
+ * ── WHAT THE SCALE DOES NOT COVER ──
+ *
+ * It covers PROSE. Two things sit outside it on purpose, and a literal rem value
+ * is correct for both:
+ *
+ *   • Display type above --text-xl — a page hero (2rem), a section title
+ *     (1.6rem), a stat's number, a price. Each is one component's signature
+ *     size, and pulling them onto shared steps would tie a hero and a stat tile
+ *     together for no reason.
+ *   • Micro labels below --text-xs — a heatmap's weekday initial (0.55rem), a
+ *     grid's month label. These are sized against the dense grid they sit in,
+ *     not against text elsewhere; snapping them up to 0.75rem breaks the layout.
+ *
+ * Also outside: any font-size that sizes a GLYPH — an icon, an emoji, a chevron,
+ * a currency mark. That's geometry, not type. See the comments on those rules.
+ *
+ * ── LEADING ──
+ * Two, for the same reason. love-well had EIGHT line-heights (1.3 → 1.65), with
+ * 1.5 and 1.55 alone accounting for 73 declarations — the difference between
+ * them is invisible on screen and permanent in the code.
+ *
+ *   --leading-tight   1.35   headings, card titles, compact rows
+ *   --leading-normal  1.5    prose — anything meant to be read in sentences
  */
 :root {
   --text-xs: 0.75rem;
@@ -94,6 +118,32 @@
   --weight-normal: 400;
   --weight-medium: 600;
   --weight-bold: 700;
+
+  --leading-tight: 1.35;
+  --leading-normal: 1.5;
+}
+
+/*
+ * .eyebrow — the small uppercase label above a block ("YOUR DIRECTION",
+ * "WHAT YOU DO NOW", "STEP 2"). Works on any element.
+ *
+ *   <p class="eyebrow">Where it shows up</p>
+ *
+ * Why it's here: a love-well audit (2026-08-21) found 21 of these hand-rolled
+ * across 16 files, at six different sizes (0.68 → 0.85rem) and six different
+ * letter-spacings (0.03 → 0.09em). Nobody chose those differences; each one was
+ * a fresh guess in a fresh file. They read as noise when you use the app daily,
+ * and — worse — no theme could reach them.
+ *
+ * Layout stays with the caller: this sets type and colour only, so a flex row
+ * with an icon in it keeps its own `display` / `gap` rule.
+ */
+.eyebrow {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ion-color-medium);
 }
 
 /*

@@ -30,6 +30,3 @@ function onChange(event) {
   }
 }
 </script>
-
-<style scoped lang="scss">
-</style>

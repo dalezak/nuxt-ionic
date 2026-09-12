@@ -20,3 +20,40 @@ defineProps({
 });
 </script>
 
+<style lang="scss">
+.accent-card {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.accent-card-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+}
+
+.accent-card-header ion-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+  color: white;
+}
+
+.accent-card-title {
+  flex: 1;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: white;
+}
+
+.accent-card-subtitle {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.7);
+}
+</style>

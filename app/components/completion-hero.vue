@@ -19,3 +19,29 @@ defineProps({
 });
 </script>
 
+<style lang="scss">
+.completion-hero {
+  text-align: center;
+  padding-top: var(--space-5);
+}
+
+.completion-hero-icon {
+  font-size: 4rem;
+  color: var(--ion-color-success);
+}
+
+.completion-hero-title {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  margin: var(--space-3) 0;
+  color: var(--ion-text-color);
+}
+
+.completion-hero-body {
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--ion-color-medium-shade);
+  margin: 0 auto;
+  max-width: 30rem;
+}
+</style>

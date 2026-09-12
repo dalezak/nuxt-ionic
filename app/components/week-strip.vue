@@ -29,3 +29,37 @@ const ariaLabel = computed(() => {
 });
 </script>
 
+<style lang="scss">
+.week-strip {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: var(--space-1);
+  align-items: center;
+}
+
+.week-strip .dot {
+  width: 100%;
+  max-width: 0.6rem;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  border: 1.25px solid var(--ion-color-medium);
+  background: transparent;
+  justify-self: center;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.week-strip .dot.done {
+  background: var(--ion-color-primary);
+  border-color: var(--ion-color-primary);
+}
+
+.week-strip .dot.today {
+  outline: 2px solid var(--ion-color-medium-tint);
+  outline-offset: 2px;
+}
+
+.week-strip .dot.today.done {
+  outline-color: var(--ion-color-primary-tint);
+}
+</style>

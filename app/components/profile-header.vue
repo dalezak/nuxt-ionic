@@ -49,3 +49,11 @@ defineProps({
 });
 </script>
 
+<style lang="scss">
+.profile-header {
+  padding-top: var(--space-5);
+}
+.profile-header-badge {
+  margin-top: var(--space-1);
+}
+</style>

@@ -36,3 +36,32 @@ defineProps({
 defineEmits(['action']);
 </script>
 
+<style lang="scss">
+.empty-state {
+  padding-top: 4rem;
+}
+.empty-state .empty-icon {
+  font-size: 4rem;
+  opacity: 0.3;
+  margin-bottom: var(--space-4);
+}
+.empty-state .empty-icon.vivid {
+  opacity: 1;
+}
+.empty-state h3 {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-medium);
+  margin: 0 0 var(--space-2);
+}
+.empty-state p {
+  opacity: 0.6;
+  font-size: var(--text-sm);
+  margin: 0;
+  line-height: var(--leading-normal);
+}
+.empty-state .empty-action {
+  max-width: 280px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>

@@ -52,3 +52,15 @@ function onTap() {
 }
 </script>
 
+<style lang="scss">
+.provenance-chip {
+  margin: var(--space-3) 0 0;
+  font-size: var(--text-xs);
+  --background: var(--ion-color-step-100, #ececec);
+  --color: var(--ion-color-medium-shade);
+}
+
+.provenance-chip ion-icon {
+  font-size: 0.9rem;
+}
+</style>

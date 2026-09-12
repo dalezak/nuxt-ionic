@@ -37,3 +37,31 @@ defineProps({
 defineEmits(['click']);
 </script>
 
+<style lang="scss">
+.stats-card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.stats-card-icon {
+  font-size: 1.2rem;
+  margin-bottom: 0.15rem;
+}
+
+.stats-card-value {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  line-height: 1.1;
+  color: var(--ion-text-color);
+  font-variant-numeric: tabular-nums;
+}
+
+.stats-card-label {
+  font-size: var(--text-xs);
+  color: var(--ion-color-medium-shade);
+  text-align: center;
+  line-height: var(--leading-tight);
+}
+</style>

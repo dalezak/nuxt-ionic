@@ -89,3 +89,40 @@ const resolvedBackground = computed(() => {
 });
 </script>
 
+<style lang="scss">
+.stat-tile {
+  margin: 0;
+  /* Tighter inner padding than the default section-card (1rem) so short
+     single-word labels (COURSES, LESSONS) have enough content width to
+     fit on one line in narrow grid cells. */
+  --card-padding: 0.6rem;
+}
+.stat-tile-content {
+  text-align: center;
+}
+.stat-tile-icon {
+  font-size: 1.4rem;
+  margin-bottom: var(--space-2);
+}
+.stat-tile-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--ion-text-color);
+  line-height: 1;
+  margin-bottom: var(--space-1);
+  /* Keep values like "80%" or "1.2k" intact — % and . are treated as
+     separable by default, so without nowrap they break to the next line
+     in narrow cells. */
+  white-space: nowrap;
+}
+.stat-tile-label {
+  /* Tightened size + letter-spacing so single-word labels (COURSES,
+     LESSONS, STREAK) fit on one line in narrow cells. Multi-word labels
+     still wrap on word boundary, single words now overflow gracefully
+     instead of breaking mid-word ("COURS / ES"). */
+  font-size: 0.65rem;
+  color: var(--ion-color-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+</style>

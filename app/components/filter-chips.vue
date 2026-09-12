@@ -75,3 +75,30 @@ function select(value) {
 }
 </script>
 
+<style lang="scss">
+/* The flex gap is the single source of spacing — Ionic's default ~4px ion-chip
+   margin is zeroed so wrapped rows don't read as too far apart. */
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-4);
+}
+
+/* Single-line, horizontally-scrolling variant for longer option sets. */
+.filter-chips--scroll {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: var(--space-1);
+}
+
+.filter-chips--scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-chips ion-chip {
+  margin: 0;
+  flex-shrink: 0;
+}
+</style>

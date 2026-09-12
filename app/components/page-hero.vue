@@ -45,3 +45,35 @@ defineProps({
 });
 </script>
 
+<style lang="scss">
+.page-hero {
+  padding-top: var(--space-8);
+  padding-bottom: var(--space-5);
+}
+
+.page-hero-icon {
+  font-size: 4rem;
+  margin-bottom: var(--space-4);
+  display: inline-block;
+}
+
+.page-hero-title {
+  font-size: 2rem;
+  font-weight: var(--weight-bold);
+  margin: 0 0 var(--space-2);
+}
+
+.page-hero-body {
+  font-size: var(--text-base);
+  opacity: 0.7;
+  max-width: 28rem;
+  margin: 0 auto;
+  line-height: var(--leading-normal);
+}
+
+/* Trim default <p> margins so consumers can pass `<p>...</p>` without
+   the body block jumping vertically. */
+.page-hero-body p {
+  margin: 0;
+}
+</style>

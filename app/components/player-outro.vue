@@ -40,3 +40,48 @@ defineProps({
 });
 </script>
 
+<style lang="scss">
+.player-outro {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  text-align: center;
+  animation: player-outro-in 1100ms ease-out both;
+}
+
+.player-outro-icon {
+  font-size: 3rem;
+  color: var(--ion-color-tertiary);
+  margin-bottom: var(--space-2);
+  animation: player-outro-in 900ms 500ms ease-out both;
+}
+
+.player-outro-title {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-medium);
+}
+
+.player-outro-sub {
+  margin: 0 0 var(--space-5);
+  color: var(--ion-color-medium-shade);
+  line-height: var(--leading-normal);
+  max-width: 18rem;
+}
+
+@keyframes player-outro-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* The motion is decoration — the acknowledgement reads the same without it. */
+@media (prefers-reduced-motion: reduce) {
+  .player-outro,
+  .player-outro-icon {
+    animation: none;
+  }
+}
+</style>

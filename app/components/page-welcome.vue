@@ -40,3 +40,11 @@ defineProps({
 });
 </script>
 
+<style lang="scss">
+.page-welcome {
+  /* Top spacing only — horizontal padding is the page container's job, so the
+     greeting + slot (tagline, week-strip) align with cards and section
+     headings at the content edge instead of being inset an extra 1rem. */
+  padding: var(--space-4) 0 0;
+}
+</style>

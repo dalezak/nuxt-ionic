@@ -30,3 +30,35 @@ defineProps({
 });
 </script>
 
+<style lang="scss">
+.feature-list {
+  background: transparent;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: var(--space-4);
+}
+
+.feature-list-item {
+  --background: transparent;
+  --padding-start: 0;
+  --inner-padding-end: 0;
+}
+
+.feature-list-icon {
+  font-size: 1.75rem;
+  align-self: flex-start;
+  margin-top: var(--space-2);
+}
+
+.feature-list-title {
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+  margin-bottom: 0.15rem;
+}
+
+.feature-list-description {
+  font-size: var(--text-sm);
+  color: var(--ion-color-medium-shade);
+  line-height: var(--leading-normal);
+}
+</style>

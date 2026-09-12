@@ -1,0 +1,51 @@
+/*
+ * Shape tokens — corner radii, shared across the suite.
+ *
+ * Companion to typography.css: same idea, different property. Apps override at
+ * their own `:root` or in theme.css; last one wins.
+ *
+ * Why: a love-well audit (2026-08-21) found 31 `border-radius` declarations
+ * using THIRTEEN different values — 3px, 4px, 6px, 8px, 10px, 12px, 16px,
+ * 0.5rem, 0.6rem, 0.75rem, 999px, 50%, and a two-corner variant. Every rounded
+ * thing in the app had its corner decided independently, so "soften the corners"
+ * or "square everything off" was a change to thirty-one files.
+ *
+ * Three steps and a pill. Roles, not sizes:
+ *
+ *   --radius-sm    4px     thin bars, track fills, small thumbnails
+ *   --radius-md    10px    blocks INSIDE a card — callouts, tappable rows,
+ *                          message bubbles, nested panels
+ *   --radius-lg    16px    a standalone rounded surface that isn't a card
+ *   --radius-pill  999px   chips, progress tracks, anything fully rounded
+ *
+ * The card's own corner is NOT here: it's `--card-radius` in section-card.css,
+ * and it is deliberately larger than `--radius-md` so a block nested inside a
+ * card reads as tucked in rather than fighting the container's edge.
+ *
+ * A circle stays `50%` — that's geometry, not style; a token would only hide it.
+ *
+ * ── LINES ──
+ *
+ *   --hairline          the 1px rule between rows, and the outline of a chip or
+ *                       a tappable row inside a card. The same audit found this
+ *                       written two ways (`--ion-color-light-shade` and
+ *                       `--ion-color-step-150` with that as its fallback) across
+ *                       15 places. "Drop the borders" should be one edit.
+ *   --accent-bar-width  the coloured bar down the left edge of a callout. The
+ *                       COLOUR stays local — it's what the callout means
+ *                       (primary / warning / muted quote) — but the width was
+ *                       2px or 3px depending on the file.
+ *
+ * A card's own accent bar is wider (`--card-accent-width`, 4px in
+ * section-card.css) because it runs the full height of a much larger surface.
+ * Deliberately not the same token.
+ */
+:root {
+  --radius-sm: 4px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  --hairline: 1px solid var(--ion-color-step-150, var(--ion-color-light-shade));
+  --accent-bar-width: 3px;
+}

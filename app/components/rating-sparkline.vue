@@ -47,3 +47,46 @@ function cellStyle(cell, score) {
 }
 </script>
 
+<style lang="scss">
+.rating-sparkline {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.18rem;
+  /* Taller than a typical sparkline on purpose: on a 1–5 scale each cell is a
+     discrete step, so extra height makes "3 vs 4" a clear one-cell jump rather
+     than a hairline. */
+  height: 2.75rem;
+}
+
+.rating-sparkline .col {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column-reverse; /* fill from the bottom */
+  gap: 2px;
+  opacity: 0.75;
+  transition: opacity 0.15s;
+}
+
+.rating-sparkline .col--current {
+  opacity: 1;
+}
+
+.rating-sparkline .col--empty {
+  opacity: 0.4;
+}
+
+.rating-sparkline .cell {
+  flex: 1 1 0;
+  min-height: 0;
+  border-radius: 1px;
+  border: 1px solid var(--ion-color-medium);
+  background: transparent;
+  opacity: 0.5;
+}
+
+.rating-sparkline .cell--filled {
+  opacity: 1;
+}
+</style>

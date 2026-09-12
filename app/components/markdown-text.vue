@@ -26,3 +26,58 @@ const props = defineProps({
 const html = computed(() => markdownLite(props.text));
 </script>
 
+<style lang="scss">
+.markdown-text {
+ font-size: var(--text-base);
+ line-height: var(--leading-normal);
+ color: var(--ion-text-color);
+}
+
+.markdown-text p {
+ margin: 0 0 var(--space-3);
+}
+
+.markdown-text p:last-child,
+.markdown-text ul:last-child,
+.markdown-text ol:last-child {
+ margin-bottom: 0;
+}
+
+.markdown-text h2,
+.markdown-text h3 {
+ font-size: var(--text-base);
+ font-weight: var(--weight-bold);
+ line-height: var(--leading-tight);
+ margin: var(--space-4) 0 var(--space-2);
+}
+
+.markdown-text h2:first-child,
+.markdown-text h3:first-child {
+ margin-top: 0;
+}
+
+.markdown-text ul,
+.markdown-text ol {
+ margin: 0 0 var(--space-3);
+ padding-inline-start: 1.25rem;
+}
+
+.markdown-text li {
+ margin: 0.15rem 0;
+}
+
+.markdown-text strong {
+ font-weight: var(--weight-bold);
+}
+
+.markdown-text code {
+ font-size: 0.9em;
+ padding: 0.05rem var(--space-1);
+ border-radius: 0.3rem;
+ background: var(--ion-color-step-50, #f5f5f5);
+}
+
+.markdown-text a {
+ color: var(--ion-color-primary);
+}
+</style>

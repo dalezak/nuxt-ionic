@@ -97,3 +97,95 @@ function soloFillStyle(item) {
 }
 </script>
 
+<style lang="scss">
+.dim-bars .db-empty {
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--ion-color-medium-shade);
+}
+
+.dim-bars .db-item {
+  margin: 0 0 var(--space-4);
+}
+
+.dim-bars .db-item-label {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  color: var(--ion-text-color);
+}
+
+.dim-bars .db-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-1);
+}
+
+/* Solo rows sit flush (no per-item heading above them). */
+.dim-bars .db-row--solo {
+  margin: 0 0 var(--space-2);
+}
+
+.dim-bars .db-name {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex: 0 0 5.5rem;
+  min-width: 0;
+  font-size: var(--text-xs);
+  color: var(--ion-color-medium-shade);
+}
+
+/* Wider column for the solo view, where the label is the item name
+   ("Interdependence") rather than a short series name. */
+.dim-bars .db-name--wide {
+  flex-basis: 8rem;
+  font-weight: var(--weight-medium);
+  color: var(--ion-text-color);
+}
+
+.dim-bars .db-emoji {
+  font-size: 0.85rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.dim-bars .db-name-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dim-bars .db-track {
+  position: relative;
+  flex: 1 1 auto;
+  height: 0.6rem;
+  border-radius: var(--radius-pill);
+  background: var(--ion-color-light);
+  overflow: hidden;
+}
+
+.dim-bars .db-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: var(--radius-pill);
+  opacity: 0.85;
+  transition: width 200ms ease;
+}
+
+.dim-bars .db-val {
+  flex: 0 0 1rem;
+  text-align: right;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  color: var(--ion-text-color);
+  opacity: 0.75;
+}
+
+.dim-bars .db-val--empty {
+  font-weight: var(--weight-normal);
+  opacity: 0.4;
+}
+</style>

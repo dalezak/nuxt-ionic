@@ -76,7 +76,3 @@ const properties = computed(() => ({
   url: props.url
 }))
 </script>
-
-<style lang="scss" scoped>
-
-</style>

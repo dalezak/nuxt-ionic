@@ -26,7 +26,3 @@ function onClick(event) {
   emits("click", event);
 }
 </script>
-
-<style scoped lang="scss">
-
-</style>

@@ -48,7 +48,3 @@ function onSlideChange(swiper) {
   emit('slideChange', swiper);
 }
 </script>
-
-<style scoped lang="scss">
-
-</style>

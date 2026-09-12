@@ -40,3 +40,11 @@ defineProps({
 });
 </script>
 
+<style lang="scss">
+.page-error-icon {
+  font-size: 2rem;
+  margin-bottom: var(--space-2);
+  display: block;
+  opacity: 0.5;
+}
+</style>

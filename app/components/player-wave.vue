@@ -312,3 +312,20 @@ onUnmounted(() => {
 });
 </script>
 
+<style lang="scss">
+/* Sizing lives here, not in each player. Four of them had their own clamp and
+   they'd already drifted (125px, 150px, 92px), which is the same failure mode
+   as the duplicated drawing code — a shared visual that four callers can size
+   differently isn't shared, it's copied.
+   Height is the pace control: the marker only travels vertically, so its speed
+   is amplitude × rate of change, and a shorter band reads as calmer. This is
+   about the floor — flatten it much further and the swell becomes a ripple,
+   where direction stops being legible. Override with a class where a surface
+   genuinely needs it. */
+.player-wave {
+  display: block;
+  width: 100%;
+  max-width: 560px;
+  height: clamp(88px, 13vh, 125px);
+}
+</style>

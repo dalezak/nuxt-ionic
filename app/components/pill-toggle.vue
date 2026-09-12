@@ -30,3 +30,22 @@ const accentVars = computed(() => ({
 }));
 </script>
 
+<style lang="scss">
+.pill-toggle {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--ion-color-step-200, #cfcfcf);
+  background: transparent;
+  color: var(--ion-color-medium-shade);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.pill-toggle--active {
+  border-color: var(--pill-accent, var(--ion-color-primary));
+  background: rgba(var(--pill-accent-rgb, var(--ion-color-primary-rgb)), 0.12);
+  color: var(--pill-accent-shade, var(--ion-color-primary-shade));
+}
+</style>

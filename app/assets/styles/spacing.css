@@ -1,0 +1,44 @@
+/*
+ * Spacing scale — the amounts of space available, suite-wide.
+ *
+ * This one is a narrower claim than typography.css or shape.css, and the
+ * difference matters. The suite's UI rules say a component OWNS its layout: it
+ * decides where space goes, which edges get it, and how its children sit
+ * together. Nothing here takes that away.
+ *
+ * What it takes away is the freedom to invent an AMOUNT. A love-well audit
+ * (2026-08-21) found 411 margin / padding / gap declarations drawing on more
+ * than thirty distinct values — 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65,
+ * 0.7, 0.75rem all present, all doing the same job. Nobody chose those
+ * differences; each was a fresh guess in a fresh file, and together they're why
+ * two cards that should sit at the same rhythm never quite do.
+ *
+ * Same bargain as the type scale: the component still picks the step, the scale
+ * decides which steps exist.
+ *
+ *   --space-1   0.25rem   hairline gaps — icon↔label, chip padding
+ *   --space-2   0.5rem    the default gap between related things
+ *   --space-3   0.75rem   inside a small block; between a label and its content
+ *   --space-4   1rem      a card's inner padding; between blocks
+ *   --space-5   1.5rem    between sections
+ *   --space-6   2rem      a major break in the page
+ *   --space-8   3rem      top-of-page breathing room, empty states
+ *
+ * Seven steps, and the gaps between them widen as they grow — the difference
+ * between 0.25 and 0.5 is worth having, the difference between 2 and 2.25 is
+ * not.
+ *
+ * NOT in scope, deliberately:
+ *   • Negative margins. Those pull one element flush against another — an
+ *     optical calibration against a specific neighbour, not a rhythm.
+ *   • `auto`, percentages, and 0. Not amounts.
+ */
+:root {
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-8: 3rem;
+}

@@ -62,6 +62,3 @@ function onSearch(event) {
   }
 }
 </script>
-
-<style scoped lang="scss">
-</style>

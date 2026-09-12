@@ -23,3 +23,10 @@
   one place.
 -->
 
+<style lang="scss">
+.section-title {
+  font-size: 1.6rem;
+  font-weight: var(--weight-bold);
+  margin: var(--space-2) 0 var(--space-3);
+}
+</style>

@@ -55,3 +55,48 @@ const fraction = computed(() => {
 });
 </script>
 
+<style lang="scss">
+.progress-meter-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.progress-meter-track {
+  flex: 1;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--ion-color-light-shade);
+  overflow: hidden;
+}
+
+.progress-meter-fill {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  transition: width 0.4s ease;
+  /* Hairline floor: without it, 1-of-40 rounds to nothing and a user who has
+     genuinely started reads as not started. */
+  min-width: 2px;
+}
+
+.progress-meter-label {
+  flex-shrink: 0;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold, 700);
+  color: var(--ion-color-medium);
+  text-align: right;
+}
+
+/* Two classes, not one. This is a <p>, and progress-meter renders inside cards
+   (Today's path, page-header, the course cards) where Ionic's `.card-content-* p`
+   — specificity (0,1,1) — outranks a single-class rule and would silently force
+   0.875rem with no top margin. See the note in CLAUDE.md. It's the only <p> in
+   this layer's components that lands inside a card; the rest (section-lede,
+   feature-list, the player captions) render outside one, so a single class is
+   safe for them. */
+.progress-meter .progress-meter-caption {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-sm, 0.85rem);
+  color: var(--ion-color-medium);
+}
+</style>

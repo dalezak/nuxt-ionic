@@ -19,3 +19,22 @@ defineProps({
 });
 </script>
 
+<style lang="scss">
+.faq-list .faq-item {
+  margin: 0 0 var(--space-5);
+}
+
+.faq-list .faq-q {
+  font-size: var(--text-md);
+  font-weight: var(--weight-bold);
+  margin: 0 0 var(--space-1);
+  color: var(--ion-text-color);
+}
+
+.faq-list .faq-a {
+  margin: 0;
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--ion-color-medium-shade);
+}
+</style>

@@ -60,3 +60,12 @@ function onSwiper(swiper)      { emit('swiper', swiper); }
 function onSlideChange(swiper) { emit('slideChange', swiper); }
 </script>
 
+<style lang="scss">
+.swiper-pagination-bullet {
+ background: var(--ion-color-medium);
+ opacity: 0.4;
+} .swiper-pagination-bullet-active {
+ background: var(--ion-color-primary);
+ opacity: 1;
+}
+</style>

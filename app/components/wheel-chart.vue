@@ -177,3 +177,68 @@ function wedgePath(i, score) {
 }
 </script>
 
+<style lang="scss">
+.wheel-chart {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-2) var(--space-4); /* small horizontal pad so text labels have room */
+  overflow: visible;
+}
+
+/* Square stage the SVG fills and the icons overlay onto. */
+.wheel-chart .wheel-stage {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.wheel-chart .wheel-svg {
+  display: block;
+  width: 100%;      /* scale to the stage… */
+  height: auto;     /* …keeping the square aspect from the viewBox */
+  overflow: visible;
+}
+
+.wheel-chart .wheel-label {
+  font-size: 11px;
+  font-weight: var(--weight-medium);
+  fill: var(--ion-text-color);
+}
+
+/* Perimeter icon — HTML overlay centered on its computed % position. */
+.wheel-chart .wheel-icon {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.wheel-chart .wheel-icon ion-icon {
+  font-size: 18px;
+}
+
+.wheel-chart .tappable {
+  cursor: pointer;
+}
+
+/* Bands are purely visual; taps fall through to the transparent hit-target
+   slices underneath so selection still works over the gaps. */
+.wheel-chart .band {
+  pointer-events: none;
+}
+
+/* Highlight pulse — fires once per render for the filled bands of segments
+   named in highlightKeys. Lifts opacity briefly so the ring "breathes" once,
+   then reverts to the per-band fill-opacity attribute. */
+@keyframes band-pulse {
+  0%   { fill-opacity: 0.7; }
+  40%  { fill-opacity: 0.98; }
+  100% { fill-opacity: 0.7; }
+}
+
+.wheel-chart .band--highlight {
+  animation: band-pulse 1.4s ease-in-out 1;
+}
+</style>

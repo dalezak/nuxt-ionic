@@ -73,7 +73,3 @@ function onMore(event) {
   emit('more');
 }
 </script>
-
-<style scoped lang="scss">
-
-</style>

@@ -52,3 +52,19 @@ defineProps({
 defineEmits(['select', 'refresh']);
 </script>
 
+<style lang="scss">
+.suggestion-chips-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+.suggestion-chips-list--center {
+  justify-content: center;
+}
+.suggestion-chips-list ion-chip {
+  margin: 0;
+}
+.suggestion-chips-refresh {
+  margin-top: var(--space-2);
+}
+</style>

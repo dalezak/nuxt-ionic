@@ -122,3 +122,22 @@ defineProps({
 
 defineEmits(['back', 'primary', 'secondary']);
 </script>
+
+<style lang="scss">
+.modal-footer-nav {
+  /* Ionic's grid brings its own 5px padding, and every ion-col another 5px.
+     Both stack on top of `ion-padding-horizontal`'s 16px, so these buttons sat
+     ~26px from the screen edge while every other full-width button in the app
+     sits at 16px — visibly narrower, on the most-used footer in the suite.
+     Zero Ionic's grid paddings, keep the 16px edge inset, and put the gap
+     between buttons back as a row gap. */
+  --ion-grid-padding: 0;
+  --ion-grid-column-padding: 0;
+  /* The vertical breathing room the grid's own padding used to provide. */
+  padding-block: var(--space-1);
+}
+
+.modal-footer-nav ion-row {
+  gap: var(--space-2);
+}
+</style>

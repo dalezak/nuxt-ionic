@@ -26,7 +26,3 @@ function onShare(event) {
   emits("share", event);
 }
 </script>
-
-<style lang="scss" scoped>
-
-</style>

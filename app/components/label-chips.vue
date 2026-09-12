@@ -76,3 +76,42 @@ function chipStyle(chip) {
 }
 </script>
 
+<style lang="scss">
+.label-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.label-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: var(--weight-medium, 600);
+  line-height: 1.2;
+  padding: var(--space-1) var(--space-3);
+  /* Fully round, like pill-toggle and filter-chips. This was 0.6rem — a rounded
+     RECTANGLE — so metadata pills were the only squarish ones in the app and
+     read as a different family beside every tappable pill next to them. One
+     shape language for all pills; what still separates them is fill. */
+  border-radius: var(--radius-pill);
+  /* Filled + borderless stays deliberate: interactive pills are outlined, so a
+     solid pill says "this is a label, not a control" without another shape. */
+  background: var(--ion-color-step-50, #f5f5f5);
+  color: var(--ion-color-medium-shade);
+  white-space: nowrap;
+}
+
+.label-chip--uppercase .label-chip-label {
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.label-chip-icon,
+.label-chip-emoji {
+  font-size: 0.85rem;
+  line-height: 1;
+}
+</style>
