@@ -5,8 +5,9 @@
       :key="i"
       class="weekly-day"
       :class="{ 'is-today': i === resolvedTodayIndex }">
-      <span class="weekly-day-label">{{ LABELS[i] }}</span>
+      <span v-if="showLabels" class="weekly-day-label">{{ labelFor(i) }}</span>
       <svg
+        v-if="entry !== null"
         class="weekly-day-mark"
         :width="size"
         :height="size"
@@ -100,16 +101,46 @@
 const props = defineProps({
   // 7 entries, index 0 = Mon, 6 = Sun. Each is an array of
   // `{ value: 0..1, color }` channels, innermost first.
+  //
+  // `null` is a cell that is NOT A DAY — the run before the 1st in a calendar
+  // month. It holds its column so the grid stays aligned, and draws nothing.
+  // Distinct from an empty day, which draws the full geometry in hairlines
+  // because "you did nothing" is a fact and "this square isn't in the month"
+  // is not.
   days: { type: Array, default: () => [] },
   // Ionic palette color for today's label. Channels carry their own.
   color: { type: String, default: 'warning' },
   // Rendered size in px. Sized for the four-channel case at 32.
   size: { type: Number, default: 32 },
-  // Override today's index (0..6). Null = auto-compute from clock.
+  // Override today's index (0..6). Null = auto-compute from clock. Pass -1 for
+  // a strip that ISN'T the current week — no index matches, so nothing is
+  // picked out, which is what a past week wants.
   todayIndex: { type: Number, default: null },
+  // Weekday letters above the marks. Off for stacked strips after the first
+  // row: repeating M T W T F S S down a grid says nothing the header didn't
+  // already say, and the repetition competes with the marks it labels.
+  showLabels: { type: Boolean, default: true },
+  // Replace the weekday letters with per-day text — date numbers, for a
+  // calendar-shaped grid where the weekday is already in a header above.
+  // 7 entries, Mon-first; a short/empty one falls back to the letter.
+  //
+  // A prop rather than letting the host render its own number row, because the
+  // number has to sit over the mark it describes. Two independently laid-out
+  // rows agree until a mark wraps or a label runs wide, and then they don't —
+  // silently, and off by one.
+  dayLabels: { type: Array, default: null },
 });
 
 const LABELS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+
+// With `dayLabels` supplied the host owns every label, empty string included —
+// a calendar's leading cells are not Mondays that happen to be unlabelled, they
+// are not days at all, and falling back to the weekday letter would put a
+// stray "M" above a blank. Without it, the weekday letters.
+function labelFor(i) {
+  if (props.dayLabels) return props.dayLabels[i] ?? '';
+  return LABELS[i];
+}
 // Spelled out for the screen reader — the visible labels repeat "T" and "S",
 // which is fine to look at and useless to listen to.
 const FULL_LABELS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -159,6 +190,17 @@ const circumference = (r) => 2 * Math.PI * r;
 const week = computed(() =>
   Array.from({ length: 7 }, (_, i) => {
     const entry = props.days?.[i];
+    // `null` survives as null — it means "not a day", and the template skips
+    // the mark for it entirely. Coercing it to `[]` here (as this used to)
+    // made it an EMPTY DAY instead, which still draws: the centre dot is
+    // unconditional, so a calendar's leading and trailing cells each got a
+    // stray dot floating where no date is.
+    //
+    // Only an EXPLICIT null. A short `days` array still yields `[]` per missing
+    // index, which is the old behaviour and the right one: "you passed me six
+    // entries" is a caller being sloppy, not a caller saying "this square is
+    // not in the month".
+    if (entry === null) return null;
     return Array.isArray(entry)
       ? entry.map(ch => ({
         value: clamp01(Number(ch?.value)),
@@ -223,8 +265,16 @@ function describe(entry) {
      padding minimal to avoid doubling up. */
   padding: var(--space-1) 0;
 }
+/* Every cell owns exactly one seventh of the row, whatever is in it.
+   Content-sized cells under `space-between` look right only while all seven
+   have content: the moment one is empty — a calendar's run before the 1st —
+   it collapses to zero width and the rest redistribute, so the marks slide out
+   from under the weekday header above them. A column is a column even when
+   nothing is standing in it. */
 .weekly-rings .weekly-day {
   display: flex;
+  flex: 1 1 0;
+  min-width: 0;
   flex-direction: column;
   align-items: center;
   gap: var(--space-1);
