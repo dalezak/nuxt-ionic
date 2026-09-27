@@ -11,25 +11,28 @@
     <suggestion-chips :suggestions="ideas" :selected="topic" @select="onPick" @refresh="onMore" />
 
   Props:
-    suggestions  — array of label strings
-    selected     — highlights the chip matching this value (e.g. current pick)
-    refreshLabel — refresh-button text (default "More ideas")
+    suggestions  — label strings, or `{ label, icon?, color? }` objects. Chips
+                   all look alike; give each kind its own icon to tell them
+                   apart (a user's own insight vs a generic starter).
+    selected     — highlights the chip whose label matches this value
+    refreshLabel — refresh-button text (default "More ideas"); '' hides it
     center       — center the chips (card surfaces) vs left-align (form surfaces)
 
-  Emits: select (the tapped suggestion), refresh.
+  Emits: select (the tapped suggestion, as passed — string or object), refresh.
 -->
 <template>
   <div class="suggestion-chips">
     <div class="suggestion-chips-list" :class="{ 'suggestion-chips-list--center': center }">
       <ion-chip
-        v-for="s in suggestions"
-        :key="s"
-        :color="selected === s ? 'primary' : undefined"
-        @click="$emit('select', s)">
-        {{ s }}
+        v-for="item in items"
+        :key="item.label"
+        :color="selected === item.label ? 'primary' : item.color"
+        @click="$emit('select', item.raw)">
+        <ion-icon v-if="item.icon" :icon="item.icon" />
+        <ion-label>{{ item.label }}</ion-label>
       </ion-chip>
     </div>
-    <ion-button fill="clear" size="small" expand="block" class="suggestion-chips-refresh" @click="$emit('refresh')">
+    <ion-button v-if="refreshLabel" fill="clear" size="small" expand="block" class="suggestion-chips-refresh" @click="$emit('refresh')">
       <ion-icon :icon="refreshOutline" slot="start"></ion-icon>
       {{ refreshLabel }}
     </ion-button>
@@ -38,18 +41,26 @@
 
 <script setup>
 import { refreshOutline } from 'ionicons/icons';
-defineProps({
-  // Array of label strings to render as chips.
+const props = defineProps({
+  // Label strings, or { label, icon?, color? } objects.
   suggestions: { type: Array, default: () => [] },
-  // Highlights the chip matching this value (e.g. the currently chosen topic).
+  // Highlights the chip whose label matches (e.g. the currently chosen topic).
   selected: { type: String, default: null },
   // Refresh button label — "More ideas" (default) / "Refresh List" / etc.
+  // Empty hides the button, for a list with nothing more to deal.
   refreshLabel: { type: String, default: 'More ideas' },
   // Center the chips (card surfaces) vs left-align (form surfaces).
   center: { type: Boolean, default: false },
 });
 
 defineEmits(['select', 'refresh']);
+
+// Every chip renders the same; an `icon` is how a list tells kinds of
+// suggestion apart (love-well: sparkles for the user's own insights, a bulb for
+// generic starters). A different fill for one kind read as "already selected".
+const items = computed(() => props.suggestions.map(s => (typeof s === 'string'
+  ? { label: s, raw: s }
+  : { label: s.label, icon: s.icon ?? null, color: s.color, raw: s })));
 </script>
 
 <style lang="scss">
