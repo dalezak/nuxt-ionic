@@ -12,9 +12,14 @@
 
   Props:
     modelValue — the selected value (null = nothing / "All")
-    options    — [{ value, label, icon? }] or plain strings (normalized to
-                 value=label). `icon` (an ionicon) renders before the label.
+    options    — [{ value, label, icon? | emoji? }] or plain strings
+                 (normalized to value=label). An `icon` (ionicon) or an
+                 `emoji` (string) renders before the label; emoji wins if both
+                 are given, matching <label-chips> and <page-header>.
     allLabel   — when set, prepends a reset chip that selects null
+    allIcon / allEmoji — mark for that reset chip, same rules as an option's.
+                 Worth setting whenever the options carry marks: a bare reset
+                 chip beside marked ones reads as a different kind of thing.
     activeColor / inactiveColor — Ionic color names (defaults primary / medium)
 
   Toggle: tapping the active chip clears back to null (when an allLabel reset
@@ -27,6 +32,8 @@
       :outline="modelValue !== null"
       :color="modelValue === null ? activeColor : inactiveColor"
       @click="select(null)">
+      <span v-if="allEmoji" class="filter-chip-emoji">{{ allEmoji }}</span>
+      <ion-icon v-else-if="allIcon" :icon="allIcon" />
       <ion-label>{{ allLabel }}</ion-label>
     </ion-chip>
     <ion-chip
@@ -35,7 +42,8 @@
       :outline="modelValue !== opt.value"
       :color="modelValue === opt.value ? activeColor : inactiveColor"
       @click="select(opt.value)">
-      <ion-icon v-if="opt.icon" :icon="opt.icon" />
+      <span v-if="opt.emoji" class="filter-chip-emoji">{{ opt.emoji }}</span>
+      <ion-icon v-else-if="opt.icon" :icon="opt.icon" />
       <ion-label>{{ opt.label }}</ion-label>
     </ion-chip>
   </div>
@@ -49,6 +57,9 @@ const props = defineProps({
   options: { type: Array, default: () => [] },
   // Optional reset chip label; omit to hide the "All" chip.
   allLabel: { type: String, default: null },
+  // Its mark, when the options have one — emoji wins if both are given.
+  allIcon: { type: [String, Object], default: null },
+  allEmoji: { type: String, default: null },
   activeColor: { type: String, default: 'primary' },
   inactiveColor: { type: String, default: 'medium' },
   // Layout: wrap to multiple rows (default) vs. a single horizontally-scrolling
@@ -100,5 +111,17 @@ function select(value) {
 .filter-chips ion-chip {
   margin: 0;
   flex-shrink: 0;
+}
+
+/* Matches <label-chips>' emoji sizing, so a set of options reads the same
+   whichever chip component renders it.
+   The end margin is doing real work: ion-chip gives its ion-icon children
+   spacing but a bare span gets none, and emoji glyphs carry wildly different
+   side bearings — so 👥 and 🧒 sat flush against their labels while 💞 and 🪞
+   looked spaced, in the same row. An explicit gap normalises them. */
+.filter-chip-emoji {
+  font-size: 0.85rem;
+  line-height: 1;
+  margin-inline-end: var(--space-1, 0.25rem);
 }
 </style>
