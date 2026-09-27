@@ -28,7 +28,11 @@
 -->
 <template>
   <div class="page-header">
-    <h1 class="page-header-title">{{ title }}</h1>
+    <!-- Optional, like every other slot here. A detail page whose nav bar
+         already carries the name does not want it twice, and an unguarded h1
+         rendered an empty heading — a blank line the reader cannot account
+         for — whenever `title` was left out. -->
+    <h1 v-if="title" class="page-header-title">{{ title }}</h1>
     <p v-if="subtitle" class="page-header-subtitle">{{ subtitle }}</p>
     <label-chips v-if="chips.length" :items="chips" class="page-header-chips" />
     <p v-if="description" class="page-header-description">{{ description }}</p>

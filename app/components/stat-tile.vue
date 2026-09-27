@@ -1,7 +1,7 @@
 <template>
   <section-card
     :accent="accent"
-    :background="tinted ? resolvedBackground : null"
+    :background="tinted || tint ? resolvedBackground : null"
     class="stat-tile">
     <div class="stat-tile-content">
       <ion-icon
@@ -49,8 +49,13 @@ const props = defineProps({
   },
   icon: { type: [String, Object], default: null },
   // Explicit icon color override. Defaults to the Ionic color matching
-  // the accent (learn→primary, act→success, etc.).
+  // the accent (learn→primary, act→success, etc.), else the `tint`.
   iconColor: { type: String, default: null },
+  // An Ionic colour name ('primary', 'warning', …) that tints the background
+  // and colours the icon WITHOUT an accent stripe — for apps that keep cards
+  // neutral but still want a row of tiles to read as distinct at a glance.
+  // `accent` wins when both are given.
+  tint: { type: String, default: null },
   // The focal number / metric. Pass a number for raw counts or a
   // formatted string for percentages, units, etc. ("87%", "12 min").
   value: { type: [String, Number], default: '—' },
@@ -79,11 +84,11 @@ const TINT_OPACITY = {
 };
 
 const resolvedIconColor = computed(() =>
-  props.iconColor ?? ACCENT_TO_ION[props.accent] ?? 'medium',
+  props.iconColor ?? ACCENT_TO_ION[props.accent] ?? props.tint ?? 'medium',
 );
 
 const resolvedBackground = computed(() => {
-  const ion = ACCENT_TO_ION[props.accent] ?? 'primary';
+  const ion = ACCENT_TO_ION[props.accent] ?? props.tint ?? 'primary';
   const opacity = TINT_OPACITY[props.accent] ?? 0.08;
   return `rgba(var(--ion-color-${ion}-rgb), ${opacity})`;
 });
@@ -92,6 +97,13 @@ const resolvedBackground = computed(() => {
 <style lang="scss">
 .stat-tile {
   margin: 0;
+  /* Fill the grid cell (ion-col / flex item) so a row of tiles stays one
+     height even when one label wraps ("DAYS STREAK" vs "THIS WEEK"); content
+     centers vertically in the shared height. */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   /* Tighter inner padding than the default section-card (1rem) so short
      single-word labels (COURSES, LESSONS) have enough content width to
      fit on one line in narrow grid cells. */
