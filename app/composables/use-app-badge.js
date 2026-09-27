@@ -27,6 +27,11 @@
 //   • Android badge counts are launcher-dependent. Samsung/OnePlus render the
 //     number; Pixel and stock Android show only a dot tied to an active
 //     notification. Setting 3 there does not display 3.
+//   • iOS Focus modes hide badges for every app not on the Focus's allowed
+//     list, and they do it silently: the plugin's set() resolves, Settings →
+//     Notifications shows Badges on, and the icon stays blank. Debugged for
+//     real on any-learn (2026-09-24) — the fix was adding the app to the
+//     Work and Personal Focus allow-lists. Check this before the code.
 //
 // Nothing here throws. A badge is the least important thing on the device and
 // must never take a page down with it.
@@ -74,22 +79,37 @@ export function useAppBadge({ enabled = null } = {}) {
     }
   }
 
+  // Every branch logs, because every failure here is silent by design (a
+  // badge must never take a page down): "which step didn't happen" is the
+  // only diagnostic there is when the icon stays blank.
   async function setBadge(count) {
     if (!import.meta.client) return;
     // Respect the user's setting — when off, make sure nothing is left behind.
-    if (!isEnabled()) return clearBadge();
+    if (!isEnabled()) {
+      consoleLog('useAppBadge', 'setting off → clear');
+      return clearBadge();
+    }
 
     const n = Math.max(0, Number(count) || 0);
     try {
       const plugin = loadPlugin();
+      consoleLog('useAppBadge', `set ${n}`, plugin ? 'native plugin' : 'no native plugin');
       if (plugin) {
         if (n === 0) return void await plugin.clear();
-        if (!(await ensurePermission(plugin))) return;
-        return void await plugin.set({ count: n });
+        const { display } = await plugin.checkPermissions();
+        consoleLog('useAppBadge', 'permission', display);
+        if (!(await ensurePermission(plugin))) {
+          consoleLog('useAppBadge', 'permission not granted — badge not set');
+          return;
+        }
+        await plugin.set({ count: n });
+        consoleLog('useAppBadge', `badge set to ${n}`);
+        return;
       }
       if (typeof navigator !== 'undefined' && navigator.setAppBadge) {
         return void (n === 0 ? await navigator.clearAppBadge() : await navigator.setAppBadge(n));
       }
+      consoleLog('useAppBadge', 'no badge backend available');
     } catch (error) {
       consoleError('useAppBadge.setBadge', error);
     }
@@ -137,18 +157,25 @@ export function useAppBadge({ enabled = null } = {}) {
     // a pre-load count.
     watch(
       [() => toValue(count), () => isReady(), () => (enabled ? !!enabled.value : true)],
-      ([n, ok]) => { if (ok) setBadge(n); },
+      ([n, ok, on]) => {
+        consoleLog('useAppBadge', `count=${n} ready=${ok} enabled=${on}`);
+        if (ok) setBadge(n);
+      },
       { immediate: true },
     );
 
+    // onUnmounted must be registered synchronously in setup — after the
+    // `await` below there is no active component instance, Vue ignores the
+    // registration, and the listener leaks across every page rebuild.
+    let pauseHandle = null;
+    onUnmounted(() => { pauseHandle?.remove?.(); pauseHandle = null; });
     onMounted(async () => {
       if (!import.meta.client) return;
       try {
         const { App } = await import('@capacitor/app');
-        const handle = await App.addListener('pause', () => {
+        pauseHandle = await App.addListener('pause', () => {
           if (isReady()) setBadge(toValue(count));
         });
-        onUnmounted(() => handle?.remove?.());
       } catch {
         // Web build, or @capacitor/app absent — the watcher still covers it.
       }
