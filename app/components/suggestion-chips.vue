@@ -26,7 +26,8 @@
       <ion-chip
         v-for="item in items"
         :key="item.label"
-        :color="selected === item.label ? 'primary' : item.color"
+        :color="selected === item.label ? 'primary' : (item.color ?? 'medium')"
+        :outline="selected !== item.label"
         @click="$emit('select', item.raw)">
         <ion-icon v-if="item.icon" :icon="item.icon" />
         <ion-label>{{ item.label }}</ion-label>
@@ -58,6 +59,11 @@ defineEmits(['select', 'refresh']);
 // Every chip renders the same; an `icon` is how a list tells kinds of
 // suggestion apart (love-well: sparkles for the user's own insights, a bulb for
 // generic starters). A different fill for one kind read as "already selected".
+//
+// Outlined + medium until picked, then filled primary — the same shape as the
+// coach's starter chips and as <filter-chips>' inactive state, so an offer
+// reads as an offer. The default solid grey fill read heavier than the text
+// field it sits under.
 const items = computed(() => props.suggestions.map(s => (typeof s === 'string'
   ? { label: s, raw: s }
   : { label: s.label, icon: s.icon ?? null, color: s.color, raw: s })));
