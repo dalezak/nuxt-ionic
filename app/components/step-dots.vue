@@ -44,7 +44,9 @@ defineEmits(['go']);
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: var(--space-1);
+  /* space-2, not space-1: the active dot scales to 1.35×, and at space-1 it
+     all but touched its neighbours — the row read as cramped on a phone. */
+  gap: var(--space-2);
   margin: 0;
 }
 
