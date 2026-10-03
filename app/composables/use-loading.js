@@ -10,6 +10,14 @@ const DEFAULT_DISMISS_DELAY_MS = 200;
  */
 const loading = ref(null);
 
+// The create+present in flight, if any. `show()` is async and callers rarely
+// await it, so two calls in the same tick both saw `loading.value === null`
+// and each created an overlay; `dismiss()` then removed only the tracked one
+// and the other stayed on screen forever (calm-parent's onboarding finish,
+// "Setting things up…" stuck over Today, 2026-09-30). A second caller now
+// waits for the first overlay to exist and updates its message instead.
+let creating = null;
+
 /**
  * Composable for a shared Ionic loading overlay.
  * @returns {{
@@ -25,11 +33,20 @@ export function useLoading() {
    */
   const show = async (message = "Loading...", hide = 0) => {
     if (process.client) {
+      if (creating) await creating;
       if (loading.value) {
         loading.value.message = message;
       } else {
-        loading.value = await loadingController.create({ message });
-        await loading.value.present();
+        creating = (async () => {
+          const overlay = await loadingController.create({ message });
+          loading.value = overlay;
+          await overlay.present();
+        })();
+        try {
+          await creating;
+        } finally {
+          creating = null;
+        }
       }
       if (hide && hide > 0) {
         dismiss(hide);
@@ -43,6 +60,10 @@ export function useLoading() {
   const dismiss = (delay = DEFAULT_DISMISS_DELAY_MS) => {
     if (process.client) {
       setTimeout(async () => {
+        // A dismiss that lands while the overlay is still being created must
+        // wait for it, or it finds nothing to dismiss and the overlay appears
+        // a moment later with nobody left to remove it.
+        if (creating) await creating;
         if (loading.value) {
           await loading.value.dismiss();
           loading.value = null;
