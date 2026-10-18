@@ -16,5 +16,5 @@ export default async function (title, content = null) {
   const detail = content?.message
     ?? (typeof content === 'string' ? content : null);
   const message = detail ? `${title} — ${detail}` : title;
-  return showToast(message, null, 'warning');
+  return showToast(message, 'warningOutline', 'warning');
 }

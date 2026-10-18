@@ -7,7 +7,7 @@
           v-for="(label, i) in monthLabels"
           :key="i"
           class="month-label"
-          :style="`grid-column: ${label.col} / span ${label.span}`">{{ label.text }}</span>
+          :style="`grid-column: ${label.col} / span ${label.span}`"><span class="month-label-long">{{ label.text }}</span><span class="month-label-short">{{ label.initial }}</span></span>
       </div>
     </div>
     <div class="body">
@@ -169,6 +169,7 @@ const monthLabels = computed(() => {
       if (currentMonth !== null) {
         labels.push({
           text: monthName(currentMonth),
+          initial: monthInitial(currentMonth),
           col: currentCol + 1, // 1-based for CSS grid
           span: col - currentCol,
         });
@@ -180,6 +181,7 @@ const monthLabels = computed(() => {
   if (currentMonth !== null) {
     labels.push({
       text: monthName(currentMonth),
+      initial: monthInitial(currentMonth),
       col: currentCol + 1,
       span: weekCount.value - currentCol,
     });
@@ -190,6 +192,12 @@ const monthLabels = computed(() => {
 
 function monthName(monthIdx) {
   return new Date(2000, monthIdx, 1).toLocaleDateString(undefined, { month: 'short' });
+}
+
+// The narrow form — "J F M A …". `month: 'narrow'` is the locale's own
+// one-letter form, so it stays right outside English.
+function monthInitial(monthIdx) {
+  return new Date(2000, monthIdx, 1).toLocaleDateString(undefined, { month: 'narrow' });
 }
 </script>
 
@@ -205,6 +213,9 @@ function monthName(monthIdx) {
   width: 100%;
   max-width: 100%;
   min-width: 0;
+  /* The month labels size to THIS box, not the viewport — the chart sits in
+     cards of different widths. */
+  container-type: inline-size;
 }
 
 .year-heatmap .month-row {
@@ -232,6 +243,23 @@ function monthName(monthIdx) {
   letter-spacing: 0.04em;
   white-space: nowrap;
   overflow: hidden;
+}
+
+/* A month is ~4.3 week-columns. On a phone that's ~27px — narrower than
+   "JAN" — so the short names overlapped and clipped into "JAI FEE MAF". One
+   letter until the chart is wide enough for every short name to fit. */
+.year-heatmap .month-label-long {
+  display: none;
+}
+
+@container (min-width: 30rem) {
+  .year-heatmap .month-label-long {
+    display: inline;
+  }
+
+  .year-heatmap .month-label-short {
+    display: none;
+  }
 }
 
 .year-heatmap .body {

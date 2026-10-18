@@ -54,7 +54,7 @@ defineProps({
 
 .player-outro-icon {
   font-size: 3rem;
-  color: var(--ion-color-tertiary);
+  color: var(--player-accent);
   margin-bottom: var(--space-2);
   animation: player-outro-in 900ms 500ms ease-out both;
 }

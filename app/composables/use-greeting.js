@@ -2,10 +2,14 @@
 // surfaces. Composes the layer's `dayPeriod()` util + `useProfile()` from
 // `nuxt-supabase` (available via this layer's `extends` chain).
 //
-// Returns three computeds — apps mix and match:
+// Returns four computeds — apps mix and match:
 //   - `greeting`  — "Good morning" / "Good afternoon" / "Good evening"
 //   - `firstName` — profile.name's first word, or email-local-part, or "there"
 //   - `period`    — 'morning' | 'afternoon' | 'evening'
+//   - `tagline`   — one line from `options.taglines`, the same all day and the
+//                   next one tomorrow (rotates at the user's LOCAL midnight);
+//                   '' when no pool is passed. Apps own the copy — love-well's
+//                   relational lines, calm-parent's parenting ones.
 //
 // `firstName` resolves at setup (profile-derived, server/client agree). `period`
 // is resolved CLIENT-SIDE only (onMounted): during SSR + the first hydration
@@ -15,11 +19,28 @@
 // mismatch the client's local time — a daily hydration mismatch for any non-UTC
 // user near a period boundary ("Good morning" SSR vs "Good evening" client).
 
-export function useGreeting() {
+// Days since the epoch in the user's LOCAL time, so the tagline flips at their
+// midnight, not UTC's.
+function localDayIndex(date = new Date()) {
+  return Math.floor((date.getTime() - date.getTimezoneOffset() * 60000) / 86400000);
+}
+
+export function useGreeting({ taglines = [] } = {}) {
   const { profile } = useProfile();
 
+  // Both clock-derived values resolve on the client only (see above): null
+  // through SSR + first hydration render, then the real local value.
   const period = ref(null);
-  onMounted(() => { period.value = dayPeriod(); });
+  const dayIndex = ref(null);
+  onMounted(() => {
+    period.value = dayPeriod();
+    dayIndex.value = localDayIndex();
+  });
+
+  const tagline = computed(() => {
+    if (!taglines.length || dayIndex.value === null) return '';
+    return taglines[dayIndex.value % taglines.length];
+  });
 
   const greeting = computed(() => {
     if (period.value === 'morning') return 'Good morning';
@@ -34,5 +55,5 @@ export function useGreeting() {
     return 'there';
   });
 
-  return { greeting, firstName, period };
+  return { greeting, firstName, period, tagline };
 }

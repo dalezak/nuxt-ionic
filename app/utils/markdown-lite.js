@@ -26,6 +26,13 @@ function escapeHtml(text) {
 // italic, or `**x**` is eaten as two italics.
 function inline(text) {
   return text
+    // A run of three or more underscores is a fill-in BLANK ("When I ___, they
+    // tend to ___"), not markup — authored prompts use it everywhere. Left as
+    // underscores, the emphasis rules below paired blanks with each other and
+    // with a real `_italic_` around them, so "_With ___, loving well looks like
+    // ___._" rendered as scrambled bold-italic. Encoded as entities here, they
+    // are no longer `_` to those rules and still display as underscores.
+    .replace(/_{3,}/g, run => '&#95;'.repeat(run.length))
     .replace(/`([^`]+)`/g, '<code>$1</code>')
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
     .replace(/__([^_]+)__/g, '<strong>$1</strong>')

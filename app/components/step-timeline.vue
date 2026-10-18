@@ -139,6 +139,11 @@ function onStepClick(step, index) {
   display: flex;
   flex-direction: column;
   margin-top: var(--space-2);
+  /* The node's size AND the title's line-height, so the node's centre and the
+     title's first line share one axis. They used to be set independently — a
+     1.5rem node pushed down by a 4px margin beside a title on the browser's
+     default line-height — and the node sat ~5px below the word it marks. */
+  --step-node-size: 1.5rem;
 }
 
 .step-timeline .step {
@@ -157,18 +162,17 @@ function onStepClick(step, index) {
   flex-direction: column;
   align-items: center;
   flex-shrink: 0;
-  width: 1.5rem;
+  width: var(--step-node-size);
 }
 
 .step-timeline .step-node {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: var(--step-node-size);
+  height: var(--step-node-size);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  margin-top: var(--space-1);
   transition: background 0.15s ease, border-color 0.15s ease;
 }
 
@@ -185,13 +189,21 @@ function onStepClick(step, index) {
   padding-bottom: var(--space-4);
 }
 
+/* That padding is the gap BEFORE the next step. The last step has no next
+   step, so on it the padding only stacked on the host card's own bottom
+   padding and left a visible empty band under the final row. */
+.step-timeline .step:last-child .step-body {
+  padding-bottom: 0;
+}
+
 /* Trailing disclosure chevron — aligned to the title row, accent-tinted to
    echo the current step's color. Pinned to the top so it tracks the title,
    not the vertical center of a tall (subtitled) row. */
 .step-timeline .step-disclosure {
   flex-shrink: 0;
   align-self: flex-start;
-  margin-top: var(--space-2);
+  /* Centred on the title's line: (line - own height) / 2. */
+  margin-top: calc((var(--step-node-size) - 1em) / 2);
   font-size: var(--text-md);
   color: var(--step-color, var(--ion-color-primary));
 }
@@ -212,6 +224,9 @@ function onStepClick(step, index) {
 .step-timeline .step-title {
   font-size: var(--text-base);
   font-weight: var(--weight-medium);
+  /* One line = the node's height, so the node centres on it (see
+     --step-node-size). A wrapped title keeps the same rhythm. */
+  line-height: var(--step-node-size);
   margin: 0;
   color: var(--ion-text-color);
 }

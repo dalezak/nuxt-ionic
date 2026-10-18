@@ -55,3 +55,30 @@
 	--ion-color-light-shade: #d7d8da;
 	--ion-color-light-tint: #f5f6f9;
 }
+
+/*
+ * Colour ROLES an app's theme can re-point without touching components:
+ *
+ *   --progress-color   completion (below)
+ *   --player-accent    the one colour every guided player draws in: the wave,
+ *                      the breathing circle, selected chips, the outro.
+ *                      Defaults to tertiary (the "turn inward" accent).
+ *
+ * Re-point in the app's theme.css, e.g.
+ *   html body { --player-accent: var(--ion-color-primary); … }
+ *
+ * Declared on `body`, NOT `:root`, on purpose: a var() resolves where it is
+ * declared, and dark mode re-defines tertiary on `body.dark` — on `:root`
+ * this would freeze the light-mode value into dark mode.
+ */
+body {
+  /* Completion — the fill of a <progress-meter> and the tick on a finished
+     lesson. Success green by default; an app may re-point it at its own
+     colour. NOT for right/wrong answers, which stay success/danger. */
+  --progress-color: var(--ion-color-success);
+
+  --player-accent: var(--ion-color-tertiary);
+  --player-accent-rgb: var(--ion-color-tertiary-rgb);
+  --player-accent-shade: var(--ion-color-tertiary-shade);
+  --player-accent-tint: var(--ion-color-tertiary-tint);
+}

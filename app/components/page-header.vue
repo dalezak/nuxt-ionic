@@ -11,7 +11,8 @@
     chips       — [{ label, icon? | emoji? }] → a row of uniform light-grey
                   <ion-chip>s (category, level, duration, …). Each chip may
                   carry an `icon` (ionicon) OR an `emoji` (string).
-    description — a muted paragraph below the chips
+    description — a muted paragraph below the chips; inline markdown
+                  (**bold**, _italic_, `code`, links) renders
     progress    — 0–1 fraction; when set, renders a thin progress bar + % label
     cta         — { label, icon?, color?, disabled? } → a full-width primary
                   button at the bottom; emits `cta` on click
@@ -35,7 +36,10 @@
     <h1 v-if="title" class="page-header-title">{{ title }}</h1>
     <p v-if="subtitle" class="page-header-subtitle">{{ subtitle }}</p>
     <label-chips v-if="chips.length" :items="chips" class="page-header-chips" />
-    <p v-if="description" class="page-header-description">{{ description }}</p>
+    <!-- Inline markdown (bold, italic, code, links) — descriptions are authored
+         prose, e.g. a lesson overview naming "_I–It_", and rendered raw the
+         underscores showed. inlineMarkdown escapes first, so v-html is safe. -->
+    <p v-if="description" class="page-header-description" v-html="inlineMarkdown(description)"></p>
     <div v-if="progress != null" class="page-header-progress">
       <progress-meter :value="progress" :label="`${Math.round(progress * 100)}%`" />
     </div>
@@ -65,6 +69,8 @@
 </template>
 
 <script setup>
+import { inlineMarkdown } from '../utils/markdown-lite';
+
 defineProps({
   title: { type: String, default: '' },
   subtitle: { type: String, default: '' },

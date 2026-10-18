@@ -7,13 +7,15 @@ import { toastController } from "@ionic/vue";
  * pre-colored error/warning toasts use `showToastError()` / `showToastWarning()`.
  *
  * Multi-toast behavior:
- *   - default       — sequential queue; new toasts wait for the stage to
- *                     clear. One toast on screen at a time. Right shape
- *                     for almost every UI confirmation.
- *   - `stack: true` — fill-from-bottom pile, up to `MAX_STACK` slots;
- *                     overflow queues and drains as slots free. Use when
- *                     callers genuinely want parallel feedback (e.g. a
- *                     celebratory cascade).
+ *   - default (`stack: true`) — fill-from-bottom pile, up to `MAX_STACK`
+ *                     slots; overflow queues and drains as slots free.
+ *                     Stacked by default since 2026-10-15: a save that also
+ *                     earns a badge and captures an insight fires three
+ *                     toasts at once, and a one-at-a-time queue made the
+ *                     last of them land seconds after the moment it
+ *                     described.
+ *   - `stack: false` — sequential queue; waits for the stage to clear.
+ *                     For a toast that must be read alone.
  *
  * Stack layout: toasts grow upward from the bottom edge. Each new stack
  * toast is placed just above the previously-topmost one, with its
@@ -35,9 +37,9 @@ import { toastController } from "@ionic/vue";
  * across single- and multi-line messages.
  *
  * @param {string} message - The text to display.
- * @param {string|null} iconName - Optional Ionicons icon name (camelCase, e.g. "trophy", "bulbOutline"). Resolved via `getIcon()`.
+ * @param {string|null} iconName - Optional Ionicons icon — its camelCase name ("trophy", "bulbOutline"), resolved via `getIcon()`, or the imported icon value itself.
  * @param {string|null} color - Optional Ionic color name (e.g. 'danger', 'warning', 'success').
- * @param {boolean} [stack=false] - When true, allow parallel display up to MAX_STACK; otherwise queue sequentially.
+ * @param {boolean} [stack=true] - Parallel display up to MAX_STACK; false queues it sequentially.
  * @returns {Promise<HTMLIonToastElement|null>}
  * @example
  * showToast('Saved successfully');
@@ -134,9 +136,14 @@ async function drainPending() {
   await next.create();
 }
 
-export default async function (message, iconName = null, color = null, stack = false) {
+export default async function (message, iconName = null, color = null, stack = true) {
   if (!import.meta.client) return null;
-  const icon = iconName ? getIcon(iconName) : null;
+  // A name ('bulbOutline') or the icon itself (an imported `bulbOutline`,
+  // which is an SVG data URL). Callers do both; the name lookup alone returned
+  // undefined for the second kind, so those toasts showed no icon at all.
+  const icon = iconName
+    ? (getIcon(iconName) ?? (String(iconName).startsWith('data:') ? iconName : null))
+    : null;
 
   // Recipe: reserves a slot synchronously, builds + presents the toast
   // with Ionic's native enter animation (iOS/MD-correct fade), then

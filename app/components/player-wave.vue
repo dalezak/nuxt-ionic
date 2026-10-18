@@ -66,7 +66,9 @@ const props = defineProps({
   paused: { type: Boolean, default: false },
   // Peak height as a fraction of the box.
   amplitude: { type: Number, default: 0.3 },
-  // Any CSS color. Defaults to the Ionic tertiary ramp.
+  // Any CSS color. Defaults to `--player-accent` (default-white.css), the one
+  // colour every guided player draws in — tertiary unless the app's theme
+  // re-points it.
   color: { type: String, default: null },
 });
 
@@ -163,11 +165,17 @@ function sizeCanvas() {
   return true;
 }
 
+// Read from the CANVAS, not <html>: dark mode re-defines colours on
+// `body.dark` and a theme can scope them lower still, and the root sees none of
+// that — the wave stayed light-mode tertiary on a dark ground.
+function cssVar(name) {
+  const el = canvasRef.value ?? document.documentElement;
+  return getComputedStyle(el).getPropertyValue(name).trim();
+}
+
 function resolvedColor() {
   if (props.color) return props.color;
-  const value = getComputedStyle(document.documentElement)
-    .getPropertyValue('--ion-color-tertiary').trim();
-  return value || '#6d5bd0';
+  return cssVar('--player-accent') || cssVar('--ion-color-tertiary') || '#6d5bd0';
 }
 
 function draw() {
@@ -181,8 +189,7 @@ function draw() {
   if (w < 2 || h < 2) return;
 
   const color = resolvedColor();
-  const mutedColor = getComputedStyle(document.documentElement)
-    .getPropertyValue('--ion-color-medium').trim() || '#8b85a0';
+  const mutedColor = cssVar('--ion-color-medium') || '#8b85a0';
   const showLabels = props.labels && isPaced.value;
   const labelBand = showLabels ? 26 : 0;
   const top = labelBand + 10;

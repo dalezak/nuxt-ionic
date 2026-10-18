@@ -22,8 +22,10 @@
                "complete" beside it is the same fact twice. Omit for a bare bar.
     caption  — a line beneath ("8 of 55 lessons"), for descriptive copy
                too long to sit inline.
-    color    — any Ionic colour name; success by default, because progress here
-               means "completed", not "loading".
+    color    — any Ionic colour name. Omitted, the fill is `--progress-color`
+               (default-white.css): success green unless the app's theme
+               re-points it, because progress here means "completed", not
+               "loading".
 -->
 
 <template>
@@ -32,7 +34,7 @@
       <div class="progress-meter-track">
         <div
           class="progress-meter-fill"
-          :style="{ width: `${fraction * 100}%`, background: `var(--ion-color-${color})` }" />
+          :style="{ width: `${fraction * 100}%`, background: color ? `var(--ion-color-${color})` : 'var(--progress-color, var(--ion-color-success))' }" />
       </div>
       <span v-if="label" class="progress-meter-label">{{ label }}</span>
     </div>
@@ -45,7 +47,7 @@ const props = defineProps({
   value: { type: Number, default: 0 },
   label: { type: String, default: null },
   caption: { type: String, default: null },
-  color: { type: String, default: 'success' },
+  color: { type: String, default: null },
 });
 
 const fraction = computed(() => {

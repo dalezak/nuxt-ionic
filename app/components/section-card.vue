@@ -573,9 +573,15 @@ ion-card-content.section-card-body--has-footer {
  * component's own stylesheet so there is one file per component — nothing else
  * consumed them, and an app can still override any of these (or any rule below)
  * from its own `theme.css`.
+ *
+ * Declared on `body` as well as `:root`: a var() resolves where it's declared,
+ * and dark mode re-defines the Ionic colours on `body.dark`. On `:root` alone
+ * the accents froze at their light-mode values — a dark-mode card drew a
+ * light-mode stripe.
  */
 
-:root {
+:root,
+body {
   /* Geometry */
   --card-radius: 12px;
   --card-padding: 1rem;

@@ -139,7 +139,7 @@ app/
   components/          # Reusable Vue components
   composables/         # useAppRoute, useAppScreen, useAppTabs, useIonPage, useLoading, useSearchPagination
   middleware/auth.js   # Route guard using ROUTES constants
-  pages/               # File-based routing (tabs/, reset, logout)
+  pages/               # File-based routing (tabs/, reset, logout). tabs/your-data.vue = export + delete account (copy from app.config.yourData; calls the app's export-user-data / delete-user-account wrappers around nuxt-supabase's _shared/account-data.ts)
   plugins/             # masonry.js, ion-router.js
   stores/              # Pinia stores
   utils/               # Auto-imported utility functions (kebab-case → camelCase)

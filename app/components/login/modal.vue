@@ -22,11 +22,15 @@
     <h2 class="login-title">{{ formTitle }}</h2>
     <p class="login-subtitle">{{ formSubtitle }}</p>
 
-    <ion-list lines="none" class="login-fields">
+    <!-- A plain div, not ion-list: the inputs aren't ion-items, so a list adds
+         nothing but Ionic's `.list-ios` white background — which outranks a
+         same-specificity override and showed as a white block behind the
+         fields, above the first outline. -->
+    <div class="login-fields">
       <ion-input v-if="isSignup" type="text" autocapitalize="words" autocorrect="off" spellcheck="false" label="Name" label-placement="floating" mode="md" fill="outline" ref="state.nameInput" v-model="state.name" :required="isSignup" v-on:keyup.enter="onEnter" class="login-input"></ion-input>
       <ion-input v-if="isSignup || isLogin || isReset" type="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" label="Email" label-placement="floating" mode="md" fill="outline" ref="state.emailInput" v-model="state.email" required v-on:keyup.enter="onEnter" class="login-input"></ion-input>
       <ion-input v-if="isSignup || isLogin" type="password" autocapitalize="off" autocorrect="off" spellcheck="false" label="Password" label-placement="floating" mode="md" fill="outline" ref="state.passwordInput" v-model="state.password" :required="isSignup || isLogin" v-on:keyup.enter="onEnter" class="login-input"></ion-input>
-    </ion-list>
+    </div>
 
     <div class="login-links">
       <ion-button fill="clear" size="small" @click="signupForm" v-if="isLogin">Don't have an account?</ion-button>
@@ -37,14 +41,15 @@
   </ion-content>
   <ion-footer class="login-modal-footer">
     <ion-toolbar>
-      <ion-button size="small" expand="block" color="primary" @click="doSignup" v-if="isSignup">Signup</ion-button>
-      <ion-button size="small" expand="block" color="primary" @click="doLogin" v-else-if="isLogin">Login</ion-button>
+      <ion-button size="small" expand="block" color="primary" @click="doSignup" v-if="isSignup">Sign Up</ion-button>
+      <ion-button size="small" expand="block" color="primary" @click="doLogin" v-else-if="isLogin">Log In</ion-button>
       <ion-button size="small" expand="block" color="primary" @click="doReset" v-else-if="isReset">Reset Password</ion-button>
     </ion-toolbar>
   </ion-footer>
 </template>
 
 <script setup>
+import { happyOutline } from 'ionicons/icons';
 const props = defineProps({
   // Where to land on success. Deep-link bounces pass the original path;
   // otherwise null → the app root. Only relative paths are honored.
@@ -187,6 +192,14 @@ function waitForPageCovered(outgoing, timeoutMs = 5000) {
   });
 }
 
+// The greeting uses the name they gave us — the first word of it, which is
+// how a person is greeted. Login loads the profile row (User.login); signup has
+// the name they just typed. Falls back to "friend" when neither has one (the
+// auth-only fallback profile carries no name).
+function firstName(name) {
+  return String(name ?? '').trim().split(/\s+/)[0] || null;
+}
+
 async function doLogin() {
   if (hasEmail() && hasPassword()) {
     try {
@@ -197,7 +210,8 @@ async function doLogin() {
       });
       if (user) {
         lastEmail.value = state.email;  // remember for next launch's prefill
-        showToast("Welcome back friend");
+        const first = firstName(user.name);
+        showToast(`Welcome back ${first ?? 'friend'}`, happyOutline);
         await finishAuth();
       }
       else {
@@ -233,7 +247,8 @@ async function doSignup() {
       }
       else if (user) {
         lastEmail.value = state.email;  // remember for next launch's prefill
-        showToast("Welcome friend");
+        const first = firstName(user.name ?? state.name);
+        showToast(`Welcome ${first ?? 'friend'}`, happyOutline);
         await finishAuth();
       }
       else {
@@ -299,7 +314,6 @@ function clearInputs() {
 }
 
 .login-fields {
-  background: transparent;
   /* Top padding clears the first floating label — MD's `label-placement="floating"`
      positions the active label ~8px above the input outline. */
   padding: var(--space-2) 0 0;

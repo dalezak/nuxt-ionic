@@ -61,7 +61,10 @@ function repairTail(line) {
   // Close what the cut left open. `**` before `*` so a bold marker isn't
   // mistaken for two italics — masking the pairs already handled keeps the
   // single-character markers from counting the doubled ones.
-  let masked = out;
+  // Fill-in blanks (`___`, three or more underscores) aren't markup — markdown-
+  // lite renders them as literal underscores — so they're masked out before
+  // counting, or a blank would read as an unclosed `__` and gain a stray one.
+  let masked = out.replace(/_{3,}/g, '');
   for (const marker of PAIRED) {
     if (isBalanced(masked, marker)) {
       masked = masked.split(marker).join('');  // consumed; hide from later counts
