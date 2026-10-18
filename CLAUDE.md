@@ -222,6 +222,28 @@ Navigate via the `show-*` utils, not `router.push`:
 
 For app-specific destinations (e.g. course details), wrap them in a local util: `app/utils/show-course-details.js` exporting `showPage(\`/courses/${id}\`, true)`. This keeps call sites uniform and routes centralized.
 
+### Home-screen day widget + deep links
+
+One iOS widget for every app: the day's steps ("2 of 4", a named next step, a dot or tick per step) on the home and lock screens. The pieces:
+
+| Piece | Lives in | Notes |
+| --- | --- | --- |
+| `publishDayWidget({ steps, next })` | `app/utils/publish-day-widget.js` | Call from the app's Today page when the day's steps change. Settings from app.config `widget: { group, label, shortLabel, url }` |
+| `DayWidget.swift` | `native/ios/` | **Identical in every app**, never edited there. Copied in by `npm run widget:copy` (`scripts/sync-widget.mjs <widget folder>`) |
+| `useDeepLinks(App)` | `app/composables/use-deep-links.js` | `<scheme>://today` → the Today tab. Scheme from app.config `deepLinks.scheme` |
+| Native-plugin injectors | each app's `app/plugins/` | `widget.client.js` provides `widgetPlugin`; `deep-links.client.js` calls `useDeepLinks(App)`. Apps inject; the layer never imports optional native plugins |
+
+Adopting it in a new app, in order:
+
+1. Xcode → File → New → Target → **Widget Extension**. Untick Live Activity, Control and Configuration Intent. Bundle ID `<app id>.widget`.
+2. **Set the extension's iOS minimum to match the app (17.0 for both).** `cap sync` copies the FIRST deployment target in `project.pbxproj` into `CapApp-SPM/Package.swift`; the extension's sorts first, and Xcode's default (26.x) breaks package resolution.
+3. Delete the template `.swift` files from the extension's folder (its `@main` bundle clashes), add `"widget:copy"` to package.json, run it.
+4. Widget `Info.plist`: `DayWidgetAppGroup`, `DayWidgetName`, `DayWidgetDescription`. Widget asset catalog: set `AccentColor` (else ticks are system blue).
+5. App Groups capability on BOTH targets with the same `group.<app id>`, matching app.config `widget.group`. **A mismatch fails silently** — the widget just keeps showing "Open &lt;App&gt; to set today."
+6. App `Info.plist`: `CFBundleURLTypes` with the `deepLinks.scheme`.
+
+The payload is the only contract between the publisher and the Swift. Rename a field in one, rename it in the other in the same change. No streaks, percentages or user-written text on it — see the header of either file.
+
 ### Refresher
 
 Standard pull-to-refresh:

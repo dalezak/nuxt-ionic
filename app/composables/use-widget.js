@@ -2,8 +2,12 @@
 // widgets. The consuming app decides WHAT the widget says; this only knows how
 // to hand a payload across the process boundary and ask the OS to redraw.
 //
-//   const { publish } = useWidget({ group: 'group.co.lovewell' });
+//   const { publish } = useWidget({ group: 'group.com.example.app' });
 //   await publish('today', { title: 'Own the Morning', body: '…' });
+//
+// For the shared "day widget" (the day's steps on the home and lock screens),
+// don't call this directly — use `publishDayWidget()`, which pairs with the
+// shared `native/ios/DayWidget.swift`.
 //
 // ── WHY A WIDGET IS NOT JUST ANOTHER SURFACE ─────────────────────────────────
 // A widget runs in a SEPARATE PROCESS with no access to the webview, the DOM,
