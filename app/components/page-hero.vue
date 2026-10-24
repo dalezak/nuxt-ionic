@@ -9,6 +9,11 @@
     <div v-if="$slots.default" class="page-hero-body">
       <slot />
     </div>
+    <!-- Buttons go here, not in the default slot: the body is dimmed (it is
+         the lede), and a call to action inside it read as disabled. -->
+    <div v-if="$slots.actions" class="page-hero-actions">
+      <slot name="actions" />
+    </div>
   </div>
 </template>
 
@@ -23,7 +28,8 @@
 
   Optional ionicon above the title; default slot carries the lede/body
   text so consumers can include multiple paragraphs, emphasis, links,
-  computed parts, etc.
+  computed parts, etc. The `actions` slot holds a call to action under the
+  lede, at full strength (the body is dimmed).
 
     <page-hero
       :icon="compassOutline"
@@ -75,5 +81,9 @@ defineProps({
    the body block jumping vertically. */
 .page-hero-body p {
   margin: 0;
+}
+
+.page-hero-actions {
+  margin-top: var(--space-4);
 }
 </style>
