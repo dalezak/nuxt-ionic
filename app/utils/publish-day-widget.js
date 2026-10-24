@@ -5,7 +5,16 @@ import { useWidget } from '../composables/use-widget';
 //   publishDayWidget({
 //     steps: [{ id: 'commit', title: 'Commit', done: true }, …],
 //     next:  { title: 'Practice', detail: 'Notice One Bid' },   // or null
+//     rings: [{ value: 1, color: 'beat-dawn', title: 'Commit' }, …],  // optional
 //   });
+//
+// `rings` is TODAY's <weekly-rings> mark: the same `{ value: 0..1, color }`
+// channels, centre first. The widget draws it as a dot plus concentric arcs
+// beside the steps, and as the lock screen's circular family. Omit it and the
+// widget draws exactly what it did before. One day only, never the week: a
+// row of seven marks on a surface the user cannot close reads as a streak.
+// `color` is an Ionic palette name (or a hex); it is resolved to hex here,
+// because the widget is another process and cannot read CSS variables.
 //
 // Pairs with `native/ios/DayWidget.swift`, which every app copies in unchanged
 // (`npm run widget:copy`). The payload below IS the contract between the two —
@@ -38,7 +47,7 @@ import { useWidget } from '../composables/use-widget';
 // when the app has no widget config, no bridge, or is running on the web.
 export const DAY_WIDGET_KEY = 'day';
 
-export default async function publishDayWidget({ steps = [], next = null } = {}) {
+export default async function publishDayWidget({ steps = [], next = null, rings = null } = {}) {
   const config = useAppConfig().widget ?? {};
   if (!config.group) return false;
 
@@ -60,11 +69,36 @@ export default async function publishDayWidget({ steps = [], next = null } = {})
       : (doneCount ? (config.doneHeadline ?? 'Your day is complete.') : (config.emptyHeadline ?? 'Nothing set yet today.')),
     doneCount,
     total: steps.length,
+    rings: Array.isArray(rings) && rings.length
+      ? rings.map(r => ({
+        value: clamp01(Number(r?.value)),
+        color: resolveColor(r?.color),
+        title: r?.title ?? null,
+      }))
+      : null,
     // Stamped so the widget can tell a stale payload from today's — WidgetKit
     // honours reloads on its own budget, and yesterday's day shown as today's
     // is worse than an admitted date.
     day: today(),
   });
+}
+
+function clamp01(n) {
+  return Number.isFinite(n) ? Math.min(1, Math.max(0, n)) : 0;
+}
+
+// An Ionic palette name → its current hex (`--ion-color-<name>`); a hex passes
+// through. Null when it can't be resolved, and the widget falls back to its
+// accent colour. Read from the live theme, so it follows the app's own mode —
+// from <body>, not <html>: dark palettes are scoped to `body.dark`, and :root
+// alone would hand the widget the light values in dark mode.
+function resolveColor(color) {
+  if (!color) return null;
+  if (String(color).startsWith('#')) return color;
+  if (typeof document === 'undefined') return null;
+  const value = getComputedStyle(document.body ?? document.documentElement)
+    .getPropertyValue(`--ion-color-${color}`).trim();
+  return value.startsWith('#') ? value : null;
 }
 
 // The device's local calendar day, YYYY-MM-DD — the same day the user sees.

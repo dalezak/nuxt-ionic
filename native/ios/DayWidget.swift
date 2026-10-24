@@ -54,6 +54,14 @@ struct Step: Decodable, Hashable {
     let done: Bool
 }
 
+// One channel of today's ring: how far it got (0…1), its colour as hex, and its
+// name for VoiceOver. Index 0 is the centre dot; the rest grow outward.
+struct Ring: Decodable, Hashable {
+    let value: Double
+    let color: String?
+    let title: String?
+}
+
 struct DayPayload: Decodable {
     let label: String
     let shortLabel: String
@@ -65,6 +73,9 @@ struct DayPayload: Decodable {
     let doneCount: Int
     let total: Int
     let day: String?
+    // Optional: an app that sends no rings gets the dots-only layout it always
+    // had, so this file stays identical across apps.
+    var rings: [Ring]? = nil
 
     // What a freshly-placed widget shows before the app has ever published:
     // an honest prompt rather than invented steps — this file doesn't know
@@ -146,6 +157,102 @@ struct StepDots: View {
     }
 }
 
+extension Color {
+    // "#RRGGBB" → Color; nil for anything else, so a bad value falls back to the
+    // accent rather than to black.
+    init?(hex: String?) {
+        guard var s = hex?.trimmingCharacters(in: .whitespaces) else { return nil }
+        if s.hasPrefix("#") { s.removeFirst() }
+        guard s.count == 6, let v = UInt32(s, radix: 16) else { return nil }
+        self.init(
+            red: Double((v >> 16) & 0xFF) / 255,
+            green: Double((v >> 8) & 0xFF) / 255,
+            blue: Double(v & 0xFF) / 255
+        )
+    }
+}
+
+// Today's ring — the same mark as the app's <weekly-rings>, one day of it.
+// Centre dot for the first channel, then concentric arcs outward, each filling
+// clockwise from twelve o'clock. Geometry is copied from weekly-rings.vue (a
+// 100-unit box): dot r 12, bands 9 wide with 3.6 gaps, so three rings close at
+// the edge. Keep the two in step.
+//
+// The channels are INDEPENDENT on purpose: a light day still shows a real,
+// partly filled mark, which is the whole point of the design. So there is no
+// aggregate here — no total ring, no percentage.
+//
+// In tinted / vibrant rendering (lock screen, StandBy, tinted home screens)
+// colour is stripped, so arcs draw in the primary ink and tracks fade.
+struct RingGlyph: View {
+    let rings: [Ring]
+    let size: CGFloat
+    @Environment(\.widgetRenderingMode) private var renderingMode
+
+    private let dotR: CGFloat = 12
+    private let width: CGFloat = 9
+    private let gap: CGFloat = 3.6
+    private let trackOpacity = 0.14
+
+    private var fullColor: Bool { renderingMode == .fullColor }
+    private var isEmpty: Bool { rings.allSatisfy { $0.value <= 0 } }
+
+    private func ink(_ ring: Ring) -> Color {
+        fullColor ? (Color(hex: ring.color) ?? .accentColor) : .primary
+    }
+
+    var body: some View {
+        let u = size / 100
+        ZStack {
+            if let centre = rings.first {
+                if isEmpty {
+                    // A day with nothing in it yet: the shape it will take, as
+                    // faint hairlines — never a different kind of mark.
+                    Circle()
+                        .stroke(Color.secondary.opacity(0.35), lineWidth: 3 * u)
+                        .frame(width: 2 * dotR * u, height: 2 * dotR * u)
+                } else {
+                    Circle()
+                        .fill(ink(centre).opacity(centre.value >= 1 ? 1 : trackOpacity))
+                        .frame(width: 2 * dotR * u, height: 2 * dotR * u)
+                }
+            }
+            ForEach(Array(rings.dropFirst().enumerated()), id: \.offset) { i, ring in
+                let r = (dotR + gap + width / 2 + CGFloat(i) * (width + gap)) * u
+                if isEmpty {
+                    Circle()
+                        .stroke(Color.secondary.opacity(0.35), lineWidth: 3 * u)
+                        .frame(width: 2 * r, height: 2 * r)
+                } else {
+                    Circle()
+                        .stroke(ink(ring).opacity(fullColor ? trackOpacity : 0.25), lineWidth: width * u)
+                        .frame(width: 2 * r, height: 2 * r)
+                    if ring.value > 0 {
+                        Circle()
+                            .trim(from: 0, to: min(1, ring.value))
+                            .stroke(ink(ring), style: StrokeStyle(lineWidth: width * u, lineCap: .round))
+                            .rotationEffect(.degrees(-90))
+                            .frame(width: 2 * r, height: 2 * r)
+                    }
+                }
+            }
+        }
+        .frame(width: size, height: size)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(accessibilityText)
+    }
+
+    // Per channel, in words — never one total.
+    private var accessibilityText: String {
+        rings.map { ring in
+            let name = ring.title ?? "Step"
+            if ring.value >= 1 { return "\(name) done" }
+            if ring.value <= 0 { return "\(name) not yet" }
+            return "\(name) partly done"
+        }.joined(separator: ", ")
+    }
+}
+
 struct DayWidgetEntryView: View {
     @Environment(\.widgetFamily) private var family
     var entry: DayEntry
@@ -155,9 +262,16 @@ struct DayWidgetEntryView: View {
     var body: some View {
         switch family {
         case .accessoryRectangular: rectangularAccessory
+        case .accessoryCircular:    circularAccessory
         case .systemMedium:         medium
         default:                    small
         }
+    }
+
+    // The ring, when the app sends one and it has a channel to draw.
+    private var rings: [Ring]? {
+        guard let r = payload.rings, !r.isEmpty else { return nil }
+        return r
     }
 
     // ── Small — a glance ─────────────────────────────────────────────────────
@@ -175,7 +289,13 @@ struct DayWidgetEntryView: View {
                     .foregroundStyle(.secondary)
             }
             Spacer(minLength: 0)
-            StepDots(steps: payload.steps)
+            // The ring says what the dots say and more (how FAR each beat got),
+            // so it takes their place rather than stacking on them.
+            if let rings {
+                RingGlyph(rings: rings, size: 40)
+            } else {
+                StepDots(steps: payload.steps)
+            }
         }
         .padding(14)
         .containerBackground(for: .widget) { Color(.systemBackground) }
@@ -188,11 +308,21 @@ struct DayWidgetEntryView: View {
     // stand for.
     private var medium: some View {
         VStack(alignment: .leading, spacing: 10) {
-            header
-            Text(payload.headline)
-                .font(.subheadline).fontWeight(.medium)
-                .lineLimit(2)
-                .fixedSize(horizontal: false, vertical: true)
+            // The ring sits beside the header and headline, not beside the
+            // ticks: the ticks need the full width to keep every step name on
+            // one line.
+            HStack(alignment: .top, spacing: 12) {
+                VStack(alignment: .leading, spacing: 10) {
+                    header
+                    Text(payload.headline)
+                        .font(.subheadline).fontWeight(.medium)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                if let rings {
+                    RingGlyph(rings: rings, size: 52)
+                }
+            }
             Spacer(minLength: 0)
             HStack(spacing: 12) {
                 ForEach(payload.steps, id: \.self) { step in
@@ -251,6 +381,31 @@ struct DayWidgetEntryView: View {
         .widgetURL(payload.tapURL)
     }
 
+    // ── Lock screen, circular — the ring on its own ─────────────────────────
+    // The one family a ring was made for. Without rings (an app that sends
+    // none) it falls back to the day's count, still scoped to today.
+    private var circularAccessory: some View {
+        ZStack {
+            if let rings {
+                RingGlyph(rings: rings, size: 50)
+            } else if payload.total > 0 {
+                VStack(spacing: 0) {
+                    Image(systemName: payload.complete ? "checkmark" : "circle.dotted")
+                        .font(.system(size: 12, weight: .semibold))
+                    if !payload.complete {
+                        Text("\(payload.doneCount)/\(payload.total)")
+                            .font(.system(size: 13, weight: .semibold))
+                    }
+                }
+            } else {
+                Image(systemName: "circle.dotted")
+                    .font(.system(size: 20))
+            }
+        }
+        .containerBackground(for: .widget) { Color.clear }
+        .widgetURL(payload.tapURL)
+    }
+
     private var header: some View {
         HStack {
             // The small family can't fit a long label beside the count and
@@ -281,7 +436,7 @@ struct DayWidget: Widget {
         }
         .configurationDisplayName(info("DayWidgetName") ?? "Today")
         .description(info("DayWidgetDescription") ?? "What's still open today.")
-        .supportedFamilies([.systemSmall, .systemMedium, .accessoryRectangular])
+        .supportedFamilies([.systemSmall, .systemMedium, .accessoryRectangular, .accessoryCircular])
     }
 }
 
@@ -291,6 +446,14 @@ struct DayWidget: Widget {
 // from each app's payload.
 
 private extension DayPayload {
+    // The amber day ramp love-well sends (beat-dawn → beat-dusk). Sample only:
+    // each app sends its own colours, already resolved to hex.
+    static func sampleRings(_ v: [Double]) -> [Ring] {
+        let colors = ["#FFD97A", "#F2B04A", "#D98324", "#A85A10"]
+        let titles = ["Commit", "Learn", "Practice", "Reflect"]
+        return v.enumerated().map { Ring(value: $1, color: colors[$0], title: titles[$0]) }
+    }
+
     static let sampleSteps = [
         Step(id: "commit", title: "Commit", done: true),
         Step(id: "learn", title: "Learn", done: true),
@@ -303,7 +466,27 @@ private extension DayPayload {
         label: "Today's Path", shortLabel: "Today", url: nil,
         steps: sampleSteps,
         nextTitle: "Practice", nextDetail: "Notice One Bid",
-        headline: "Notice One Bid", doneCount: 2, total: 4, day: nil
+        headline: "Notice One Bid", doneCount: 2, total: 4, day: nil,
+        rings: sampleRings([1, 1, 0.34, 0])
+    )
+
+    // A light day — Commit and one practice of three. The case the ring exists
+    // for: it should read as a real, partly filled mark, not as a miss.
+    static let lightDay = DayPayload(
+        label: "Today's Path", shortLabel: "Today", url: nil,
+        steps: sampleSteps.map { Step(id: $0.id, title: $0.title, done: $0.id == "commit") },
+        nextTitle: "Learn", nextDetail: "Love Languages",
+        headline: "Love Languages", doneCount: 1, total: 4, day: nil,
+        rings: sampleRings([1, 0, 0.34, 0])
+    )
+
+    // Nothing yet this morning: the ring's empty structure, as hairlines.
+    static let untouched = DayPayload(
+        label: "Today's Path", shortLabel: "Today", url: nil,
+        steps: sampleSteps.map { Step(id: $0.id, title: $0.title, done: false) },
+        nextTitle: "Commit", nextDetail: "Set today's intention",
+        headline: "Set today's intention", doneCount: 0, total: 4, day: nil,
+        rings: sampleRings([0, 0, 0, 0])
     )
 
     // Day closed — no count, warm close. Check this renders without a
@@ -312,7 +495,16 @@ private extension DayPayload {
         label: "Today's Path", shortLabel: "Today", url: nil,
         steps: sampleSteps.map { Step(id: $0.id, title: $0.title, done: true) },
         nextTitle: nil, nextDetail: nil,
-        headline: "Your day is complete.", doneCount: 4, total: 4, day: nil
+        headline: "Your day is complete.", doneCount: 4, total: 4, day: nil,
+        rings: sampleRings([1, 1, 1, 1])
+    )
+
+    // An app that sends no rings — must look exactly as before.
+    static let noRings = DayPayload(
+        label: "Today's Path", shortLabel: "Today", url: nil,
+        steps: sampleSteps,
+        nextTitle: "Practice", nextDetail: "Notice One Bid",
+        headline: "Notice One Bid", doneCount: 2, total: 4, day: nil
     )
 
     // A long practice title — the case that breaks layouts.
@@ -321,7 +513,8 @@ private extension DayPayload {
         steps: sampleSteps,
         nextTitle: "Practice", nextDetail: "Say the hard thing without the edge",
         headline: "Say the hard thing without the edge",
-        doneCount: 2, total: 4, day: nil
+        doneCount: 2, total: 4, day: nil,
+        rings: sampleRings([1, 1, 0.34, 0])
     )
 }
 
@@ -329,7 +522,10 @@ private extension DayPayload {
     DayWidget()
 } timeline: {
     DayEntry(date: .now, payload: .midday)
+    DayEntry(date: .now, payload: .lightDay)
+    DayEntry(date: .now, payload: .untouched)
     DayEntry(date: .now, payload: .complete)
+    DayEntry(date: .now, payload: .noRings)
     DayEntry(date: .now, payload: .placeholder)
     DayEntry(date: .now, payload: .longTitle)
 }
@@ -338,7 +534,9 @@ private extension DayPayload {
     DayWidget()
 } timeline: {
     DayEntry(date: .now, payload: .midday)
+    DayEntry(date: .now, payload: .lightDay)
     DayEntry(date: .now, payload: .complete)
+    DayEntry(date: .now, payload: .noRings)
     DayEntry(date: .now, payload: .longTitle)
 }
 
@@ -348,4 +546,13 @@ private extension DayPayload {
     DayEntry(date: .now, payload: .midday)
     DayEntry(date: .now, payload: .complete)
     DayEntry(date: .now, payload: .longTitle)
+}
+
+#Preview("Lock screen — circular", as: .accessoryCircular) {
+    DayWidget()
+} timeline: {
+    DayEntry(date: .now, payload: .midday)
+    DayEntry(date: .now, payload: .lightDay)
+    DayEntry(date: .now, payload: .untouched)
+    DayEntry(date: .now, payload: .noRings)
 }
