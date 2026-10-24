@@ -1,3 +1,18 @@
+// The app's off switch. Module-level rather than read from a setting here: this
+// layer has no settings store, and every haptic in the suite (including the
+// meditation and practice players in other layers) comes through this util,
+// so one flag set from the app's own setting quiets them all. On by default.
+let hapticsEnabled = true;
+
+/**
+ * Turns every `haptic()` call on or off — wire it to the app's setting, e.g.
+ * in app.vue: `watchEffect(() => setHapticsEnabled(get('haptics')))`.
+ * @param {boolean} on
+ */
+export function setHapticsEnabled(on) {
+  hapticsEnabled = on !== false;
+}
+
 /**
  * Fires a single, quiet haptic tap as tactile confirmation of a meaningful
  * moment (a check-in saved, a reflection committed). Deliberately minimal —
@@ -17,6 +32,7 @@
  * await haptic('success'); // a richer pattern for an earned moment
  */
 export default async function (style = 'medium') {
+  if (!hapticsEnabled) return;
   try {
     const { Haptics, ImpactStyle, NotificationType } = await import('@capacitor/haptics');
     if (style === 'success') {

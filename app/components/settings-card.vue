@@ -16,12 +16,16 @@
 
     <settings-card :is-paid="isPaid" @upsell="onUpsell" />
 
-  Item shape: { id, type, label, description?, icon?, default, plan?, options? }
+  Native-only: an item with `native: true` shows only inside the Capacitor
+  app — for a setting that does nothing on the web (haptics). A section left
+  with no items is dropped.
+
+  Item shape: { id, type, label, description?, icon?, default, plan?, native?, options? }
 -->
 
 <template>
   <section-card
-    v-for="section in sections"
+    v-for="section in visibleSections"
     :key="section.title"
     :icon="section.icon ? getIcon(section.icon) : null"
     :title="section.title">
@@ -77,6 +81,11 @@ const props = defineProps({
 const emit = defineEmits(['upsell', 'change']);
 
 const { loadProfile } = useProfile();
+const { isNative } = useAppScreen();
+
+const visibleSections = computed(() => props.sections
+  .map(section => ({ ...section, items: (section.items ?? []).filter(item => !item.native || isNative) }))
+  .filter(section => section.items.length));
 const { get, set } = useSettings();
 
 // Self-contained: ensure the profile (and its settings blob) is loaded so
