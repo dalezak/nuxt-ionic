@@ -1,5 +1,5 @@
 <template>
-  <div class="step-timeline" :class="{ 'step-timeline--emphasize': emphasizeCurrent }">
+  <div class="step-timeline" :class="{ 'step-timeline--emphasize': emphasizeCurrent, 'step-timeline--centered': centered }">
     <div
       v-for="(step, i) in steps"
       :key="step.id ?? i"
@@ -77,6 +77,12 @@ import { checkmark, chevronForwardOutline } from 'ionicons/icons';
 //   emphasizeCurrent: give the current step primary-CTA weight (default off) —
 //                a tinted panel behind its body + a heavier title, so "what
 //                do I do now?" is unmistakable.
+//   centered:    a centred column instead of a left rail — each step's node,
+//                then its text beneath it, then a short connector down to the
+//                next node. For a progress view on its own, under a spinner
+//                (a generate modal's "Writing… / Recording… / Opening…"), not
+//                for a list beside other content. Not meant to combine with
+//                emphasizeCurrent, whose panel assumes the left rail.
 //
 // Slots:
 //   step               — default body for every step (override globally)
@@ -94,6 +100,7 @@ const props = defineProps({
   // false | true (current step only) | 'all' (every step)
   disclosure: { type: [Boolean, String], default: false },
   emphasizeCurrent: { type: Boolean, default: false },
+  centered: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(['step-click']);
@@ -276,6 +283,46 @@ function onStepClick(step, index) {
 .step--upcoming .step-title,
 .step-timeline .step--upcoming .step-subtitle {
   opacity: 0.5;
+}
+
+/* Centred column (opt-in via `centered`). The rail is flattened with
+   `display: contents` so its node and line become items of the step itself,
+   then reordered: node, body, line. The connector therefore runs from under a
+   step's text down to the next node, and everything shares one centre line. */
+.step-timeline.step-timeline--centered .step {
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  text-align: center;
+}
+
+.step-timeline.step-timeline--centered .step-rail {
+  display: contents;
+}
+
+.step-timeline.step-timeline--centered .step-node { order: 0; }
+
+.step-timeline.step-timeline--centered .step-body {
+  order: 1;
+  flex: none;
+  padding-bottom: 0;
+}
+
+.step-timeline.step-timeline--centered .step-body-default {
+  align-items: center;
+}
+
+.step-timeline.step-timeline--centered .step-line {
+  order: 2;
+  flex: none;
+  height: 1.5rem;
+  min-height: 0;
+  margin: 0 0 var(--space-1);
+}
+
+.step-timeline.step-timeline--centered .step-disclosure {
+  order: 3;
+  margin-top: 0;
 }
 
 /* Emphasized current step (opt-in via `emphasizeCurrent`) — marks the one
